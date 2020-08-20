@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { defineMovement } from "../logics/Movement";
-// import "..";
+import { defineLegalMoves, moveValidation } from '../logics/LogicController';
 
 function Board() {
   let isEven = true;
 
-  // template = [row, col, val]
-  const [template, setTemplate] = useState([]);
+  // temp = [row, col, val]
+  const [temp, setTemp] = useState([]);
+  const [legalMoves, setLegalMoves] = useState([]);
 
   const rookBlack = require("../chess-pack/chess-rook-black.png");
   const rookWhite = require("../chess-pack/chess-rook-white.png");
@@ -73,17 +73,19 @@ function Board() {
   }
 
   function handleClick(row, col, val) {
-    if (template[0] === row && template[1] === col)  {
-      return setTemplate([]);
+    if (temp[0] === row && temp[1] === col)  {
+      return setTemp([]);
     }
 
-    if (template.length === 0 && val !== 0) {
-      const newTemplate = [row, col, val];
-      setTemplate(newTemplate);
-    } else if(template.length > 0 && template[2] !== 0) {
-      const newBoard = defineMovement(board, template, row, col);
+    if (temp.length === 0 && val !== 0) {
+      const newTemp = [row, col, val];
+      const data = defineLegalMoves(board, row, col, val);
+      setTemp(newTemp);
+      setLegalMoves(data);
+    } else if(temp.length > 0 && temp[2] !== 0) {
+      const newBoard = moveValidation(board, temp, row, col, legalMoves);
       if(newBoard) {
-        setTemplate([]);
+        setTemp([]);
         setBoard(newBoard);
       }
     }
