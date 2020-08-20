@@ -41,15 +41,19 @@ function App() {
   }
 
   function handleClick(row, col, val) {
-    if (firstClick && val > 0) {
+    console.log(template, "<<< template")
+    if (firstClick && val !== 0) {
       const newTemplate = [row, col, val];
       setTemplate(newTemplate);
-    } else if(template[2] > 0){
+    } else if(template[2] !== 0){
       if (template[2] === 5 || template[2] === -5) {
         const newBoard = Move.benteng(board, template, row, col);
         if(newBoard) setBoard(newBoard);
-      } else if (template[2] === 6 || template[2] === -6) {
-        const newBoard = Move.pion(board, template, row, col);
+      } else if (template[2] === 6) {
+        const newBoard = Move.pionWhite(board, template, row, col);
+        if(newBoard) setBoard(newBoard);
+      } else if(template[2] === -6) {
+        const newBoard = Move.pionBlack(board, template, row, col);
         if(newBoard) setBoard(newBoard);
       } else if (template[2] === 1 || template[2] === -1) {
         const newBoard = Move.king(board, template, row, col);
