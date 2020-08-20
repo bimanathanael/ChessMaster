@@ -64,10 +64,12 @@ function Board() {
   function defineBox(row, col) {
     if (row % 2 === 0) {
       isEven = !isEven;
-      if (isEven) return "col, black-box";
+      if (row === temp[0] && col === temp[1]) return "col, selected-box";
+      else if (isEven) return "col, black-box";
       else return "col, white-box";
     } else {
-      if (col % 2 === 0) return "col, black-box";
+      if (row === temp[0] && col === temp[1]) return "col, selected-box";
+      else if (col % 2 === 0) return "col, black-box";
       else return "col, white-box";
     }
   }
