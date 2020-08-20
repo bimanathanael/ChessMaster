@@ -36,7 +36,7 @@ export default () => {
           <div class="form-group">
             <label for="exampleInputEmail1">Email address</label>
             <input
-              type="email"
+              type="text"
               class="form-control"
               id="exampleInputEmail1"
               aria-describedby="emailHelp"
