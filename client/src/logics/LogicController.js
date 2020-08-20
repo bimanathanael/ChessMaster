@@ -1,7 +1,7 @@
 import {
   legalDiagonalMoves, legalHorVerMoves,
   legalBlackPawnMoves, legalWhitePawnMoves,
-  legalKingMoves
+  legalKingMoves, legalKnightMoves
 } from './LegalMovesChecker';
 
 
@@ -22,6 +22,10 @@ export function defineLegalMoves(board, row, col, val) {
     case -3:
     case 3:
       legalMoves = legalDiagonalMoves(board, row, col);
+      break;
+    case -4:
+    case 4:
+      legalMoves = legalKnightMoves(board, row, col);
       break;
     case -5:
     case 5:
@@ -44,8 +48,8 @@ export function defineLegalMoves(board, row, col, val) {
 export function moveValidation(board, temp, row, col, legalMoves) {
   let flag = false;
 
+  // validate move target is in legalMoves
   for(const i in legalMoves) {
-    console.log(legalMoves, `[${row}, ${col}]`)
     if(legalMoves[i][0] === row && legalMoves[i][1] === col) {
       flag = true;
       break;
