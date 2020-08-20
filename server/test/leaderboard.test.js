@@ -1,17 +1,30 @@
 const request = require("supertest");
 const app = require("../app");
 
+const db = require("../config/mongo");
+
+afterAll(async (done) => {
+  try {
+    db.collection("Leaderboards").drop();
+    done();
+  } catch (error) {
+    done(error);
+  }
+});
+
 describe("leaderboard test", () => {
-  test.only ("201 sucess post", async (done) => {
+  test("201 sucess post", async (done) => {
     try {
       const newData = {
-        userName: "budi",
+        username: "budi",
         time: 30,
       };
       const response = await request(app).post("/leaderboards").send(newData);
       const { body, status } = response;
       expect(status).toBe(201);
-      expect(body).toHaveProperty("data", expect.any(Object));
+      expect(body).toHaveProperty("_id");
+      expect(body).toHaveProperty("time");
+      expect(body).toHaveProperty("username");
       done();
     } catch (err) {
       done(err);
@@ -20,7 +33,7 @@ describe("leaderboard test", () => {
   test("400 failed post - empty username", async (done) => {
     try {
       const newData = {
-        userName: "",
+        username: "",
         time: 30,
       };
       const response = await request(app).post("/leaderboards").send(newData);
@@ -35,7 +48,7 @@ describe("leaderboard test", () => {
   test("400 failed post - empty time", async (done) => {
     try {
       const newData = {
-        userName: "budi",
+        username: "budi",
         time: null,
       };
       const response = await request(app).post("/leaderboards").send(newData);
