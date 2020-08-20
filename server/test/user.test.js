@@ -9,7 +9,9 @@ beforeAll(async (done) => {
     const newUser = {
       username: "tono",
       password: hashPassword("tono"),
+      score: 0,
     };
+
     await db.collection("Users").insertOne(newUser);
     done();
   } catch (err) {
@@ -26,12 +28,94 @@ afterAll(async (done) => {
   }
 });
 
-describe("register user", () => {
+describe("check and update data user, route = /user", () => {
+  test("200 sucess read data user", async (done) => {
+    try {
+      const response = await request(app).get("/users");
+      const { body, status } = response;
+      expect(status).toBe(200);
+      expect(body).toEqual(expect.any(Array));
+      done();
+    } catch (err) {
+      done(err);
+    }
+  });
+
+  test("400 sucess update data user", async (done) => {
+    try {
+      const updateUser = {
+        username: "tono",
+        score: 30,
+      };
+      const response = await request(app).put("/users").send(updateUser);
+      const { body, status } = response;
+      expect(status).toBe(200);
+      expect(body).toHaveProperty("username");
+      expect(body).toHaveProperty("score");
+      done();
+    } catch (err) {
+      done(err);
+    }
+  });
+  test("400 failed update - empty username", async (done) => {
+    try {
+      const updateUser = {
+        username: "",
+        score: 30,
+      };
+      const response = await request(app).put("/users").send(updateUser);
+      const { body, status } = response;
+      expect(status).toBe(400);
+      expect(body).toHaveProperty("message", "username cannot empty");
+
+      done();
+    } catch (err) {
+      done(err);
+    }
+  });
+
+  test("400 failed update - empty score", async (done) => {
+    try {
+      const updateUser = {
+        username: "tono",
+        score: "",
+      };
+      const response = await request(app).put("/users").send(updateUser);
+      const { body, status } = response;
+      expect(status).toBe(400);
+      expect(body).toHaveProperty("message", "score cannot empty");
+
+      done();
+    } catch (err) {
+      done(err);
+    }
+  });
+
+  test("404 failed update - username cannot found", async (done) => {
+    try {
+      const updateUser = {
+        username: "kakakak",
+        score: 30,
+      };
+      const response = await request(app).put("/users").send(updateUser);
+      const { body, status } = response;
+      expect(status).toBe(404);
+      expect(body).toHaveProperty("message", "username cannot found");
+
+      done();
+    } catch (err) {
+      done(err);
+    }
+  });
+});
+
+describe("register user, route = (/register)", () => {
   test("201 sucess register", async (done) => {
     try {
       const newUser = {
         username: "budi",
         password: hashPassword("budi"),
+        score: 0,
       };
       const response = await request(app).post("/register").send(newUser);
       const { body, status } = response;
@@ -47,6 +131,7 @@ describe("register user", () => {
       const newUser = {
         username: "",
         password: hashPassword("budi"),
+        score: 0,
       };
       const response = await request(app).post("/register").send(newUser);
       const { body, status } = response;
@@ -63,6 +148,7 @@ describe("register user", () => {
       const newUser = {
         username: "budi",
         password: "",
+        score: 0,
       };
       const response = await request(app).post("/register").send(newUser);
       const { body, status } = response;
@@ -78,6 +164,7 @@ describe("register user", () => {
       const newUser = {
         username: "budi",
         password: hashPassword("tono"),
+        score: 0,
       };
       const response = await request(app).post("/register").send(newUser);
       const { body, status } = response;
@@ -93,7 +180,7 @@ describe("register user", () => {
   });
 });
 
-describe("login user", () => {
+describe("login user, route = /login", () => {
   test("200 sucess login", async (done) => {
     try {
       const loginUser = {

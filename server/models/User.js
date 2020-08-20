@@ -13,6 +13,10 @@ class UserModel {
   static findOne(username) {
     return UserColls.findOne({ username });
   }
+
+  static updateOne(username, userUpdate) {
+    return UserColls.findOneAndUpdate({ username }, { $set: userUpdate });
+  }
 }
 
 module.exports = UserModel;
