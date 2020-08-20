@@ -1,11 +1,13 @@
-const router = require('express').Router()
-const user = require('./user')
-const leaderboard = require('./leaderboard')
+const router = require("express").Router();
+const leaderboard = require("./leaderboard");
+const UsersController = require("../controllers/UsersController");
 
-router.use('/users', user)
-router.use('/leaderboards', leaderboard)
-router.get('/', (req, res) => {
-  res.send("welcome, /users , /leaderboards")
-})
+router.post("/login", UsersController.login);
+router.post("/register", UsersController.register);
 
-module.exports = router
+router.use("/leaderboards", leaderboard);
+router.get("/", (req, res) => {
+  res.send("welcome, /users , /leaderboards");
+});
+
+module.exports = router;
