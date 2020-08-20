@@ -85,7 +85,7 @@ class Movement {
     }
 
     if (col === template[1] && row < template[0]) {
-      for(let i = template[0] - 1; i > row; i++) {
+      for(let i = template[0] - 1; i > row; i--) {
         if(board[i][template[1]] !== 0) {
           flag = false;
           break;

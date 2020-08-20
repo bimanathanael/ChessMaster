@@ -41,7 +41,9 @@ function App() {
   }
 
   function handleClick(row, col, val) {
-    console.log(template, "<<< template")
+    if (template[0] === row && template[1] === col)  {
+      return setFirstClick(true);
+    }
     if (firstClick && val !== 0) {
       const newTemplate = [row, col, val];
       setTemplate(newTemplate);
