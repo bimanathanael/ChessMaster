@@ -23,19 +23,21 @@ export function legalHorVerMoves(board, row, col) {
 
   // collect legal vertical movements
   for(let i = row - 1; i >= 0; i--) {
+    console.log(String(board[i][col])[0])
     if(board[i][col] === 0) {
       legalMoves.push([i, col]);
     } else {
-      if(flag !== isNaN(String(board[row][i])[0])) legalMoves.push([row, i]);
+      if(flag !== isNaN(String(board[i][col])[0])) legalMoves.push([i, col]);
       break;
     }
   }
 
   for(let i = row + 1; i < board.length; i++) {
+    console.log(String(board[i][col])[0])
     if(board[i][col] === 0) {
       legalMoves.push([i, col]);
     } else {
-      if(flag !== isNaN(String(board[row][i])[0])) legalMoves.push([row, i]);
+      if(flag !== isNaN(String(board[i][col])[0])) legalMoves.push([i, col]);
       break;
     }
   }
