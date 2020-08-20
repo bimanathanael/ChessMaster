@@ -41,67 +41,26 @@ function App() {
   }
 
   function handleClick(row, col, val) {
-    if (firstClick) {
+    console.log(template, "<<< template")
+    if (firstClick && val !== 0) {
       const newTemplate = [row, col, val];
       setTemplate(newTemplate);
-    } else {
-      const newBoard = Move.benteng(board, template, row, col);
-      if(newBoard) setBoard(newBoard);
+    } else if(template[2] !== 0){
+      if (template[2] === 5 || template[2] === -5) {
+        const newBoard = Move.benteng(board, template, row, col);
+        if(newBoard) setBoard(newBoard);
+      } else if (template[2] === 6) {
+        const newBoard = Move.pionWhite(board, template, row, col);
+        if(newBoard) setBoard(newBoard);
+      } else if(template[2] === -6) {
+        const newBoard = Move.pionBlack(board, template, row, col);
+        if(newBoard) setBoard(newBoard);
+      } else if (template[2] === 1 || template[2] === -1) {
+        const newBoard = Move.king(board, template, row, col);
+        if(newBoard) setBoard(newBoard);
+      }
     }
   }
-
-  // function bentengMove(row, col) {
-  //   console.log(`row = ${row}, template row = ${template[0]}`)
-  //   let flag = true;
-  //   if (col === template[1] && row > template[0]) {
-  //     for(let i = template[0] + 1; i < row; i++) {
-  //       if(board[i][template[1]] !== 0) {
-  //         flag = false;
-  //         break;
-  //       }
-  //     }
-  //   }
-
-  //   if (col === template[1] && row < template[0]) {
-  //     for(let i = template[0] - 1; i > row; i--) {
-  //       if(board[i][template[1]] !== 0) {
-  //         flag = false;
-  //         break;
-  //       }
-  //     }
-  //   }
-
-  //   if (row === template[0] && col > template[1]) {
-  //     for(let i = template[1] + 1; i < col; i++) {
-  //       if(board[template[0]][i] !== 0) {
-  //         flag = false;
-  //         break;
-  //       }
-  //     }
-  //   }
-
-  //   if (row === template[0] && col < template[1]) {
-  //     for(let i = template[1] - 1; i > col; i--) {
-  //       if(board[template[0]][i] !== 0) {
-  //         flag = false;
-  //         break;
-  //       }
-  //     }
-  //   }
-
-  //   if (flag) {
-  //     const newBoard = JSON.parse(JSON.stringify(board));
-  //     newBoard[row][col] = template[2];
-  //     newBoard[template[0]][template[1]] = 0;
-  //     setBoard(newBoard);
-  //   }
-  // }
-
-  // function pionMove(row) {
-    
-  // }
-
-  console.log(board, "<<<< board")
 
   return (
     <div className="App">
