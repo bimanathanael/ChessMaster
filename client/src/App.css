@@ -17,18 +17,48 @@
   background-color: #000;
   width: 125px;
   height: 125px;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
 }
 
 .white-box {
   background-color: #fff;
   width: 125px;
   height: 125px;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
 }
 
 .selected-box {
   background-color: rgb(241, 225, 154);
   width: 125px;
   height: 125px;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+}
+
+.dot-black {
+  opacity: 0.700;
+  height: 50px;
+  width: 50px;
+  background-color: #A45B2D;
+  border-radius: 50%;
+  position: absolute;
+}
+
+.dot-white {
+  opacity: 0.700;
+  height: 50px;
+  width: 50px;
+  background-color: #C4B087;
+  border-radius: 50%;
+  position: absolute;
 }
 
 .col:hover {

@@ -61,6 +61,15 @@ function Board() {
     }
   }
 
+  function isLegalMoves(row, col) {
+    for (const i in legalMoves) {
+      if(legalMoves[i][0] === row && legalMoves[i][1] === col) {
+        if(String(temp[2])[0] === '-') return <div className="dot-black"></div>;
+        else return <div className="dot-white"></div>;
+      }
+    }
+  }
+
   function defineBox(row, col) {
     if (row % 2 === 0) {
       isEven = !isEven;
@@ -76,6 +85,7 @@ function Board() {
 
   function handleClick(row, col, val) {
     if (temp[0] === row && temp[1] === col)  {
+      setLegalMoves([]);
       return setTemp([]);
     }
 
@@ -89,6 +99,7 @@ function Board() {
       if(newBoard) {
         setTemp([]);
         setBoard(newBoard);
+        setLegalMoves([]);
       }
     }
   }
@@ -106,6 +117,7 @@ function Board() {
                   onClick={() => handleClick(row, col, value)}
                 >
                   {chesspieces(value)}
+                  {isLegalMoves(row, col)}
                 </div>
               );
             });
