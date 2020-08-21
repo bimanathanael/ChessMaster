@@ -10,6 +10,7 @@ function Board() {
   const [legalMoves, setLegalMoves] = useState([]);
   const [modalWhite, setModalWhite] = useState(false);
   const [modalBlack, setModalBlack] = useState(false);
+  const [turn, setTurn] = useState(true);
 
   const rookBlack = require("../chess-pack/chess-rook-black.png");
   const rookWhite = require("../chess-pack/chess-rook-white.png");
@@ -114,6 +115,13 @@ function Board() {
     }
     
     if (temp.length === 0 && val !== 0) {
+      if(turn && String(val)[0] === '-') {
+        return null;
+      }
+  
+      if(!turn && String(val)[0] !== '-') {
+        return null;
+      }
       const newTemp = [row, col, val];
       const data = defineLegalMoves(board, row, col, val);
       setTemp(newTemp);
@@ -124,6 +132,7 @@ function Board() {
         setTemp([]);
         setBoard(newBoard);
         setLegalMoves([]);
+        setTurn(!turn);
       }
     }
   }
@@ -144,6 +153,7 @@ function Board() {
 
   return (
     <div className="motherBoard">
+      <h3>Turn: {turn ? "White" : "Black"}</h3>
       <div className={styleBoard()}>
         <div className="row justify-content-center">
           {board.map((boardRow, row) => {
