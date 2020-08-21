@@ -1,17 +1,34 @@
 import React from "react";
-// import logo from "./logo.svg";
+
 import "./App.css";
-// import LoginPage from "./pages/LoginPages";
+import { LoginPages, MainMenu, RegisterPage } from "./pages";
 import Board from "./components/board";
-// import RegisterPage from "./pages/RegisterPage";
-// import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+
+import { Provider } from "react-redux";
+import store from "./store";
 
 function App() {
   return (
-    <div className="App">
-      <Board />
-      {/* <RegisterPage /> */}
-    </div>
+    <Provider store={store}>
+      <div className="App">
+        <Router>
+          <Switch>
+            <Route exact path="/login">
+              <LoginPages />
+            </Route>
+            <Route exact path="/register">
+              <RegisterPage />
+            </Route>
+            <Route exact path="/">
+              <MainMenu />
+            </Route>
+          </Switch>
+        </Router>
+        {/* <Board /> */}
+        {/* <RegisterPage /> */}
+      </div>
+    </Provider>
   );
 }
 
