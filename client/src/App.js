@@ -3,24 +3,23 @@ import React from "react";
 import "./App.css";
 // import LoginPage from "./pages/LoginPages";
 import Board from "./components/board";
-<<<<<<< HEAD
-import RegisterPage from "./pages/RegisterPage";
-import MainMenu from "./pages/MainMenu";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-=======
+import {Game} from "./pages/Game";
 // import RegisterPage from "./pages/RegisterPage";
-// import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
->>>>>>> development
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 function App() {
   return (
     <div className="App">
-<<<<<<< HEAD
-      <MainMenu />
-=======
-      <Board />
       {/* <RegisterPage /> */}
->>>>>>> development
+      <Router>
+        <div>
+          <Switch>
+            <Route exact path="/" component={Game}/>
+            {/* <Route path="/" component={Board} /> */}
+            <Route path="/" />
+          </Switch>
+        </div>
+      </Router>
     </div>
   );
 }
