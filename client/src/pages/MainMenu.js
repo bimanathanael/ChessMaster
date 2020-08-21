@@ -12,9 +12,6 @@ export default () => {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const kingW = require("../chess-pack/chess-king-white.png");
-  const kingB = require("../chess-pack/chess-king-black.png");
-
   const logoutHandler = () => {
     localStorage.clear();
     swal("you are successfully logout", "", "success");
@@ -34,9 +31,9 @@ export default () => {
         <Button variant="primary" onClick={handleShow}>
           Create Room
         </Button>
-        <button className="btn btn-primary ToLeaderBoard" type="button">
+        <Button variant="primary" onClick={handleShow}>
           Leader Board
-        </button>
+        </Button>
       </div>
       <br />
       <Cards />
