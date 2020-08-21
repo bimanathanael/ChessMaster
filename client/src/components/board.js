@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { defineLegalMoves, moveValidation } from '../logics/LogicController';
+import { defineLegalMoves, moveValidation } from "../logics/LogicController";
 import { Modal } from "react-bootstrap";
 
 function Board() {
@@ -37,54 +37,53 @@ function Board() {
     [-5, -4, -3, -1, -2, -3, -4, -5],
   ]);
 
-  
-
   useEffect(() => {
-    for(const i in board[0]) {
+    for (const i in board[0]) {
       if (board[0][i] === -6) setModalBlack(true);
     }
     // eslint-disable-next-line
   }, [board[0]]);
 
   useEffect(() => {
-    for(const i in board[0]) {
+    for (const i in board[0]) {
       if (board[7][i] === 6) setModalWhite(true);
     }
     // eslint-disable-next-line
-  }, [board[0]])
+  }, [board[0]]);
 
   function chesspieces(value) {
     if (value === 1) {
-      return <img className="pieces" src={kingWhite} alt=""/>;
+      return <img className="pieces" src={kingWhite} alt="" />;
     } else if (value === 2) {
-      return <img className="pieces" src={queenWhite} alt=""/>;
+      return <img className="pieces" src={queenWhite} alt="" />;
     } else if (value === 3) {
-      return <img className="pieces" src={bishopWhite} alt=""/>;
+      return <img className="pieces" src={bishopWhite} alt="" />;
     } else if (value === 4) {
-      return <img className="pieces" src={knightWhite} alt=""/>;
+      return <img className="pieces" src={knightWhite} alt="" />;
     } else if (value === 5) {
-      return <img className="pieces" src={rookWhite} alt=""/>;
+      return <img className="pieces" src={rookWhite} alt="" />;
     } else if (value === 6) {
-      return <img className="pieces" src={pawnWHite} alt=""/>;
+      return <img className="pieces" src={pawnWHite} alt="" />;
     } else if (value === -1) {
-      return <img className="pieces" src={kingBlack} alt=""/>;
+      return <img className="pieces" src={kingBlack} alt="" />;
     } else if (value === -2) {
-      return <img className="pieces" src={queenBlack} alt=""/>;
+      return <img className="pieces" src={queenBlack} alt="" />;
     } else if (value === -3) {
-      return <img className="pieces" src={bishopBlack} alt=""/>;
+      return <img className="pieces" src={bishopBlack} alt="" />;
     } else if (value === -4) {
-      return <img className="pieces" src={knightBlack} alt=""/>;
+      return <img className="pieces" src={knightBlack} alt="" />;
     } else if (value === -5) {
-      return <img className="pieces" src={rookBlack} alt=""/>;
+      return <img className="pieces" src={rookBlack} alt="" />;
     } else if (value === -6) {
-      return <img className="pieces" src={pawnBlack} alt=""/>;
+      return <img className="pieces" src={pawnBlack} alt="" />;
     }
   }
 
   function isLegalMoves(row, col) {
     for (const i in legalMoves) {
-      if(legalMoves[i][0] === row && legalMoves[i][1] === col) {
-        if(String(temp[2])[0] === '-') return <div className="dot-black"></div>;
+      if (legalMoves[i][0] === row && legalMoves[i][1] === col) {
+        if (String(temp[2])[0] === "-")
+          return <div className="dot-black"></div>;
         else return <div className="dot-white"></div>;
       }
     }
@@ -104,31 +103,31 @@ function Board() {
   }
 
   function styleBoard() {
-    if(temp.length < 1) return "board-grab";
+    if (temp.length < 1) return "board-grab";
     else return "board-grabbing";
   }
 
   function handleClick(row, col, val) {
-    if (temp[0] === row && temp[1] === col)  {
+    if (temp[0] === row && temp[1] === col) {
       setLegalMoves([]);
       return setTemp([]);
     }
-    
+
     if (temp.length === 0 && val !== 0) {
-      if(turn && String(val)[0] === '-') {
+      if (turn && String(val)[0] === "-") {
         return null;
       }
-  
-      if(!turn && String(val)[0] !== '-') {
+
+      if (!turn && String(val)[0] !== "-") {
         return null;
       }
       const newTemp = [row, col, val];
       const data = defineLegalMoves(board, row, col, val);
       setTemp(newTemp);
       setLegalMoves(data);
-    } else if(temp.length > 0 && temp[2] !== 0) {
+    } else if (temp.length > 0 && temp[2] !== 0) {
       const newBoard = moveValidation(board, temp, row, col, legalMoves);
-      if(newBoard) {
+      if (newBoard) {
         setTemp([]);
         setBoard(newBoard);
         setLegalMoves([]);
@@ -139,14 +138,14 @@ function Board() {
 
   function pieceChange(val) {
     let newBoard = JSON.parse(JSON.stringify(board));
-    for(let i = 0; i < board.length; i+=7) {
-      for(let j = 0; j < newBoard[i].length; j++) {
+    for (let i = 0; i < board.length; i += 7) {
+      for (let j = 0; j < newBoard[i].length; j++) {
         if (newBoard[i][j] === 6 || newBoard[i][j] === -6) {
           newBoard[i][j] = val;
         }
       }
     }
-    if(String(val)[0] === '-') setModalBlack(false);
+    if (String(val)[0] === "-") setModalBlack(false);
     else setModalWhite(false);
     setBoard(newBoard);
   }
@@ -173,7 +172,6 @@ function Board() {
         </div>
       </div>
 
-      
       <Modal
         show={modalWhite}
         size="lg"
