@@ -17,14 +17,18 @@
   background-color: #000;
   width: 125px;
   height: 125px;
-  color: #fff;
 }
 
 .white-box {
   background-color: #fff;
   width: 125px;
   height: 125px;
-  color: #000;
+}
+
+.selected-box {
+  background-color: rgb(241, 225, 154);
+  width: 125px;
+  height: 125px;
 }
 
 .col:hover {
