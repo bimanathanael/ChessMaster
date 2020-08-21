@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useHistory, Link } from "react-router-dom";
 import Cards from "../components/Cards";
 import { Button, Modal } from "react-bootstrap";
+import swal from "sweetalert";
 
 export default () => {
   const history = useHistory();
@@ -14,9 +15,20 @@ export default () => {
   const kingW = require("../chess-pack/chess-king-white.png");
   const kingB = require("../chess-pack/chess-king-black.png");
 
+  const logoutHandler = () => {
+    localStorage.clear();
+    swal("you are successfully logout", "", "success");
+    history.push("/login");
+  };
+
   return (
     <div className="mainMenu">
-      <button className="btn btn-danger buttonLogout">Logout</button>
+      <button
+        className="btn btn-danger buttonLogout"
+        onClick={(e) => logoutHandler(e)}
+      >
+        Logout
+      </button>
       <h1>Main Menu</h1>
       <div className="buttonGroup">
         <Button variant="primary" onClick={handleShow}>
