@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { defineLegalMoves, moveValidation } from '../logics/LogicController';
+import { Modal } from "react-bootstrap";
 
 function Board() {
   let isEven = true;
@@ -7,6 +8,8 @@ function Board() {
   // temp = [row, col, val]
   const [temp, setTemp] = useState([]);
   const [legalMoves, setLegalMoves] = useState([]);
+  const [modalWhite, setModalWhite] = useState(false);
+  const [modalBlack, setModalBlack] = useState(false);
 
   const rookBlack = require("../chess-pack/chess-rook-black.png");
   const rookWhite = require("../chess-pack/chess-rook-white.png");
@@ -32,6 +35,22 @@ function Board() {
     [-6, -6, -6, -6, -6, -6, -6, -6],
     [-5, -4, -3, -1, -2, -3, -4, -5],
   ]);
+
+  
+
+  useEffect(() => {
+    for(const i in board[0]) {
+      if (board[0][i] === -6) setModalBlack(true);
+    }
+    // eslint-disable-next-line
+  }, [board[0]]);
+
+  useEffect(() => {
+    for(const i in board[0]) {
+      if (board[7][i] === 6) setModalWhite(true);
+    }
+    // eslint-disable-next-line
+  }, [board[0]])
 
   function chesspieces(value) {
     if (value === 1) {
@@ -83,12 +102,17 @@ function Board() {
     }
   }
 
+  function styleBoard() {
+    if(temp.length < 1) return "board-grab";
+    else return "board-grabbing";
+  }
+
   function handleClick(row, col, val) {
     if (temp[0] === row && temp[1] === col)  {
       setLegalMoves([]);
       return setTemp([]);
     }
-
+    
     if (temp.length === 0 && val !== 0) {
       const newTemp = [row, col, val];
       const data = defineLegalMoves(board, row, col, val);
@@ -104,9 +128,23 @@ function Board() {
     }
   }
 
+  function pieceChange(val) {
+    let newBoard = JSON.parse(JSON.stringify(board));
+    for(let i = 0; i < board.length; i+=7) {
+      for(let j = 0; j < newBoard[i].length; j++) {
+        if (newBoard[i][j] === 6 || newBoard[i][j] === -6) {
+          newBoard[i][j] = val;
+        }
+      }
+    }
+    if(String(val)[0] === '-') setModalBlack(false);
+    else setModalWhite(false);
+    setBoard(newBoard);
+  }
+
   return (
     <div className="motherBoard">
-      <div className="board">
+      <div className={styleBoard()}>
         <div className="row justify-content-center">
           {board.map((boardRow, row) => {
             return boardRow.map((value, col) => {
@@ -124,6 +162,86 @@ function Board() {
           })}
         </div>
       </div>
+
+      
+      <Modal
+        show={modalWhite}
+        size="lg"
+        onHide={() => setModalWhite(false)}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header>
+          <Modal.Title>Choose One</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="modal-chess">
+            <img
+              className="pieces"
+              src={queenWhite}
+              alt="queen"
+              onClick={() => pieceChange(2)}
+            />
+            <img
+              className="pieces"
+              src={bishopWhite}
+              alt="bishop"
+              onClick={() => pieceChange(3)}
+            />
+            <img
+              className="pieces"
+              src={knightWhite}
+              alt="knight"
+              onClick={() => pieceChange(4)}
+            />
+            <img
+              className="pieces"
+              src={rookWhite}
+              alt="rook"
+              onClick={() => pieceChange(5)}
+            />
+          </div>
+        </Modal.Body>
+      </Modal>
+      <Modal
+        show={modalBlack}
+        size="lg"
+        onHide={() => setModalBlack(false)}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header>
+          <Modal.Title>Choose One</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="modal-chess">
+            <img
+              className="pieces"
+              src={queenBlack}
+              alt="queen"
+              onClick={() => pieceChange(-2)}
+            />
+            <img
+              className="pieces"
+              src={bishopBlack}
+              alt="bishop"
+              onClick={() => pieceChange(-3)}
+            />
+            <img
+              className="pieces"
+              src={knightBlack}
+              alt="knight"
+              onClick={() => pieceChange(-4)}
+            />
+            <img
+              className="pieces"
+              src={rookBlack}
+              alt="rook"
+              onClick={() => pieceChange(-5)}
+            />
+          </div>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }

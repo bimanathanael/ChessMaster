@@ -4,7 +4,16 @@
   background-color: grey;
 }
 
-.board {
+.board-grab {
+  margin-top: 150px;
+  width: 1002px;
+  border: #000 solid 2px;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.board-grabbing {
   margin-top: 150px;
   width: 1002px;
   border: #000 solid 2px;
@@ -31,6 +40,14 @@
   justify-content: center;
   text-align: center;
   align-items: center;
+}
+
+.board-grab:hover {
+  cursor: grab;
+}
+
+.board-grabbing:hover {
+  cursor: grabbing;
 }
 
 .selected-box {
@@ -124,4 +141,18 @@
 .buttonLogout{
   position: absolute;
   left: 0;
+}
+
+.modal-chess {
+  display: flex;
+  justify-content: center;
+}
+
+.modal-chess img {
+  border: #000 solid 1px;
+  margin: 0 10px;
+}
+
+.modal-chess img:hover {
+  cursor: pointer;
 }
