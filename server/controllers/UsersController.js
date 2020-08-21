@@ -4,6 +4,7 @@ const { jwtSignIn } = require("../helpers/jsonwebtoken");
 
 class UserController {
   static async getUser(req, res) {
+    console.log('masuk')
     try {
       const usersData = await UserModel.getAll();
       return res.status(200).json(usersData);

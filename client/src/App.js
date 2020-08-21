@@ -32,7 +32,7 @@ function App() {
               component={RegisterPage}
             />
     
-            <ProtectedRouteBeforeLogin
+            <ProtectedRouteAfterLogin
               exact
               path="/game"
               component={Game}
