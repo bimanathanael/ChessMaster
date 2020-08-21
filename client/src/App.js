@@ -4,6 +4,10 @@ import "./App.css";
 import { LoginPages, MainMenu, RegisterPage } from "./pages";
 import Board from "./components/board";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import {
+  ProtectedRouteAfterLogin,
+  ProtectedRouteBeforeLogin,
+} from "./protectedRoute";
 
 import { Provider } from "react-redux";
 import store from "./store";
@@ -14,17 +18,22 @@ function App() {
       <div className="App">
         <Router>
           <Switch>
-            <Route exact path="/login">
-              <LoginPages />
-            </Route>
-            <Route exact path="/register">
-              <RegisterPage />
-            </Route>
-            <Route exact path="/">
-              <MainMenu />
-            </Route>
+            <ProtectedRouteBeforeLogin
+              exact
+              path="/login"
+              component={LoginPages}
+            />
+
+            <ProtectedRouteBeforeLogin
+              exact
+              path="/register"
+              component={RegisterPage}
+            />
+
+            <ProtectedRouteAfterLogin exact path="/" component={MainMenu} />
           </Switch>
         </Router>
+
         {/* <Board /> */}
         {/* <RegisterPage /> */}
       </div>
