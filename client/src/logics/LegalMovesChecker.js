@@ -144,8 +144,8 @@ export function legalKingMoves(board, row, col) {
   ]
 
   legalMoves.forEach(arr => {
-    if (arr[0] > 0 && arr[0] < 8 && arr[1] > 0 && arr[1] < 8) {
-      if (flag === isNaN(String(board[arr[0]][arr[1]])[0])) {
+    if (arr[0] >= 0 && arr[0] < 8 && arr[1] >= 0 && arr[1] < 8) {
+      if (board[arr[0]][arr[1]] !== 0 && flag === isNaN(String(board[arr[0]][arr[1]])[0])) {
         legalMoves = legalMoves.filter(e => e !== arr);
       }
     }
@@ -165,8 +165,8 @@ export function legalKnightMoves(board, row, col) {
   ]
 
   legalMoves.forEach(arr => {
-    if (arr[0] > 0 && arr[0] < 8 && arr[1] > 0 && arr[1] < 8) {
-      if (flag === isNaN(String(board[arr[0]][arr[1]])[0])) {
+    if (arr[0] >= 0 && arr[0] < 8 && arr[1] >= 0 && arr[1] < 8) {
+      if (board[arr[0]][arr[1]] !== 0 && flag === isNaN(String(board[arr[0]][arr[1]])[0])) {
         legalMoves = legalMoves.filter(e => e !== arr);
       }
     }
