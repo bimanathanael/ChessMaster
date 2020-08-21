@@ -3,6 +3,8 @@ import React from "react";
 import "./App.css";
 import { LoginPages, MainMenu, RegisterPage } from "./pages";
 import Board from "./components/board";
+import {Game} from "./pages/Game";
+
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import {
   ProtectedRouteAfterLogin,
@@ -28,6 +30,12 @@ function App() {
               exact
               path="/register"
               component={RegisterPage}
+            />
+    
+            <ProtectedRouteBeforeLogin
+              exact
+              path="/game"
+              component={Game}
             />
 
             <ProtectedRouteAfterLogin exact path="/" component={MainMenu} />
