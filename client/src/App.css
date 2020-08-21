@@ -49,3 +49,49 @@
 }
 
 
+.Card{
+  height: 250px;
+  width: 250px;
+ /* margin: 30px; */
+  margin: 30px auto 30px;
+  border-radius: 5px;
+  background-color: grey;
+}
+
+.cardLogo {
+  height: 50px;
+  width: 50px;
+}
+
+.vs{
+  padding-top: 20px;
+  text-align: center;
+  /* width: 50%; */
+  /* height: 50%; */
+  background-color: #000;
+}
+
+.mainMenu{
+  background-color: #263554;
+  height: 100vh;
+  justify-content: center;
+ color: white; 
+ text-align: center;
+}
+
+.buttonGroup{
+  /* padding: 10px; */
+  /* margin: 10px; */
+  width: 290px;
+  margin: 0 auto;
+}
+
+.buttonGroup > .btn {
+  margin: 0 10px 0;
+  
+}
+
+.buttonLogout{
+  position: absolute;
+  left: 0;
+}
