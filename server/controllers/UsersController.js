@@ -54,6 +54,16 @@ class UserController {
       if (!req.body.password || req.body.password == "") {
         return res.status(400).json({ message: "password cannot empty" });
       }
+      if (req.body.username.length < 6) {
+        return res
+          .status(400)
+          .json({ message: "username at least 6 characters" });
+      }
+      if (req.body.password.length < 8) {
+        return res
+          .status(400)
+          .json({ message: "password at least 8 characters" });
+      }
 
       const newUser = {
         username: req.body.username,

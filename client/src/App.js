@@ -1,26 +1,51 @@
 import React from "react";
-// import logo from "./logo.svg";
+
 import "./App.css";
-// import LoginPage from "./pages/LoginPages";
+import { LoginPages, MainMenu, RegisterPage } from "./pages";
 import Board from "./components/board";
 import {Game} from "./pages/Game";
-// import RegisterPage from "./pages/RegisterPage";
+
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import {
+  ProtectedRouteAfterLogin,
+  ProtectedRouteBeforeLogin,
+} from "./protectedRoute";
+
+import { Provider } from "react-redux";
+import store from "./store";
 
 function App() {
   return (
-    <div className="App">
-      {/* <RegisterPage /> */}
-      <Router>
-        <div>
+    <Provider store={store}>
+      <div className="App">
+        <Router>
           <Switch>
-            <Route exact path="/" component={Game}/>
-            {/* <Route path="/" component={Board} /> */}
-            <Route path="/" />
+            <ProtectedRouteBeforeLogin
+              exact
+              path="/login"
+              component={LoginPages}
+            />
+
+            <ProtectedRouteBeforeLogin
+              exact
+              path="/register"
+              component={RegisterPage}
+            />
+    
+            <ProtectedRouteBeforeLogin
+              exact
+              path="/game"
+              component={Game}
+            />
+
+            <ProtectedRouteAfterLogin exact path="/" component={MainMenu} />
           </Switch>
-        </div>
-      </Router>
-    </div>
+        </Router>
+
+        {/* <Board /> */}
+        {/* <RegisterPage /> */}
+      </div>
+    </Provider>
   );
 }
 
