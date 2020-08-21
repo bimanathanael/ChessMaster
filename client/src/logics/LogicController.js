@@ -1,6 +1,6 @@
 import {
   legalDiagonalMoves, legalHorVerMoves,
-  legalBlackPawnMoves, legalWhitePawnMoves,
+  legalBlackPawnMoves,
   legalKingMoves, legalKnightMoves
 } from './LegalMovesChecker';
 
@@ -32,7 +32,7 @@ export function defineLegalMoves(board, row, col, val) {
       legalMoves = legalHorVerMoves(board, row, col);
       break;
     case 6:
-      legalMoves = legalWhitePawnMoves(board, row, col);
+      legalMoves = legalBlackPawnMoves(board, row, col);
       break;
     case -6:
       legalMoves = legalBlackPawnMoves(board, row, col);

@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 9000;
 const routes = require("./routes");
 const server = require("http").createServer();
 const io = require("socket.io")(server);
@@ -11,11 +11,38 @@ app.use(express.json());
 app.use(cors());
 app.use(routes);
 
+let board = [
+  [5, 4, 3, 2, 1, 3, 4, 5],
+  [6, 6, 6, 6, 6, 6, 6, 6],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [-6, -6, -6, -6, -6, -6, -6, -6],
+  [-5, -4, -3, -1, -2, -3, -4, -5],
+];
+
+let turn = true;
+let clients = []
+
 let connectedPeers = new Map()
 
 io.on("connection", (socket) => {
-  socket.emit('connection-success', {success: `/webrtcPeer#${socket.id}`})
+  clients.push(socket);
+  if (clients.length < 2) {
+    socket.emit('setUp', {board: board.reverse(), turn, side: 'white'});
+  } else {
+    socket.emit('setUp', {board: board.reverse(), turn: false, side: 'black'});
+  }
 
+  socket.on('finishTurn', (data) => {
+    turn = turn;
+    board = data.board.reverse();
+    socket.broadcast.emit('endTurn', {board, turn});
+  })
+  
+  
+  // socket.emit('connection-success', {success: `/webrtcPeer#${socket.id}`})
   connectedPeers.set(socket.id, socket)
 
   socket.on('disconnect', () =>{

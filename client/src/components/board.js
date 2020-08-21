@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { defineLegalMoves, moveValidation } from '../logics/LogicController';
 import { Modal } from "react-bootstrap";
+import io from "socket.io-client";
+
+const socket = io("http://localhost:9000");
 
 function Board() {
   let isEven = true;
@@ -10,7 +13,8 @@ function Board() {
   const [legalMoves, setLegalMoves] = useState([]);
   const [modalWhite, setModalWhite] = useState(false);
   const [modalBlack, setModalBlack] = useState(false);
-  const [turn, setTurn] = useState(true);
+  const [turn, setTurn] = useState(null);
+  const [side, setSide] = useState('');
 
   const rookBlack = require("../chess-pack/chess-rook-black.png");
   const rookWhite = require("../chess-pack/chess-rook-white.png");
@@ -26,18 +30,30 @@ function Board() {
   const queenBlack = require("../chess-pack/chess-queen-black.png");
 
   // 1 = Raja, 2 = PM, 3 = Peluncur, 4 = Kuda, 5 = Benteng, 6 = Pion
-  const [board, setBoard] = useState([
-    [5, 4, 3, 2, 1, 3, 4, 5],
-    [6, 6, 6, 6, 6, 6, 6, 6],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [-6, -6, -6, -6, -6, -6, -6, -6],
-    [-5, -4, -3, -1, -2, -3, -4, -5],
-  ]);
+  // const [board, setBoard] = useState([
+  //   [5, 4, 3, 2, 1, 3, 4, 5],
+  //   [6, 6, 6, 6, 6, 6, 6, 6],
+  //   [0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0],
+  //   [-6, -6, -6, -6, -6, -6, -6, -6],
+  //   [-5, -4, -3, -1, -2, -3, -4, -5],
+  // ]);
 
-  
+  const [board, setBoard] = useState([]);
+
+  socket.on("setUp", data => {
+    setBoard(data.board);
+    setTurn(data.turn);
+    setSide(data.side);
+    console.log(data.turn);
+  })
+
+  socket.on("endTurn", (data) => {
+    setBoard(data.board);
+    setTurn(data.turn)
+  })
 
   useEffect(() => {
     for(const i in board[0]) {
@@ -113,13 +129,16 @@ function Board() {
       setLegalMoves([]);
       return setTemp([]);
     }
-    
+    if (!turn) {
+      return null;
+    }
+    console.log(turn, "<<< turn")
     if (temp.length === 0 && val !== 0) {
-      if(turn && String(val)[0] === '-') {
+      if(side === 'white' && String(val)[0] === '-') {
         return null;
       }
   
-      if(!turn && String(val)[0] !== '-') {
+      if(side === 'black' && String(val)[0] !== '-') {
         return null;
       }
       const newTemp = [row, col, val];
@@ -129,6 +148,7 @@ function Board() {
     } else if(temp.length > 0 && temp[2] !== 0) {
       const newBoard = moveValidation(board, temp, row, col, legalMoves);
       if(newBoard) {
+        socket.emit('finishTurn', {board: newBoard});
         setTemp([]);
         setBoard(newBoard);
         setLegalMoves([]);
