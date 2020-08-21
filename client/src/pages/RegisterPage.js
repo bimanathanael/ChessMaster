@@ -1,65 +1,85 @@
-import React, { useState } from "react";
-// import { gql, useMutation } from "@apollo/client";
-// import { GET_MOVIES } from "./Movies";
-import { useHistory, useRouteMatch } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { postRegister } from "../store/actions/userAction";
+import { useHistory, useRouteMatch, Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import swal from "sweetalert";
 
 export default () => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const history = useHistory();
-
+  const dispatch = useDispatch();
   const logo = require("../chess-pack/chess-pawn-black.png");
 
-  //   const onchange = (e) => {
-  //     let { name, value } = e.target;
-  //     const newMoviesInput = { ...MoviesInput, [name]: value };
-  //     setMovieInput(newMoviesInput);
-  //   };
+  const usernameRegisterHandler = (e) => {
+    setUsername(e.target.value);
+  };
 
-  //   const handleSubmit = (e) => {
-  //     e.preventDefault();
-  //     MoviesInput.popularity = Number(MoviesInput.popularity);
-  //     addMovies({
-  //       variables: {
-  //         addNewMovies: MoviesInput,
-  //       },
-  //     });
-  //     history.push("/main-menu");
-  //   };
+  const passwordRegisterHandler = (e) => {
+    setPassword(e.target.value);
+  };
+
+  const formRegisterHandler = async (e) => {
+    e.preventDefault();
+    const registerUser = {
+      username,
+      password,
+    };
+    const asda = await dispatch(postRegister(registerUser, history));
+    console.log(asda, "ini undefined");
+  };
 
   return (
-    <div className="motherLogin">
-      <div>
-        <img src={logo} />
-        <h1>Welcome TO ChessMater</h1>
-        <h2>Please Fill The Form Below To REGISTER</h2>
+    <>
+      <div style={{ backgroundColor: "#263554" }}>
+        <div
+          className="text-center"
+          style={{ paddingTop: "2%", color: "white" }}
+        >
+          <img
+            className="LogoLogin"
+            src={logo}
+            style={{
+              width: "15%",
+            }}
+          />
+          <h1 className="Login-Title">Welcome TO ChessMaster</h1>
+        </div>
         <br />
-
-        <form>
-          <div class="form-group">
-            <label for="exampleInputEmail1">User Name</label>
-            <input
-              type="text"
-              class="form-control"
-              id="exampleInputEmail1"
-              aria-describedby="emailHelp"
-            />
-          </div>
-          <div class="form-group">
-            <label for="exampleInputPassword1">Password</label>
-            <input
-              type="password"
-              class="form-control"
-              id="exampleInputPassword1"
-            />
-          </div>
-          <button type="submit" class="btn btn-primary">
-            Register
-          </button>
-        </form>
-        <p>Allready Have Account ? Login down Here !!</p>
-        <button type="submit" className="btn btn-primary" value="save">
-          Login
-        </button>
+        <div style={{ margin: "0 31%", color: "white", paddingBottom: "2.4%" }}>
+          <form onSubmit={(e) => formRegisterHandler(e)}>
+            <div className="form-group">
+              <label>Username</label>
+              <input
+                type="text"
+                className="form-control"
+                onChange={(e) => usernameRegisterHandler(e)}
+                style={{ width: "100%" }}
+              />
+            </div>
+            <div className="form-group">
+              <label>Password</label>
+              <input
+                type="password"
+                className="form-control"
+                onChange={(e) => passwordRegisterHandler(e)}
+              />
+            </div>
+            <div className="text-center">
+              <button
+                type="submit"
+                className="btn btn-info"
+                style={{ width: "100%" }}
+              >
+                Register
+              </button>
+            </div>
+          </form>
+          <p style={{ marginTop: "10%" }}>
+            Already have account ? <Link to="/login">click here</Link>
+          </p>
+        </div>
       </div>
-    </div>
+    </>
   );
 };

@@ -7,8 +7,8 @@ const { jwtSignIn } = require("../helpers/jsonwebtoken");
 beforeAll(async (done) => {
   try {
     const newUser = {
-      username: "tono",
-      password: hashPassword("tono"),
+      username: "tono1234",
+      password: hashPassword("tono1234"),
       score: 0,
     };
 
@@ -44,7 +44,7 @@ describe("check and update data user, route = /user", () => {
   test("400 sucess update data user", async (done) => {
     try {
       const updateUser = {
-        username: "tono",
+        username: "tono1234",
         score: 30,
       };
       const response = await request(app).put("/users").send(updateUser);
@@ -77,7 +77,7 @@ describe("check and update data user, route = /user", () => {
   test("400 failed update - empty score", async (done) => {
     try {
       const updateUser = {
-        username: "tono",
+        username: "tono1234",
         score: "",
       };
       const response = await request(app).put("/users").send(updateUser);
@@ -113,8 +113,8 @@ describe("register user, route = (/register)", () => {
   test("201 sucess register", async (done) => {
     try {
       const newUser = {
-        username: "budi",
-        password: hashPassword("budi"),
+        username: "budi1234",
+        password: "budi1343",
         score: 0,
       };
       const response = await request(app).post("/register").send(newUser);
@@ -130,7 +130,7 @@ describe("register user, route = (/register)", () => {
     try {
       const newUser = {
         username: "",
-        password: hashPassword("budi"),
+        password: "budi134",
         score: 0,
       };
       const response = await request(app).post("/register").send(newUser);
@@ -146,7 +146,7 @@ describe("register user, route = (/register)", () => {
   test("400 failed register - empty password", async (done) => {
     try {
       const newUser = {
-        username: "budi",
+        username: "budi1234",
         password: "",
         score: 0,
       };
@@ -162,8 +162,8 @@ describe("register user, route = (/register)", () => {
   test("400 failed register - duplicate username", async (done) => {
     try {
       const newUser = {
-        username: "budi",
-        password: hashPassword("tono"),
+        username: "budi1234",
+        password: "tono1342",
         score: 0,
       };
       const response = await request(app).post("/register").send(newUser);
@@ -178,14 +178,47 @@ describe("register user, route = (/register)", () => {
       done(err);
     }
   });
+  test("400 failed register - username at least 6 characters", async (done) => {
+    try {
+      const newUser = {
+        username: "budi",
+        password: "tono134",
+        score: 0,
+      };
+      const response = await request(app).post("/register").send(newUser);
+      const { body, status } = response;
+      expect(status).toBe(400);
+      expect(body).toHaveProperty("message", "username at least 6 characters");
+      done();
+    } catch (err) {
+      done(err);
+    }
+  });
+
+  test("400 failed register - password at least 8 characters", async (done) => {
+    try {
+      const newUser = {
+        username: "budi1234",
+        password: "tono",
+        score: 0,
+      };
+      const response = await request(app).post("/register").send(newUser);
+      const { body, status } = response;
+      expect(status).toBe(400);
+      expect(body).toHaveProperty("message", "password at least 8 characters");
+      done();
+    } catch (err) {
+      done(err);
+    }
+  });
 });
 
 describe("login user, route = /login", () => {
   test("200 sucess login", async (done) => {
     try {
       const loginUser = {
-        username: "tono",
-        password: "tono",
+        username: "tono1234",
+        password: "tono1234",
       };
       const response = await request(app).post("/login").send(loginUser);
       const { body, status } = response;
@@ -201,7 +234,7 @@ describe("login user, route = /login", () => {
     try {
       const loginUser = {
         username: "jokondokondo",
-        password: "tono",
+        password: "tono1234",
       };
       const response = await request(app).post("/login").send(loginUser);
       const { body, status } = response;
@@ -216,7 +249,7 @@ describe("login user, route = /login", () => {
   test("404 failed login - wrong password", async (done) => {
     try {
       const loginUser = {
-        username: "tono",
+        username: "tono1234",
         password: "joko",
       };
       const response = await request(app).post("/login").send(loginUser);
