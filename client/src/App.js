@@ -45,7 +45,8 @@ function App() {
         </Router>
         <RegisterPage /> */}
 
-        <LeaderBoard />
+        {/* <LeaderBoard /> */}
+        <Board />
       </div>
     </Provider>
   );

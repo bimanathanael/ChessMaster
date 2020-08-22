@@ -114,24 +114,24 @@ export function legalBlackPawnMoves(board, row, col) {
 }
 
 
-export function legalWhitePawnMoves(board, row, col) {
-  let legalMoves = [];
-  const flag = isNaN(String(board[row][col])[0]);
+// export function legalWhitePawnMoves(board, row, col) {
+//   let legalMoves = [];
+//   const flag = isNaN(String(board[row][col])[0]);
 
-  if (row === 1) {
-    for(let i = row + 1; i < row + 3; i++) {
-      if (board[i][col] === 0) legalMoves.push([i, col]);
-      else break
-    }
-  } else {
-    if (board[row+1][col] === 0) legalMoves = [[row+1, col]];
-  }
-  // can move diagonal if diagonal target (is not empty && is opponent side)
-  if (board[row+1][col+1] !== 0 && (isNaN(String(board[row+1][col+1])[0]) !== flag)) legalMoves.push([row+1, col+1]);
-  if (board[row+1][col-1] !== 0 && (isNaN(String(board[row+1][col-1])[0]) !== flag)) legalMoves.push([row+1, col-1]);
+//   if (row === 1) {
+//     for(let i = row + 1; i < row + 3; i++) {
+//       if (board[i][col] === 0) legalMoves.push([i, col]);
+//       else break
+//     }
+//   } else {
+//     if (board[row+1][col] === 0) legalMoves = [[row+1, col]];
+//   }
+//   // can move diagonal if diagonal target (is not empty && is opponent side)
+//   if (board[row+1][col+1] !== 0 && (isNaN(String(board[row+1][col+1])[0]) !== flag)) legalMoves.push([row+1, col+1]);
+//   if (board[row+1][col-1] !== 0 && (isNaN(String(board[row+1][col-1])[0]) !== flag)) legalMoves.push([row+1, col-1]);
 
-  return legalMoves;
-}
+//   return legalMoves;
+// }
 
 
 export function legalKingMoves(board, row, col) {
