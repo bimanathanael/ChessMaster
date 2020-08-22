@@ -11,6 +11,7 @@ app.use(express.json());
 app.use(cors());
 app.use(routes);
 
+// ============== START : CHESS SOCKET IO ================ //
 let board = [
   [5, 4, 3, 2, 1, 3, 4, 5],
   [6, 6, 6, 6, 6, 6, 6, 6],
@@ -25,24 +26,27 @@ let board = [
 let turn = true;
 let clients = []
 
-let connectedPeers = new Map()
-
 io.on("connection", (socket) => {
   clients.push(socket);
+  console.log(clients.length, 'clients.length')
   if (clients.length < 2) {
     socket.emit('setUp', {board: board.reverse(), turn, side: 'white'});
   } else {
     socket.emit('setUp', {board: board.reverse(), turn: false, side: 'black'});
   }
-
+  
   socket.on('finishTurn', (data) => {
     turn = turn;
     board = data.board.reverse();
     socket.broadcast.emit('endTurn', {board, turn});
   })
+  // ============== END : CHESS SOCKET IO ================ //
   
-  
-  // socket.emit('connection-success', {success: `/webrtcPeer#${socket.id}`})
+
+  // // // ========== START : WEB RTC SOCKET IO ================ //
+  let connectedPeers = new Map()
+
+  socket.broadcast.emit('connection-success', {success: `/webrtcPeer#${socket.id}`})
   connectedPeers.set(socket.id, socket)
 
   socket.on('disconnect', () =>{
@@ -72,12 +76,12 @@ io.on("connection", (socket) => {
     }
   })
 
-  socket.on("move", function (url) {
-    socket.broadcast.emit("move");
+  socket.on("needAnswer", function (txt) {
+    socket.broadcast.emit("needAnswer", txt);
   });
-  socket.on("teks", function (txt) {
-    socket.broadcast.emit("teks", txt);
-  });
+
+  // // ========== END : WEB RTC SOCKET IO ================ //
+
 });
 
 if (app.get("env") === "development") {

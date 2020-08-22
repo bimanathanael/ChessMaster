@@ -1,14 +1,21 @@
 import React, { createRef, useState, useEffect} from 'react';
-import io from "socket.io-client";
 import Board from '../components/board'
+import { useLocation } from 'react-router-dom';
+// import io from "socket.io-client";
 
-const socket = io("http://localhost:3000");
+// const socket = io("http://localhost:9000");
+import {socket} from "../config/socket";
+
 
 export const Game = () =>  {
+  const location = useLocation()
+  console.log(location,' location')
 
   const localVideoref = createRef()
   const remoteVideoRef = createRef()
   let textref = createRef()
+  let needAnswer = createRef()
+
 
   const pc_config = {
     "iceServers": [
@@ -27,7 +34,7 @@ export const Game = () =>  {
 
   pc.onicecandidate = (e) => {
     if(e.candidate) {
-      console.log(JSON.stringify(e.candidate))
+      // console.log(JSON.stringify(e.candidate))
       sendToPeer('candidate', e.candidate)
     }
   }
@@ -45,12 +52,32 @@ export const Game = () =>  {
   })
 
   const [teks, setTeks] = useState("");
+
+
   useEffect(() => {
-    socket.on("move", () => {
-    });
+
     socket.on("teks", (txt) => {
       setTeks(txt);
     });
+
+    console.log(needAnswer, 'needAnswerneedAnswerneedAnswer')
+    socket.on("needAnswer", (txt) => {
+      needAnswer.current = true;
+      if(txt.payload === false ){
+        document.getElementById("btn").style.visibility = "hidden";
+        document.getElementById("board").style.visibility = "visible";
+      }
+    });
+
+    socket.on('connection-success', () => {
+      console.log('masuk')
+      sendToPeer('needAnswer', true )
+      pc.createOffer({offerToReceiveVideo: 1, offerToReceiveAudio:1})
+      .then( sdp => {
+        pc.setLocalDescription(sdp)
+        sendToPeer('offerOrAnswer', sdp)
+      }, e => {})
+    })
   
     socket.on('offerOrAnswer', (sdp) => {
       textref.value = JSON.stringify(sdp)
@@ -62,12 +89,6 @@ export const Game = () =>  {
 
     })
   }, []);
-  
-  const formHandler = (e) => {
-    console.log(e.target.value);
-    setTeks(e.target.value);
-    socket.emit("teks", e.target.value);
-  };
 
   const sendToPeer = (messageType, payload) => {
     socket.emit(messageType, {
@@ -93,17 +114,23 @@ export const Game = () =>  {
   .then( success )
   .catch( failure )
 
-  const createOffer = () => {
-    console.log('offer')
-    pc.createOffer({offerToReceiveVideo: 1, offerToReceiveAudio:1})
-    .then( sdp => {
-      pc.setLocalDescription(sdp)
-      sendToPeer('offerOrAnswer', sdp)
-    }, e => {})
+  const createOffer = () => {  
+    const btn = document.getElementById('btn');
+    btn.disabled = true; 
+    btn.innerText = 'Waiting for Opponent...'
+    if (needAnswer.current == null){
+      
+    } else {
+      createAnswer()
+      sendToPeer('needAnswer', false )
+      document.getElementById("btn").style.visibility = "hidden";
+      document.getElementById("board").style.visibility = "visible";
+
+    }
   }
 
   const createAnswer = () => {
-    pc.createAnswer({offerToReceiveAudio: 1})
+    pc.createAnswer({offerToReceiveVideo: 1, offerToReceiveAudio:1})
       .then ( sdp => {
         pc.setLocalDescription(sdp)
         sendToPeer('offerOrAnswer', sdp)
@@ -114,49 +141,56 @@ export const Game = () =>  {
     <div className="motherLogin">
       <div className="row">
         <br />
-            <input
-              onChange={(e) => formHandler(e)}
-              type="email"
-              className="form-control"
-              id="exampleInputEmail1"
-              aria-describedby="emailHelp"
-              value={teks}
-            />
-        <video 
-          ref={localVideoref} 
-          autoPlay
-          style={{
-            float:"left",
-            width: 240, 
-            height: 240, 
-            margin: 5, 
-            backgroundColor :'black'
-          }}
-          controls
-          >
-        </video>
-        <Board/>
-        <video 
-          ref={remoteVideoRef} 
-          autoPlay
-          style={{
-            float:"right",
-            width: 240, 
-            height: 240, 
-            margin: 5, 
-            backgroundColor :'black'
-          }}
-          controls
-          >
-        </video>
+        <div className='flex-column mt-3  mr-3'>
+          <div>
+            <video 
+              ref={localVideoref} 
+              autoPlay
+              style={{
+                float:"left",
+                width: 240, 
+                height: 240, 
+                margin: 5, 
+                backgroundColor :'black'
+              }}
+              controls
+              >
+            </video>
+          </div>
+          <div className="text-center">
+            <button id="btn" onClick={() => createOffer()} className="btn btn-info  mt-3" style={{width:'100%'}}> i am ready </button>
+          </div>
+        </div>
+        <div id="board" style={{visibility: 'hidden'}}>
+          <Board/>
+        </div>
+        <div className='flex-column mt-3 ml-3'>
+          <div>
+            <video 
+              ref={remoteVideoRef} 
+              autoPlay
+              style={{
+                float:"right",
+                width: 240, 
+                height: 240, 
+                margin: 5, 
+                backgroundColor :'black'
+              }}
+              controls
+              >
+            </video>
+          </div>
+          <div className="text-center">
+            {/* <button onClick={() => createAnswer()} className="btn btn-info  mt-3">i am ready</button> */}
+          </div>
+        </div>
         <br/>
       </div>
       <br></br>
-      <button onClick={() => createOffer()}>Offer</button>
-      <button onClick={() => createAnswer()}>Answer</button>
       <br/>
       <textarea id="myTextArea" ref={ref => textref = ref} style={{display: "none"}}></textarea>
     </div>
   )
   
 }
+

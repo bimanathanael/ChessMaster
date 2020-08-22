@@ -27,11 +27,11 @@ export default () => {
   };
 
   return (
-    <>
+    <div className="motherLogin">
       <div style={{ backgroundColor: "#263554" }}>
         <div
           className="text-center"
-          style={{ paddingTop: "2%", color: "white" }}
+          style={{ color: "white" }}
         >
           <img
             className="LogoLogin"
@@ -77,6 +77,6 @@ export default () => {
           </p>
         </div>
       </div>
-    </>
+    </div>
   );
 };

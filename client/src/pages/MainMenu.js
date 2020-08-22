@@ -31,9 +31,13 @@ export default () => {
         <Button variant="primary" onClick={handleShow}>
           Create Room
         </Button>
-        <Button variant="primary" onClick={handleShow}>
+        <Button variant="primary ToLeaderBoard" onClick={handleShow}>
           Leader Board
         </Button>
+        {/* <Link to="/game"> Join game </Link> */}
+        <a href="/game"> 
+          <button className="btn btn-info"> Join Game </button> 
+        </a>
       </div>
       <br />
       <Cards />

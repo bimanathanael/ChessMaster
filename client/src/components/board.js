@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { defineLegalMoves, moveValidation } from "../logics/LogicController";
 import { Modal } from "react-bootstrap";
-import io from "socket.io-client";
+import {socket} from "../config/socket";
 
-const socket = io("http://localhost:9000");
+// const socket = io("http://localhost:9000/");
 
 function Board() {
   let isEven = true;

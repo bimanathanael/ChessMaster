@@ -1,7 +1,7 @@
 import swal from "sweetalert";
 export const postRegister = (data, history) => {
   return (dispatch) => {
-    fetch("http://localhost:3000/register", {
+    fetch("http://localhost:9000/register", {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -32,7 +32,7 @@ export const postRegister = (data, history) => {
 
 export const postLogin = (data, history) => {
   return (dispatch) => {
-    fetch("http://localhost:3000/login", {
+    fetch("http://localhost:9000/login", {
       method: "POST",
       headers: {
         Accept: "application/json",
