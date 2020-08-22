@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { postRegister } from "../store/actions/userAction";
 import { useHistory, useRouteMatch, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { Button } from "react-bootstrap";
 import swal from "sweetalert";
 
 export default () => {
@@ -32,10 +33,7 @@ export default () => {
   return (
     <div className="motherLogin">
       <div style={{ backgroundColor: "#263554" }}>
-        <div
-          className="text-center"
-          style={{color: "white" }}
-        >
+        <div className="text-center" style={{ color: "white" }}>
           <img
             className="LogoLogin"
             src={logo}
@@ -76,7 +74,10 @@ export default () => {
             </div>
           </form>
           <p style={{ marginTop: "10%" }}>
-            Already have account ? <Link to="/login">click here</Link>
+            Already have account ?{" "}
+            <Link to="/login">
+              <Button variant="info">Click Here</Button>
+            </Link>
           </p>
         </div>
       </div>
