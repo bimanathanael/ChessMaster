@@ -1,15 +1,9 @@
 import React, { createRef, useState, useEffect} from 'react';
+import io from "socket.io-client";
 import Board from '../components/board'
-import { useLocation } from 'react-router-dom';
-// import io from "socket.io-client";
-
-// const socket = io("http://localhost:9000");
-import {socket} from "../config/socket";
-
+import {socket} from '../config/socket'
 
 export const Game = () =>  {
-  const location = useLocation()
-  console.log(location,' location')
 
   const localVideoref = createRef()
   const remoteVideoRef = createRef()
@@ -163,6 +157,9 @@ export const Game = () =>  {
         </div>
         <div id="board" style={{visibility: 'hidden'}}>
           <Board/>
+          {/* <h1>
+            hello
+          </h1> */}
         </div>
         <div className='flex-column mt-3 ml-3'>
           <div>
