@@ -238,8 +238,8 @@ describe("login user, route = /login", () => {
       };
       const response = await request(app).post("/login").send(loginUser);
       const { body, status } = response;
-      expect(status).toBe(404);
-      expect(body).toHaveProperty("message", "user not found");
+      expect(status).toBe(400);
+      expect(body).toHaveProperty("message", "Wrong username/password");
       done();
     } catch (err) {
       done(err);
@@ -254,8 +254,8 @@ describe("login user, route = /login", () => {
       };
       const response = await request(app).post("/login").send(loginUser);
       const { body, status } = response;
-      expect(status).toBe(404);
-      expect(body).toHaveProperty("message", "wrong password");
+      expect(status).toBe(400);
+      expect(body).toHaveProperty("message", "Wrong username/password");
       done();
     } catch (err) {
       done(err);
