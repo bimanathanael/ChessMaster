@@ -4,7 +4,7 @@ const { jwtSignIn } = require("../helpers/jsonwebtoken");
 
 class UserController {
   static async getUser(req, res) {
-    console.log('masuk')
+    console.log("masuk");
     try {
       const usersData = await UserModel.getAll();
       return res.status(200).json(usersData);
@@ -97,11 +97,11 @@ class UserController {
       const User = await UserModel.findOne(username);
 
       if (!User) {
-        return res.status(404).json({ message: "user not found" });
+        return res.status(400).json({ message: "Wrong username/password" });
       } else {
         const checkPassword = decodePassword(password, User.password);
         if (!checkPassword) {
-          return res.status(404).json({ message: "wrong password" });
+          return res.status(400).json({ message: "Wrong username/password" });
         } else {
           const sendToJWT = {
             username: User.username,
