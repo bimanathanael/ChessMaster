@@ -13,6 +13,8 @@ import Board from "./components/board";
 
 import { Provider } from "react-redux";
 import store from "./store";
+import MainMenu from "./pages/MainMenu";
+import LeaderBoard from "./pages/LeaderBoard";
 
 function App() {
   return (
@@ -32,7 +34,7 @@ function App() {
               component={RegisterPage}
             />
     
-            <ProtectedRouteBeforeLogin
+            <ProtectedRouteAfterLogin
               exact
               path="/game"
               component={Game}
@@ -43,6 +45,7 @@ function App() {
         </Router>
         <RegisterPage /> */}
 
+        {/* <LeaderBoard /> */}
         <Board />
       </div>
     </Provider>

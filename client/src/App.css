@@ -156,3 +156,8 @@
 .modal-chess img:hover {
   cursor: pointer;
 }
+
+.trophy{
+  height: 105px;
+  width: 105px;
+}
