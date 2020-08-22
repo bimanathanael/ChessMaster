@@ -34,6 +34,13 @@ export default () => {
         <Button variant="primary" onClick={handleShow}>
           Create Room
         </Button>
+        <button 
+        // onClick={()=>history.push({
+        //   pathname: '/game',
+        //   data: 'dummy'
+        //   })}
+        // href="/game" 
+          className="btn btn-info"> <a href="/game" > Join Game</a> </button>
         <button className="btn btn-primary ToLeaderBoard" type="button">
           Leader Board
         </button>

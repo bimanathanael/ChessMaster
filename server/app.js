@@ -14,7 +14,7 @@ app.use(routes);
 let connectedPeers = new Map()
 
 io.on("connection", (socket) => {
-  socket.emit('connection-success', {success: `/webrtcPeer#${socket.id}`})
+  socket.broadcast.emit('connection-success', {success: `/webrtcPeer#${socket.id}`})
 
   connectedPeers.set(socket.id, socket)
 
@@ -44,6 +44,10 @@ io.on("connection", (socket) => {
       }
     }
   })
+
+  socket.on("needAnswer", function (txt) {
+    socket.broadcast.emit("needAnswer", txt);
+  });
 
   socket.on("move", function (url) {
     socket.broadcast.emit("move");

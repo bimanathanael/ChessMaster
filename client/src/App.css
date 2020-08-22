@@ -43,9 +43,10 @@
 .motherLogin {
   background-color: #263554;
   height: 100vh;
-  display: flex;
-  justify-content: center;
- color: white; 
+  padding-top: 9%;
+  /* display: flex;
+  justify-content: center; */
+  color: white; 
 }
 
 
