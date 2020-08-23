@@ -1,194 +1,210 @@
-import React, { createRef, useState, useEffect} from 'react';
-import Board from '../components/board'
+import React, { createRef, useState, useEffect } from "react";
+import Board from "../components/board";
 import io from "socket.io-client";
 
 const socket = io("http://localhost:9002/");
 
-export const Game = () =>  {
-
-  const localVideoref = createRef()
-  const remoteVideoRef = createRef()
-  let textref = createRef()
-  let needAnswer = createRef()
-
+export const Game = () => {
+  const localVideoref = createRef();
+  const remoteVideoRef = createRef();
+  let textref = createRef();
+  let needAnswer = createRef();
+  let startGame = createRef();
+  let timer = createRef();
+  let timerOpponent = createRef();
 
   const pc_config = {
-    "iceServers": [
+    iceServers: [
       {
-        "url" : 'stun:stun.l.google.com:19302'
+        url: "stun:stun.l.google.com:19302",
       },
       {
-        "url": "turn:numb.viagenie.ca",
-        "username": "bimanathanael95@gmail.com",
-        "credential": "Theendensor@95"
-      }
-    ]
-  }
+        url: "turn:numb.viagenie.ca",
+        username: "bimanathanael95@gmail.com",
+        credential: "Theendensor@95",
+      },
+    ],
+  };
 
-  let pc = new RTCPeerConnection(pc_config)
+  let pc = new RTCPeerConnection(pc_config);
 
   pc.onicecandidate = (e) => {
-    if(e.candidate) {
+    if (e.candidate) {
       // console.log(JSON.stringify(e.candidate))
-      sendToPeer('candidate', e.candidate)
+      sendToPeer("candidate", e.candidate);
     }
-  }
+  };
 
   pc.oniceconnectionstatechange = (e) => {
-    console.log(e)
-  }
+    console.log(e);
+  };
 
   pc.ontrack = (e) => {
-    remoteVideoRef.current.srcObject = e.streams[0]
-  }
+    remoteVideoRef.current.srcObject = e.streams[0];
+  };
 
-  socket.on("connection-success", success => {
-    console.log(success)
-  })
-
-  const [teks, setTeks] = useState("");
-
+  socket.on("connection-success", (success) => {
+    console.log(success);
+  });
 
   useEffect(() => {
+    // console.log(needAnswer, "needAnswerneedAnswerneedAnswer");
 
-    socket.on("teks", (txt) => {
-      setTeks(txt);
-    });
-
-    console.log(needAnswer, 'needAnswerneedAnswerneedAnswer')
     socket.on("needAnswer", (txt) => {
       needAnswer.current = true;
-      if(txt.payload === false ){
+      if (txt.payload === false) {
         document.getElementById("btn").style.visibility = "hidden";
         document.getElementById("board").style.visibility = "visible";
+        console.log("masuk useEffect");
       }
     });
 
-    socket.on('connection-success', () => {
-      console.log('masuk')
-      sendToPeer('needAnswer', true )
-      pc.createOffer({offerToReceiveVideo: 1, offerToReceiveAudio:1})
-      .then( sdp => {
-        pc.setLocalDescription(sdp)
-        sendToPeer('offerOrAnswer', sdp)
-      }, e => {})
-    })
-  
-    socket.on('offerOrAnswer', (sdp) => {
-      textref.value = JSON.stringify(sdp)
-      pc.setRemoteDescription(new RTCSessionDescription(sdp))
-    })
+    socket.on("connection-success", () => {
+      console.log("masuk");
+      sendToPeer("needAnswer", true);
+      pc.createOffer({ offerToReceiveVideo: 1, offerToReceiveAudio: 1 }).then(
+        (sdp) => {
+          pc.setLocalDescription(sdp);
+          sendToPeer("offerOrAnswer", sdp);
+        },
+        (e) => {}
+      );
+    });
 
-    socket.on('candidate', (candidate) => {
-      pc.addIceCandidate(new RTCIceCandidate(candidate))
+    socket.on("offerOrAnswer", (sdp) => {
+      textref.value = JSON.stringify(sdp);
+      pc.setRemoteDescription(new RTCSessionDescription(sdp));
+    });
 
-    })
+    socket.on("candidate", (candidate) => {
+      pc.addIceCandidate(new RTCIceCandidate(candidate));
+    });
   }, []);
 
   const sendToPeer = (messageType, payload) => {
     socket.emit(messageType, {
       socketID: socket.id,
-      payload
-    })
-  }
+      payload,
+    });
+  };
 
- const success = (stream) => {
-    window.localStream = stream
-    localVideoref.current.srcObject = stream
-    stream.getTracks().forEach(track => {
+  const success = (stream) => {
+    window.localStream = stream;
+    localVideoref.current.srcObject = stream;
+    stream.getTracks().forEach((track) => {
       pc.addTrack(track, stream);
     });
-  }
+  };
 
   const failure = (e) => {
-    console.log('getUserMedia Error: ', e)
-  }
+    console.log("getUserMedia Error: ", e);
+  };
 
-  const constraints = { video : true, audio:true}
-  navigator.mediaDevices.getUserMedia( constraints)
-  .then( success )
-  .catch( failure )
+  const constraints = { video: true, audio: true };
+  navigator.mediaDevices.getUserMedia(constraints).then(success).catch(failure);
 
-  const createOffer = () => {  
-    const btn = document.getElementById('btn');
-    btn.disabled = true; 
-    btn.innerText = 'Waiting for Opponent...'
-    if (needAnswer.current == null){
-      
+  const createOffer = () => {
+    const btn = document.getElementById("btn");
+    btn.disabled = true;
+    btn.innerText = "Waiting for Opponent...";
+    if (needAnswer.current == null) {
     } else {
-      createAnswer()
-      sendToPeer('needAnswer', false )
+      createAnswer();
+      sendToPeer("needAnswer", false);
       document.getElementById("btn").style.visibility = "hidden";
       document.getElementById("board").style.visibility = "visible";
-
     }
-  }
+  };
 
   const createAnswer = () => {
-    pc.createAnswer({offerToReceiveVideo: 1, offerToReceiveAudio:1})
-      .then ( sdp => {
-        pc.setLocalDescription(sdp)
-        sendToPeer('offerOrAnswer', sdp)
-      }, e => {})
-  }
+    pc.createAnswer({ offerToReceiveVideo: 1, offerToReceiveAudio: 1 }).then(
+      (sdp) => {
+        pc.setLocalDescription(sdp);
+        sendToPeer("offerOrAnswer", sdp);
+      },
+      (e) => {}
+    );
+  };
+
+  const timerHandler = (value) => {
+    console.log(value, "dapet atau engga");
+    timer.current = value;
+    console.log("apakah ini masuk kesini atau tidak");
+  };
+
+  const timerOpponentHandler = (value) => {
+    timerOpponent.current = value;
+  };
 
   return (
     <div className="motherLogin">
+      {console.log("masuk return")}
       <div className="row">
         <br />
-        <div className='flex-column mt-3  mr-3'>
+        <div className="flex-column mt-3  mr-3">
           <div>
-            <video 
-              ref={localVideoref} 
+            <video
+              ref={localVideoref}
               autoPlay
               style={{
-                float:"left",
-                width: 240, 
-                height: 240, 
-                margin: 5, 
-                backgroundColor :'black'
+                float: "left",
+                width: 240,
+                height: 240,
+                margin: 5,
+                backgroundColor: "black",
               }}
               controls
-              >
-            </video>
+            ></video>
           </div>
+
           <div className="text-center">
-            <button id="btn" onClick={() => createOffer()} className="btn btn-info  mt-3" style={{width:'100%'}}> i am ready </button>
+            <button
+              id="btn"
+              onClick={() => createOffer()}
+              className="btn btn-info  mt-3"
+              style={{ width: "100%" }}
+            >
+              {" "}
+              i am ready{" "}
+            </button>
           </div>
         </div>
-        <div id="board" style={{visibility: 'hidden'}}>
-          <Board/>
+        <div id="board" style={{ visibility: "hidden" }}>
+          <Board />
+
           {/* <h1>
             hello
           </h1> */}
         </div>
-        <div className='flex-column mt-3 ml-3'>
+        <div className="flex-column mt-3 ml-3">
           <div>
-            <video 
-              ref={remoteVideoRef} 
+            <video
+              ref={remoteVideoRef}
               autoPlay
               style={{
-                float:"right",
-                width: 240, 
-                height: 240, 
-                margin: 5, 
-                backgroundColor :'black'
+                float: "right",
+                width: 240,
+                height: 240,
+                margin: 5,
+                backgroundColor: "black",
               }}
               controls
-              >
-            </video>
+            ></video>
           </div>
+          <div></div>
           <div className="text-center">
             {/* <button onClick={() => createAnswer()} className="btn btn-info  mt-3">i am ready</button> */}
           </div>
         </div>
-        <br/>
+        <br />
       </div>
       <br></br>
-      <br/>
-      <textarea id="myTextArea" ref={ref => textref = ref} style={{display: "none"}}></textarea>
+      <br />
+      <textarea
+        id="myTextArea"
+        ref={(ref) => (textref = ref)}
+        style={{ display: "none" }}
+      ></textarea>
     </div>
-  )
-  
-}
-
+  );
+};
