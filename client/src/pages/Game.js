@@ -1,7 +1,8 @@
 import React, { createRef, useState, useEffect} from 'react';
-import io from "socket.io-client";
 import Board from '../components/board'
-import {socket} from '../config/socket'
+import io from "socket.io-client";
+
+const socket = io("http://localhost:9002/");
 
 export const Game = () =>  {
 
