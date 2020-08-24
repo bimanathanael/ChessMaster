@@ -219,7 +219,6 @@ function Board() {
     if (!turn) {
       return null;
     }
-    console.log(turn, "<<< turn");
     if (temp.length === 0 && val !== 0) {
       if (side === "white" && String(val)[0] === "-") {
         return null;
