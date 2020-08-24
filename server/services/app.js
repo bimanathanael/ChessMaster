@@ -12,6 +12,17 @@ app.use(cors());
 app.use(routes);
 
 // ============== START : CHESS SOCKET IO ================ //
+const setUpBoard = [
+  [5, 4, 3, 2, 1, 3, 4, 5],
+  [6, 6, 6, 6, 6, 6, 6, 6],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [-6, -6, -6, -6, -6, -6, -6, -6],
+  [-5, -4, -3, -1, -2, -3, -4, -5],
+];
+
 let board = [
   [5, 4, 3, 2, 1, 3, 4, 5],
   [6, 6, 6, 6, 6, 6, 6, 6],
@@ -30,10 +41,16 @@ io.on("connection", (socket) => {
   clients.push(socket);
   console.log(clients.length, 'clients connected')
   if (clients.length < 2) {
-    socket.emit('setUp', {board: board.reverse(), turn, side: 'white'});
+    socket.emit('setUp', {board: setUpBoard.reverse(), turn, side: 'white'});
   } else {
-    socket.emit('setUp', {board: board.reverse(), turn: false, side: 'black'});
+    socket.emit('setUp', {board: setUpBoard.reverse(), turn: false, side: 'black'});
   }
+
+  socket.on('pawn-evolution', (data) => {
+    board = data.board.reverse();
+    console.log(board);
+    socket.broadcast.emit('pawn evolution', {board});
+  })
   
   socket.on('finishTurn', (data) => {
     turn = turn;
