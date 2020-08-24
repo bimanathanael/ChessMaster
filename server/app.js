@@ -28,7 +28,7 @@ let clients = []
 
 io.on("connection", (socket) => {
   clients.push(socket);
-  console.log(clients.length, 'clients.length')
+  console.log(clients.length, 'clients connected')
   if (clients.length < 2) {
     socket.emit('setUp', {board: board.reverse(), turn, side: 'white'});
   } else {
