@@ -32,6 +32,10 @@ io.on("connection", (socket) => {
   socket.on("timerStop2", () => {
     socket.broadcast.emit("timerStop2");
   });
+
+  socket.on("moveToLeaderboard", () => {
+    socket.broadcast.emit("moveToLeaderboard");
+  });
   clients.push(socket);
   console.log(clients.length, "clients.length");
   if (clients.length % 2 != 0) {
