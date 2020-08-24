@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { defineLegalMoves, moveValidation } from "../logics/LogicController";
 import { Modal } from "react-bootstrap";
 import io from "socket.io-client";
+import { useHistory } from "react-router-dom";
+import swal from "sweetalert";
 
 const socket = io("http://localhost:9001/");
 
@@ -19,8 +21,8 @@ function Board() {
   //timer state
   const [displayBoard, setDisplayBoard] = useState(false);
   const [displayButton, setDisplayButton] = useState(false);
-  const [time, setTime] = useState({ m: 3, s: 20 });
-  const [timeOpponent, setTimeOpponent] = useState({ m: 3, s: 20 });
+  const [time, setTime] = useState({ m: 0, s: 20 });
+  const [timeOpponent, setTimeOpponent] = useState({ m: 0, s: 20 });
   const [status, setStatus] = useState(0);
   const [interv, setInterv] = useState();
   const [statusOpponent, setStatusOpponent] = useState(0);
@@ -29,6 +31,7 @@ function Board() {
   var updatedM = time.m;
   var updatedSOpponent = timeOpponent.s;
   var updatedMOpponent = timeOpponent.m;
+  const history = useHistory();
 
   const rookBlack = require("../chess-pack/chess-rook-black.png");
   const rookWhite = require("../chess-pack/chess-rook-white.png");
@@ -82,6 +85,20 @@ function Board() {
 
   //timer logic
 
+  useEffect(() => {
+    if (time.s === 0) {
+      swal("You Lose SADSADSAD", "", "error");
+      history.push("/leaderboard");
+      socket.emit("moveToLeaderboard");
+    }
+  }, [time]);
+
+  useEffect(() => {
+    socket.on("moveToLeaderboard", () => {
+      swal("You WIN YEAY", "", "success");
+      history.push("/leaderboard");
+    });
+  }, []);
   useEffect(() => {
     socket.on("timerStop", () => {
       console.log("timerStop");
@@ -219,7 +236,6 @@ function Board() {
     if (!turn) {
       return null;
     }
-    console.log(turn, "<<< turn");
     if (temp.length === 0 && val !== 0) {
       if (side === "white" && String(val)[0] === "-") {
         return null;
