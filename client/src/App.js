@@ -37,14 +37,11 @@ function App() {
             <ProtectedRouteAfterLogin exact path="/game" component={Game} />
 
             <ProtectedRouteAfterLogin exact path="/" component={MainMenu} />
-<<<<<<< HEAD
-=======
             <ProtectedRouteAfterLogin
               exact
               path="/leaderboard"
               component={LeaderBoard}
             />
->>>>>>> e0ab5d8f29ab4c6830a49dc406fe4f4051d2b49b
           </Switch>
         </Router>
 
