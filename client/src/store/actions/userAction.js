@@ -1,4 +1,11 @@
 import swal from "sweetalert";
+const jwt = require("jsonwebtoken");
+const TOKEN_KEY = "chessMaster";
+const jwtVerify = (data) => {
+  var decoded = jwt.verify(data, TOKEN_KEY);
+  return decoded;
+};
+
 export const postRegister = (data, history) => {
   return (dispatch) => {
     fetch("http://localhost:9000/register", {
@@ -42,6 +49,9 @@ export const postLogin = (data, history) => {
     })
       .then((resp) => resp.json())
       .then((result) => {
+        let data = jwtVerify(result.access_token, TOKEN_KEY);
+        localStorage.setItem("username", data.username);
+        localStorage.setItem("score", data.score);
         if (result.access_token) {
           swal("success login", "", "success");
           localStorage.setItem("access_token", result.access_token);

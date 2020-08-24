@@ -10,7 +10,7 @@ export default () => {
   const aftermath = require("../asset/aftermath.png");
 
   const backToMenu = () => {
-    history.push("/main-menu");
+    history.push("/");
   };
 
   return (
