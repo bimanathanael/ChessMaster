@@ -46,9 +46,7 @@ export const postLogin = (data, history) => {
           swal("success login", "", "success");
           localStorage.setItem("access_token", result.access_token);
           history.push("/");
-        } else if (result.message === "user not found") {
-          swal(result.message, "", "error");
-        } else if (result.message === "wrong password") {
+        } else if (result.message === "Wrong username/password") {
           swal(result.message, "", "error");
         }
       })

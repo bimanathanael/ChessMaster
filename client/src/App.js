@@ -37,7 +37,7 @@ function App() {
             <ProtectedRouteAfterLogin
               exact
               path="/game"
-              component={Board}
+              component={Game}
             />
 
             <ProtectedRouteAfterLogin exact path="/" component={MainMenu} />

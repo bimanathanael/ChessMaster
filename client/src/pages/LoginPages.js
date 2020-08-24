@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useHistory, useRouteMatch, Link } from "react-router-dom";
 import { postLogin } from "../store/actions/userAction";
 import { useDispatch } from "react-redux";
+import { Button } from "react-bootstrap";
 
 export default () => {
   const [username, setUsername] = useState("");
@@ -29,10 +30,7 @@ export default () => {
   return (
     <div className="motherLogin">
       <div style={{ backgroundColor: "#263554" }}>
-        <div
-          className="text-center"
-          style={{ color: "white" }}
-        >
+        <div className="text-center" style={{ color: "white" }}>
           <img
             className="LogoLogin"
             src={logo}
@@ -73,7 +71,10 @@ export default () => {
             </div>
           </form>
           <p style={{ marginTop: "10%" }}>
-            Already have account ? <Link to="/register">click here</Link>
+            Don't have an account?{" "}
+            <Link to="/register">
+              <Button variant="info">Click Here</Button>
+            </Link>
           </p>
         </div>
       </div>
