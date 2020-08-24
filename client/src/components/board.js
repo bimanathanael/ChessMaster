@@ -4,16 +4,38 @@ import { Modal, Button } from "react-bootstrap";
 import io from "socket.io-client";
 import { useHistory } from "react-router-dom";
 import swal from "sweetalert";
+import { useDispatch } from "react-redux";
+// import { updateScore } from "../store/actiupdateScoreons/userAction";
+import { useMutation, gql } from "@apollo/client";
+import { GET_USERS } from "../pages/LeaderBoard";
+import { GET_USERBYID } from "../pages/MainMenu";
+
+const UPDATE_SCORE = gql`
+  mutation UpdateScoreUser($updateScore: inputUserUpdate) {
+    updateUser(user: $updateScore) {
+      username
+      score
+    }
+  }
+`;
 
 const socket = io("http://localhost:9001/");
+const happyFace = require("../asset/happyFace.png");
+const sadFace = require("../asset/sadFace.png");
 
 function Board() {
+  const [mutationUpdateScore] = useMutation(UPDATE_SCORE, {
+    refetchQueries: [{ query: GET_USERS }],
+    awaitRefetchQueries: true,
+  });
+  const dispatch = useDispatch();
   let isEven = true;
 
   // temp = [row, col, val]
   const [temp, setTemp] = useState([]);
   const [legalMoves, setLegalMoves] = useState([]);
   const [modalWhite, setModalWhite] = useState(false);
+  const [opponentUsername, setOpponentUsername] = useState("");
   const [modalBlack, setModalBlack] = useState(false);
   const [turn, setTurn] = useState(null);
   const [side, setSide] = useState("");
@@ -21,8 +43,8 @@ function Board() {
   //timer state
   const [displayBoard, setDisplayBoard] = useState(false);
   const [displayButton, setDisplayButton] = useState(false);
-  const [time, setTime] = useState({ m: 0, s: 20 });
-  const [timeOpponent, setTimeOpponent] = useState({ m: 0, s: 20 });
+  const [time, setTime] = useState({ m: 0, s: 3 });
+  const [timeOpponent, setTimeOpponent] = useState({ m: 0, s: 3 });
   const [status, setStatus] = useState(0);
   const [interv, setInterv] = useState();
   const [statusOpponent, setStatusOpponent] = useState(0);
@@ -89,20 +111,56 @@ function Board() {
 
   //timer logic
 
-  // useEffect(() => {
-  //   if (time.s === 0) {
-  //     swal("You Lose SADSADSAD", "", "error");
-  //     history.push("/leaderboard");
-  //     socket.emit("moveToLeaderboard");
-  //   }
-  // }, [time]);
+  useEffect(() => {
+    if (time.s === 0) {
+      const updatedScore = {
+        username: localStorage.getItem("username"),
+        score: -5,
+      };
+      mutationUpdateScore({
+        variables: {
+          updateScore: updatedScore,
+        },
+      });
+      // console.log("sadasd");
+      swal({
+        title: "You Lose",
+      });
+      history.push("/leaderboard");
+      socket.emit("moveToLeaderboard", updatedScore);
+    }
+  }, [time]);
 
-  // useEffect(() => {
-  //   socket.on("moveToLeaderboard", () => {
-  //     swal("You WIN YEAY", "", "success");
-  //     history.push("/leaderboard");
-  //   });
-  // }, []);
+  useEffect(() => {
+    if (time === 0) {
+      const updatedScore = {
+        username: opponentUsername,
+        score: -5,
+      };
+      mutationUpdateScore({
+        variables: {
+          updateScore: updatedScore,
+        },
+      });
+    }
+  }, [time]);
+
+  useEffect(() => {
+    socket.on("moveToLeaderboard", () => {
+      mutationUpdateScore({
+        variables: {
+          updateScore: {
+            username: localStorage.getItem("username"),
+            score: 50,
+          },
+        },
+      });
+      swal({
+        title: "You Win",
+      });
+      history.push("/leaderboard");
+    });
+  }, []);
   useEffect(() => {
     socket.on("timerStop", () => {
       console.log("timerStop");
@@ -122,6 +180,7 @@ function Board() {
 
   useEffect(() => {
     socket.on("timerStart", () => {
+      setOpponentUsername(localStorage.getItem("username"));
       setDisplayBoard(true);
       runOpponent();
       setStatusOpponent(1);

@@ -13,43 +13,47 @@ import {
 
 import { Provider } from "react-redux";
 import store from "./store";
+import { ApolloProvider } from "@apollo/client";
+import client from "./config/client";
 // import MainMenu from "./pages/MainMenu";
 // import LeaderBoard from "./pages/LeaderBoard";
 
 function App() {
   return (
-    <Provider store={store}>
-      <div className="App">
-        <Router>
-          <Switch>
-            <ProtectedRouteBeforeLogin
-              exact
-              path="/login"
-              component={LoginPages}
-            />
+    <ApolloProvider client={client}>
+      <Provider store={store}>
+        <div className="App">
+          <Router>
+            <Switch>
+              <ProtectedRouteBeforeLogin
+                exact
+                path="/login"
+                component={LoginPages}
+              />
 
-            <ProtectedRouteBeforeLogin
-              exact
-              path="/register"
-              component={RegisterPage}
-            />
+              <ProtectedRouteBeforeLogin
+                exact
+                path="/register"
+                component={RegisterPage}
+              />
 
-            <ProtectedRouteAfterLogin exact path="/game" component={Game} />
+              <ProtectedRouteAfterLogin exact path="/game" component={Game} />
 
-            <ProtectedRouteAfterLogin exact path="/" component={MainMenu} />
-            <ProtectedRouteAfterLogin
-              exact
-              path="/leaderboard"
-              component={LeaderBoard}
-            />
-          </Switch>
-        </Router>
+              <ProtectedRouteAfterLogin exact path="/" component={MainMenu} />
+              <ProtectedRouteAfterLogin
+                exact
+                path="/leaderboard"
+                component={LeaderBoard}
+              />
+            </Switch>
+          </Router>
 
-        {/* <RegisterPage /> */}
-        {/* <LeaderBoard /> */}
-        {/* <Board /> */}
-      </div>
-    </Provider>
+          {/* <RegisterPage /> */}
+          {/* <LeaderBoard /> */}
+          {/* <Board /> */}
+        </div>
+      </Provider>
+    </ApolloProvider>
   );
 }
 

@@ -6,6 +6,10 @@ class UserModel {
     return UserColls.find().toArray();
   }
 
+  static getByUserName(username) {
+    return UserColls.findOne({ username });
+  }
+
   static addOne(newOne) {
     return UserColls.insertOne(newOne);
   }
