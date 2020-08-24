@@ -122,11 +122,28 @@ export function legalKingMoves(board, row, col) {
   ]
 
   legalMoves.forEach(arr => {
-    
+    const knightMoves = [
+      [arr[0]+2, arr[1]-1], [arr[0]+2, arr[1]+1],
+      [arr[0]-2, arr[1]-1], [arr[0]-2, arr[1]+1],
+      [arr[0]+1, arr[1]-2], [arr[0]-1, arr[1]-2],
+      [arr[0]-1, arr[1]+2], [arr[0]+1, arr[1]+2]
+    ]
+
     if (arr[0] >= 0 && arr[0] < 8 && arr[1] >= 0 && arr[1] < 8) {
       if (board[arr[0]][arr[1]] !== 0 && flag === isNaN(String(board[arr[0]][arr[1]])[0])) {
         legalMoves = legalMoves.filter(e => e !== arr);
         return;
+      }
+
+      // cek box is safe from opponent's knight
+      for(let i = 0; i < knightMoves.length; i++) {
+        let move = knightMoves[i];
+        if(move[0] >= 0 && move[0] < 8 && move[1] >= 0 && move[1] < 8 &&
+        isNaN(String(board[move[0]][move[1]])[0]) !== flag &&
+        (board[move[0]][move[1]] === 4 || board[move[0]][move[1]] === -4)) {
+          legalMoves = legalMoves.filter(e => e !== arr);
+          return;
+        }
       }
       
       // cek box is safe from opponent's king

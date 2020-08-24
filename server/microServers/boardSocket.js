@@ -7,6 +7,17 @@ const io = require("socket.io")(server);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+const setUpBoard = [
+  [5, 4, 3, 2, 1, 3, 4, 5],
+  [6, 6, 6, 6, 6, 6, 6, 6],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [-6, -6, -6, -6, -6, -6, -6, -6],
+  [-5, -4, -3, -1, -2, -3, -4, -5],
+];
+
 let board = [
   [5, 4, 3, 2, 1, 3, 4, 5],
   [6, 6, 6, 6, 6, 6, 6, 6],
@@ -35,11 +46,11 @@ io.on("connection", (socket) => {
   clients.push(socket);
   console.log(clients.length, "clients.length");
   if (clients.length % 2 != 0) {
-    socket.emit("setUp", { board: board.reverse(), turn, side: "white" });
+    socket.emit("setUp", { board: setUpBoard.reverse(), turn, side: "white" });
     socket.emit("showButton", true);
   } else {
     socket.emit("setUp", {
-      board: board.reverse(),
+      board: setUpBoard.reverse(),
       turn: false,
       side: "black",
     });
@@ -51,6 +62,11 @@ io.on("connection", (socket) => {
     board = data.board.reverse();
     socket.broadcast.emit("endTurn", { board, turn });
   });
+
+  socket.on("pawn-evolution", (data) => {
+    board = data.board.reverse();
+    socket.broadcast.emit("pawn evolution", {board});
+  })
 });
 
 if (app.get("env") === "development") {
