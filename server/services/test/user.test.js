@@ -40,8 +40,21 @@ describe("check and update data user, route = /user", () => {
       done(err);
     }
   });
+  test("200 sucess read data user by username", async (done) => {
+    try {
+      const username = "tono1234";
+      const response = await request(app).get(`/users/${username}`);
+      const { body, status } = response;
+      expect(status).toBe(200);
+      expect(body).toHaveProperty("username");
+      expect(body).toHaveProperty("score");
+      done();
+    } catch (err) {
+      done(err);
+    }
+  });
 
-  test("400 sucess update data user", async (done) => {
+  test("200 sucess update data user", async (done) => {
     try {
       const updateUser = {
         username: "tono1234",
@@ -52,6 +65,19 @@ describe("check and update data user, route = /user", () => {
       expect(status).toBe(200);
       expect(body).toHaveProperty("username");
       expect(body).toHaveProperty("score");
+      done();
+    } catch (err) {
+      done(err);
+    }
+  });
+
+  test("400 failed read data user by username", async (done) => {
+    try {
+      const username = "tono12342222";
+      const response = await request(app).get(`/users/${username}`);
+      const { body, status } = response;
+      expect(status).toBe(400);
+      expect(body).toHaveProperty("message");
       done();
     } catch (err) {
       done(err);
@@ -120,7 +146,8 @@ describe("register user, route = (/register)", () => {
       const response = await request(app).post("/register").send(newUser);
       const { body, status } = response;
       expect(status).toBe(201);
-      expect(body).toHaveProperty("message", "success register");
+      expect(body).toHaveProperty("username");
+      expect(body).toHaveProperty("score");
       done();
     } catch (err) {
       done(err);

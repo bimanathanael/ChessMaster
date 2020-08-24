@@ -4,8 +4,29 @@ import { useHistory, useRouteMatch, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "react-bootstrap";
 import swal from "sweetalert";
+import { gql, useMutation, useQuery } from "@apollo/client";
+import { GET_USERS } from "./LeaderBoard";
+
+const ADD_USER = gql`
+  mutation AddNewUser($newUser: inputNewUser) {
+    addUser(user: $newUser) {
+      username
+      password
+    }
+  }
+`;
 
 export default () => {
+  const [mutationAddUser] = useMutation(ADD_USER, {
+    refetchQueries: [{ query: GET_USERS }],
+    onCompleted: () => {
+      swal("Success Register!", "", "success");
+      history.push("/login");
+    },
+    onError: () => {
+      swal("this username has been registered", "", "error");
+    },
+  });
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const history = useHistory();
@@ -22,12 +43,22 @@ export default () => {
 
   const formRegisterHandler = async (e) => {
     e.preventDefault();
-    const registerUser = {
-      username,
-      password,
-    };
-    const asda = await dispatch(postRegister(registerUser, history));
-    console.log(asda, "ini undefined");
+    if (!username) {
+      swal("username cannot empty", "", "error");
+    } else if (!password) {
+      swal("password cannot empty", "", "error");
+    } else if (username.length < 6) {
+      swal("username at least 6 characters", "", "error");
+    } else if (password.length < 6) {
+      swal("password at least 8 characters", "", "error");
+    } else {
+      const registerUser = {
+        username,
+        password,
+      };
+      console.log(registerUser, "cel");
+      mutationAddUser({ variables: { newUser: registerUser } });
+    }
   };
 
   return (
