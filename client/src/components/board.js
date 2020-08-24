@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { defineLegalMoves, moveValidation } from "../logics/LogicController";
-import { Modal } from "react-bootstrap";
+import { Modal, Button } from "react-bootstrap";
 import io from "socket.io-client";
 import { useHistory } from "react-router-dom";
 import swal from "sweetalert";
@@ -85,20 +85,20 @@ function Board() {
 
   //timer logic
 
-  useEffect(() => {
-    if (time.s === 0) {
-      swal("You Lose SADSADSAD", "", "error");
-      history.push("/leaderboard");
-      socket.emit("moveToLeaderboard");
-    }
-  }, [time]);
+  // useEffect(() => {
+  //   if (time.s === 0) {
+  //     swal("You Lose SADSADSAD", "", "error");
+  //     history.push("/leaderboard");
+  //     socket.emit("moveToLeaderboard");
+  //   }
+  // }, [time]);
 
-  useEffect(() => {
-    socket.on("moveToLeaderboard", () => {
-      swal("You WIN YEAY", "", "success");
-      history.push("/leaderboard");
-    });
-  }, []);
+  // useEffect(() => {
+  //   socket.on("moveToLeaderboard", () => {
+  //     swal("You WIN YEAY", "", "success");
+  //     history.push("/leaderboard");
+  //   });
+  // }, []);
   useEffect(() => {
     socket.on("timerStop", () => {
       console.log("timerStop");
@@ -283,124 +283,129 @@ function Board() {
 
   return (
     <>
-      <div>
-        <h1>
-          {time.m < 10 ? `0${time.m}` : time.m}:
-          {time.s < 10 ? `0${time.s}` : time.s}
-        </h1>
-        {displayButton && !displayBoard && (
-          <button onClick={() => startTimerHandler()} className="btn btn-info">
-            Start Game
-          </button>
-        )}
+      {displayButton && !displayBoard && (
+        <button onClick={() => startTimerHandler()} className="btn btn-info">
+          Start Game
+        </button>
+      )}
 
-        <h1>
-          {timeOpponent.m < 10 ? `0${timeOpponent.m}` : timeOpponent.m}:
-          {timeOpponent.s < 10 ? `0${timeOpponent.s}` : timeOpponent.s}
-        </h1>
-      </div>
-      <div className="motherBoard">
-        <h3>Turn: {turn ? "White" : "Black"}</h3>
-        {displayBoard && (
-          <div className={styleBoard()}>
-            <div className="row justify-content-center">
-              {board.map((boardRow, row) => {
-                return boardRow.map((value, col) => {
-                  return (
-                    <div
-                      className={defineBox(row, col)}
-                      key={col}
-                      onClick={() => handleClick(row, col, value)}
-                    >
-                      {chesspieces(value)}
-                      {isLegalMoves(row, col)}
-                    </div>
-                  );
-                });
-              })}
-            </div>
+      {displayBoard && (
+        <div>
+          <div className="d-flex justify-content-between">
+            <h1>
+              {time.m < 10 ? `0${time.m}` : time.m}:
+              {time.s < 10 ? `0${time.s}` : time.s}
+            </h1>
+            <Button variant="danger">Surrender</Button>
+            <h1>
+              {timeOpponent.m < 10 ? `0${timeOpponent.m}` : timeOpponent.m}:
+              {timeOpponent.s < 10 ? `0${timeOpponent.s}` : timeOpponent.s}
+            </h1>
           </div>
-        )}
+          <div className="motherBoard">
+            {/* <h3>Turn: {turn ? "White" : "Black"}</h3> */}
+            {displayBoard && (
+              <div className={styleBoard()}>
+                <div className="row justify-content-center">
+                  {board.map((boardRow, row) => {
+                    return boardRow.map((value, col) => {
+                      return (
+                        <div
+                          className={defineBox(row, col)}
+                          key={col}
+                          onClick={() => handleClick(row, col, value)}
+                        >
+                          {chesspieces(value)}
+                          {isLegalMoves(row, col)}
+                        </div>
+                      );
+                    });
+                  })}
+                </div>
+              </div>
+            )}
 
-        <Modal
-          show={modalWhite}
-          size="lg"
-          onHide={() => setModalWhite(false)}
-          backdrop="static"
-          keyboard={false}
-        >
-          <Modal.Header>
-            <Modal.Title>Choose One</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div className="modal-chess">
-              <img
-                className="pieces"
-                src={queenWhite}
-                alt="queen"
-                onClick={() => pieceChange(2)}
-              />
-              <img
-                className="pieces"
-                src={bishopWhite}
-                alt="bishop"
-                onClick={() => pieceChange(3)}
-              />
-              <img
-                className="pieces"
-                src={knightWhite}
-                alt="knight"
-                onClick={() => pieceChange(4)}
-              />
-              <img
-                className="pieces"
-                src={rookWhite}
-                alt="rook"
-                onClick={() => pieceChange(5)}
-              />
-            </div>
-          </Modal.Body>
-        </Modal>
-        <Modal
-          show={modalBlack}
-          size="lg"
-          onHide={() => setModalBlack(false)}
-          backdrop="static"
-          keyboard={false}
-        >
-          <Modal.Header>
-            <Modal.Title>Choose One</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div className="modal-chess">
-              <img
-                className="pieces"
-                src={queenBlack}
-                alt="queen"
-                onClick={() => pieceChange(-2)}
-              />
-              <img
-                className="pieces"
-                src={bishopBlack}
-                alt="bishop"
-                onClick={() => pieceChange(-3)}
-              />
-              <img
-                className="pieces"
-                src={knightBlack}
-                alt="knight"
-                onClick={() => pieceChange(-4)}
-              />
-              <img
-                className="pieces"
-                src={rookBlack}
-                alt="rook"
-                onClick={() => pieceChange(-5)}
-              />
-            </div>
-          </Modal.Body>
-        </Modal>
-      </div>
+            <Modal
+              show={modalWhite}
+              size="lg"
+              onHide={() => setModalWhite(false)}
+              backdrop="static"
+              keyboard={false}
+            >
+              <Modal.Header>
+                <Modal.Title>Choose One</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <div className="modal-chess">
+                  <img
+                    className="pieces"
+                    src={queenWhite}
+                    alt="queen"
+                    onClick={() => pieceChange(2)}
+                  />
+                  <img
+                    className="pieces"
+                    src={bishopWhite}
+                    alt="bishop"
+                    onClick={() => pieceChange(3)}
+                  />
+                  <img
+                    className="pieces"
+                    src={knightWhite}
+                    alt="knight"
+                    onClick={() => pieceChange(4)}
+                  />
+                  <img
+                    className="pieces"
+                    src={rookWhite}
+                    alt="rook"
+                    onClick={() => pieceChange(5)}
+                  />
+                </div>
+              </Modal.Body>
+            </Modal>
+            <Modal
+              show={modalBlack}
+              size="lg"
+              onHide={() => setModalBlack(false)}
+              backdrop="static"
+              keyboard={false}
+            >
+              <Modal.Header>
+                <Modal.Title>Choose One</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <div className="modal-chess">
+                  <img
+                    className="pieces"
+                    src={queenBlack}
+                    alt="queen"
+                    onClick={() => pieceChange(-2)}
+                  />
+                  <img
+                    className="pieces"
+                    src={bishopBlack}
+                    alt="bishop"
+                    onClick={() => pieceChange(-3)}
+                  />
+                  <img
+                    className="pieces"
+                    src={knightBlack}
+                    alt="knight"
+                    onClick={() => pieceChange(-4)}
+                  />
+                  <img
+                    className="pieces"
+                    src={rookBlack}
+                    alt="rook"
+                    onClick={() => pieceChange(-5)}
+                  />
+                </div>
+              </Modal.Body>
+            </Modal>
+          </div>
+        </div>
+      )}
     </>
   );
 }
