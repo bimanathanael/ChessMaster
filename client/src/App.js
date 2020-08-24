@@ -3,7 +3,7 @@ import React from "react";
 import "./App.css";
 import { LoginPages, MainMenu, RegisterPage } from "./pages";
 import Board from "./components/board";
-import {Game} from "./pages/Game";
+import { Game } from "./pages/Game";
 
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import {
@@ -33,12 +33,8 @@ function App() {
               path="/register"
               component={RegisterPage}
             />
-    
-            <ProtectedRouteAfterLogin
-              exact
-              path="/game"
-              component={Game}
-            />
+
+            <ProtectedRouteAfterLogin exact path="/game" component={Game} />
 
             <ProtectedRouteAfterLogin exact path="/" component={MainMenu} />
           </Switch>
