@@ -89,20 +89,20 @@ function Board() {
 
   //timer logic
 
-  // useEffect(() => {
-  //   if (time.s === 0) {
-  //     swal("You Lose SADSADSAD", "", "error");
-  //     history.push("/leaderboard");
-  //     socket.emit("moveToLeaderboard");
-  //   }
-  // }, [time]);
+  useEffect(() => {
+    if (time.s === 0) {
+      swal("You Lose SADSADSAD", "", "error");
+      history.push("/leaderboard");
+      socket.emit("moveToLeaderboard");
+    }
+  }, [time]);
 
-  // useEffect(() => {
-  //   socket.on("moveToLeaderboard", () => {
-  //     swal("You WIN YEAY", "", "success");
-  //     history.push("/leaderboard");
-  //   });
-  // }, []);
+  useEffect(() => {
+    socket.on("moveToLeaderboard", () => {
+      swal("You WIN YEAY", "", "success");
+      history.push("/leaderboard");
+    });
+  }, []);
   useEffect(() => {
     socket.on("timerStop", () => {
       console.log("timerStop");
