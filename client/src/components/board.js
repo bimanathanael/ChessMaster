@@ -75,6 +75,10 @@ function Board() {
     setDisplayButton(status);
   });
 
+  socket.on("pawn evolution", (data) => {
+    setBoard(data.board);
+  });
+
   useEffect(() => {
     for (const i in board[0]) {
       if (board[0][i] === -6) setModalBlack(true);
@@ -251,7 +255,6 @@ function Board() {
     } else if (temp.length > 0 && temp[2] !== 0) {
       const newBoard = moveValidation(board, temp, row, col, legalMoves);
       if (newBoard) {
-        console.log("kapan masuk?");
         socket.emit("finishTurn", { board: newBoard });
         setTemp([]);
         setBoard(newBoard);
@@ -276,9 +279,10 @@ function Board() {
         newBoard[0][i] = val;
       }
     }
+    socket.emit("pawn-evolution", { board: newBoard });
+    setBoard(newBoard);
     if (String(val)[0] === "-") setModalBlack(false);
     else setModalWhite(false);
-    setBoard(newBoard);
   }
 
   return (
