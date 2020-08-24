@@ -4,7 +4,7 @@ import thunk from "redux-thunk";
 
 const initialState = {
   userLogin: [],
-  statusRegister: "",
+  listRoom: [],
 };
 
 const userReducer = (state = initialState, action) => {
@@ -14,11 +14,13 @@ const userReducer = (state = initialState, action) => {
         ...state,
         userLogin: action.payload,
       };
-    case "STATUS_REGISTER":
+
+    case "SET_ROOM_GAME":
       return {
         ...state,
-        statusRegister: action.payload,
+        listRoom: state.listRoom.concat(action.payload),
       };
+
     default:
       return state;
   }
