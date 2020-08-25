@@ -29,7 +29,8 @@ export default () => {
 
   function filterTable() {
     if (data) {
-      return data.histories.slice(data.length - 8);
+      let copyData = JSON.parse(JSON.stringify(data));
+      return copyData.histories.reverse().slice(0, 4);
     }
   }
   return (
