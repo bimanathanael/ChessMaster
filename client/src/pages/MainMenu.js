@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useHistory, Link } from "react-router-dom";
 import Cards from "../components/Cards";
 import { Button, Modal, Form, Card } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import swal from "sweetalert";
+import io from "socket.io-client";
 import { gql, useQuery } from "@apollo/client";
 import { GET_ROOMS, roomsItem } from "../config/client";
 import Navbar from "../components/Navbar";
+
+const ENDPOINT = "http://localhost:9004/";
 
 export const GET_USERBYID = gql`
   query GetById($dataUser: String) {
@@ -18,6 +21,7 @@ export const GET_USERBYID = gql`
   }
 `;
 export default () => {
+  let socket = io(ENDPOINT);
   const { data: dataRooms } = useQuery(GET_ROOMS);
   const { error, loading, data: dataFromApollo } = useQuery(GET_USERBYID, {
     variables: { dataUser: localStorage.getItem("username") },
@@ -31,6 +35,8 @@ export default () => {
   const dispatch = useDispatch();
   const { listRoom, userLogin } = useSelector((state) => state);
 
+  const [room, setRoom] = useState('');
+  const [allRooms, setAllRooms] = useState([]);
   const handleClose = () => {
     setShow(false);
   };
@@ -62,27 +68,29 @@ export default () => {
       swal("name room cannot empty!", "", "error");
     } else {
       const currentRooms = roomsItem();
-      console.log("asdasd");
-      console.log(currentRooms, "paling baru");
-      console.log(
-        roomName,
-        timer,
-        rangedScore,
-        localStorage.getItem("username")
-      );
+      // console.log("asdasd");
+      // console.log(currentRooms, "paling baru");
+      // console.log(
+      //   roomName,
+      //   timer,
+      //   rangedScore,
+      //   localStorage.getItem("username")
+      // );
       const setData = {
         roomName,
         timer,
         rangedScore,
         ownerRoom: localStorage.getItem("username"),
       };
-      console.log(setData, "ini data");
-      roomsItem(currentRooms.concat(setData));
-      console.log(currentRooms, "cek");
+      socket.emit('newRoom', setData.roomName)
 
-      dispatch({ type: "SET_ROOM_GAME", payload: setData });
+      // console.log(setData, "ini data");
+      // roomsItem(currentRooms.concat(setData));
+      // console.log(currentRooms, "cek");
 
-      console.log(setData, "cek mamang");
+      // dispatch({ type: "SET_ROOM_GAME", payload: setData });
+
+      // console.log(setData, "cek mamang");
       swal("success create room", "", "success");
       setShow(false);
       setRoomName("");
@@ -93,6 +101,20 @@ export default () => {
     history.push("/hahah");
   };
 
+  // const doCreateRoom = (e) => {
+  //   e.preventDefault()
+  //   socket.emit('newRoom', room)
+  // }
+
+  useEffect( () => {
+    socket.on("allRooms",(rooms) => {
+      setAllRooms(rooms)
+    })
+    socket.emit("getRooms",() => {
+    })
+  }, [])
+  
+  // console.log(allRooms, 'allRooms')
   return (
     <div>
       <Navbar />
@@ -104,14 +126,14 @@ export default () => {
               Leader Board
             </Button>
           </Link>
-          <a href="/game">
+          {/* <a href="/game">
             <button className="btn btn-info"> Join Game </button>
-          </a>
+          </a> */}
         </div>
         {dataFromApollo && (
           <div style={{ padding: "2%", width: "20%" }} className="border">
             <p>Hello: {dataFromApollo.user.username}</p>
-            <p>Your Score: {localStorage.getItem("score")}</p>
+            <p>Your Score: {dataFromApollo.user.score}</p>
           </div>
         )}
 
@@ -180,22 +202,11 @@ export default () => {
         </Modal>
 
         <h2 style={{ marginTop: "50px" }}>Avalaible Room:</h2>
-        {listRoom.length === 0 && <h2>Tidak ada room yang tersedia</h2>}
-        <div className="container">
-          <div className="row">
-            {listRoom.map((data, idx) => (
-              // <div onClick={(e) => goToRoom(e)}>
-              <Card bg="info" className="col-sm-2">
-                <Card.Header>{data.roomName}</Card.Header>
-                <Card.Body>
-                  <Card.Title>{data.rangedScore} </Card.Title>
-                  <Card.Title>Created By: {data.ownerRoom} </Card.Title>
-                  <Button variant="secondary">Join</Button>
-                </Card.Body>
-              </Card>
-              // </div>
-            ))}
-          </div>
+        {allRooms.length === 0 && <h2>Tidak ada room yang tersedia</h2>}
+        <div className="row">
+          {allRooms.map( (room, idx) => {
+            return <Cards key={idx} roomName={room}/>
+          })}
         </div>
 
         {/* <Cards /> */}

@@ -1,3 +1,4 @@
+const { addUser, removeUser, getUser, getUsersInRoom } = require('./users');
 const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 9001;
@@ -33,6 +34,9 @@ let turn = true;
 let clients = [];
 
 io.on("connection", (socket) => {
+
+  //START : HIKA Timer
+
   socket.on("timerStart", () => {
     socket.broadcast.emit("timerStart");
   });
@@ -47,35 +51,57 @@ io.on("connection", (socket) => {
   socket.on("moveToLeaderboard", () => {
     socket.broadcast.emit("moveToLeaderboard");
   });
+  //END : HIKA Timer
+
+
+  //START:  FATUR Chess
   clients.push(socket);
-  console.log(clients.length, "clients.length");
-  if (clients.length % 2 != 0) {
-    socket.emit("setUp", { board: setUpBoard.reverse(), turn, side: "white" });
-    socket.emit("showButton", true);
-  } else {
-    socket.emit("setUp", {
-      board: setUpBoard.reverse(),
-      turn: false,
-      side: "black",
-    });
-    socket.emit("showButton", false);
-  }
+  socket.on('join', ({ name, room }, callback) => {
+    const { error, user } = addUser({ id: socket.id, name, room });
+    if(error) return callback(error);
+    socket.join(user.room);
+
+    if (getUsersInRoom(user.room).length %2 != 0 ) {
+      io.to(socket.id).emit('setUp', {board: setUpBoard.reverse(), turn, side: 'white'});
+      io.to(socket.id).emit("showButton", true);
+    } else {
+      io.to(socket.id).emit('setUp', {board: setUpBoard.reverse(), turn: false, side: 'black'});
+      io.to(socket.id).emit("showButton", false);
+    }
+  });
+  // if (clients.length % 2 != 0) {
+  //   socket.emit("setUp", { board: setUpBoard.reverse(), turn, side: "white" });
+  //   socket.emit("showButton", true);
+  // } else {
+  //   socket.emit("setUp", {
+  //     board: setUpBoard.reverse(),
+  //     turn: false,
+  //     side: "black",
+  //   });
+  //   socket.emit("showButton", false);
+  // }
+  socket.on('disconnect', () =>{
+    console.log(clients.length, 'clients.length')
+  })
 
   socket.on("finishTurn", (data) => {
+    const user = getUser(socket.id);
     turn = turn;
     board = data.board.reverse();
-    socket.broadcast.emit("endTurn", { board, turn });
+    socket.broadcast.to(user.room).emit("endTurn", { board, turn });
+    // socket.broadcast.emit("endTurn", { board, turn });
   });
 
   socket.on("pawn-evolution", (data) => {
     board = data.board.reverse();
-    socket.broadcast.emit("pawn evolution", {board});
+    socket.broadcast.to(user.room).emit("pawn evolution", {board});
+    // socket.broadcast.emit("pawn evolution", {board});
   })
 });
 
 if (app.get("env") === "development") {
   server.listen(PORT, function () {
-    console.log(`Now running on PORT ${PORT}`);
+    console.log(`Board Socket running on PORT ${PORT}`);
   });
 }
 

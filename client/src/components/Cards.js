@@ -1,34 +1,25 @@
 import React from "react";
 import { Link, useHistory } from "react-router-dom";
 
-const Card = ({ data }) => {
+const Card = ({ roomName }) => {
   const kingW = require("../chess-pack/chess-king-white.png");
   const kingB = require("../chess-pack/chess-king-black.png");
 
-  console.log(data);
   return (
-    <div className="Card">
-      <div className="vs">
-        <img className="cardLogo" src={kingW} />
-        vs
-        <img className="cardLogo" src={kingB} />
+    <div className="col-4">
+      <div className="Card">
+        <div className="vs">
+          <img className="cardLogo" src={kingW} />
+          vs
+          <img className="cardLogo" src={kingB} />
+        </div>
+        <p> {roomName} </p>
+        <a href={`/game?name=${localStorage.getItem('username')}&room=${roomName}`}> 
+          <button className="btn btn-info"> Join Game </button> 
+        </a>
       </div>
     </div>
-    // <Link
-    //   to={{
-    //     pathname: ">>> game room",
-    //     //   data.__typename === "Movies"
-    //     //     ? `/movies/${data._id}`
-    //     //     : `/series/${data._id} `,
-    //   }}
-    // >
-    //   <div className="Card">
-    //     <p>
-    //       {" "}
-    //       <img src={kingW} /> VS <img src={kingB} />{" "}
-    //     </p>
-    //   </div>
-    // </Link>
+    
   );
 };
 

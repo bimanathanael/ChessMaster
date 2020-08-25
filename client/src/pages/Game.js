@@ -1,18 +1,22 @@
-import React, { createRef, useState, useEffect } from "react";
-import Board from "../components/board";
+import React, { createRef, useState, useEffect} from 'react';
+import Board from '../components/Board'
 import io from "socket.io-client";
-import Navbar from "../components/Navbar";
+import Chat from '../components/Chat/Chat'
+import queryString from 'query-string';
+import Navbar from '../components/Navbar'
 
-const socket = io("http://localhost:9002/");
+export const Game = ({location}) =>  {
+  
+  const localVideoref = createRef()
+  const remoteVideoRef = createRef()
+  let textref = createRef()
+  let needAnswer = createRef()
+  const { name, room } = queryString.parse(location.search);
+  const [username, setUsername] = useState("")
 
-export const Game = () => {
-  const localVideoref = createRef();
-  const remoteVideoRef = createRef();
-  let textref = createRef();
-  let needAnswer = createRef();
-  let startGame = createRef();
-  let timer = createRef();
-  let timerOpponent = createRef();
+  const socket = io("http://localhost:9002/",{query: {roomName: room}});
+
+  console.log(socket, 'socket')
 
   const pc_config = {
     iceServers: [
@@ -27,12 +31,21 @@ export const Game = () => {
     ],
   };
 
-  let pc = new RTCPeerConnection(pc_config);
+  useEffect(() => {
+    socket.emit('join', { name, room }, (error) => {
+      if(error) {
+        alert(error);
+      }
+    });
+
+  }, [location.search]);
+
+  let pc = new RTCPeerConnection(pc_config)
 
   pc.onicecandidate = (e) => {
     if (e.candidate) {
       // console.log(JSON.stringify(e.candidate))
-      sendToPeer("candidate", e.candidate);
+      sendToPeer('candidate', e.candidate, room)
     }
   };
 
@@ -60,82 +73,89 @@ export const Game = () => {
       }
     });
 
-    socket.on("connection-success", () => {
-      console.log("masuk");
-      sendToPeer("needAnswer", true);
-      pc.createOffer({ offerToReceiveVideo: 1, offerToReceiveAudio: 1 }).then(
-        (sdp) => {
-          pc.setLocalDescription(sdp);
-          sendToPeer("offerOrAnswer", sdp);
-        },
-        (e) => {}
-      );
-    });
-
-    socket.on("offerOrAnswer", (sdp) => {
-      textref.value = JSON.stringify(sdp);
-      pc.setRemoteDescription(new RTCSessionDescription(sdp));
-    });
-
-    socket.on("candidate", (candidate) => {
-      pc.addIceCandidate(new RTCIceCandidate(candidate));
-    });
+    socket.on(`connection-success`, (option) => {
+      console.log('masukconnection-success')
+      console.log(option, '<<<option')
+      sendToPeer('needAnswer', true )
+      pc.createOffer({offerToReceiveVideo: 1, offerToReceiveAudio:1})
+      .then( sdp => {
+        pc.setLocalDescription(sdp)
+        sendToPeer('offerOrAnswer', sdp, room)
+      }, e => {})
+    })
   }, []);
 
-  const sendToPeer = (messageType, payload) => {
+  // useEffect( () => {
+  //   socket.on(`connection-success`, (option) => {
+  //     console.log('masukconnection-success')
+  //     console.log(option, '<<<option')
+  //     sendToPeer('needAnswer', true )
+  //     pc.createOffer({offerToReceiveVideo: 1, offerToReceiveAudio:1})
+  //     .then( sdp => {
+  //       pc.setLocalDescription(sdp)
+  //       sendToPeer('offerOrAnswer', sdp, room)
+  //     }, e => {})
+  //   })
+  // },[location.name])
+
+  useEffect( ()=>{
+    socket.on('offerOrAnswer', (sdp) => {
+      console.log("masuk offer")
+      textref.value = JSON.stringify(sdp)
+      pc.setRemoteDescription(new RTCSessionDescription(sdp))
+    })
+    
+    socket.on('candidate', (candidate) => {
+      console.log("masuk candidate")
+      pc.addIceCandidate(new RTCIceCandidate(candidate))
+
+    })
+  },[])
+
+  const sendToPeer = (messageType, payload, room) => {
     socket.emit(messageType, {
       socketID: socket.id,
       payload,
-    });
-  };
+      room
+    })
+  }
 
-  const success = (stream) => {
-    window.localStream = stream;
-    localVideoref.current.srcObject = stream;
-    stream.getTracks().forEach((track) => {
+ const success = (stream) => {
+    window.localStream = stream
+    localVideoref.current.srcObject = stream
+    stream.getTracks().forEach(track => {
       pc.addTrack(track, stream);
     });
   };
 
   const failure = (e) => {
-    console.log("getUserMedia Error: ", e);
-  };
+    console.log('getUserMedia Error: ', e)
+  }
 
-  const constraints = { video: true, audio: true };
-  navigator.mediaDevices.getUserMedia(constraints).then(success).catch(failure);
+  const constraints = { video : true, audio:true}
+  navigator.mediaDevices.getUserMedia( constraints)
+  .then( success )
+  .catch( failure )
 
-  const createOffer = () => {
-    const btn = document.getElementById("btn");
-    btn.disabled = true;
-    btn.innerText = "Waiting for Opponent...";
-    if (needAnswer.current == null) {
-    } else {
-      createAnswer();
-      sendToPeer("needAnswer", false);
+  const createOffer = () => {  
+    const btn = document.getElementById('btn');
+    btn.disabled = true; 
+    btn.innerText = 'Waiting for Opponent...'
+    if (needAnswer.current != null){
+      createAnswer()
+      sendToPeer('needAnswer', false, room )
       document.getElementById("btn").style.visibility = "hidden";
       document.getElementById("board").style.visibility = "visible";
     }
   };
 
   const createAnswer = () => {
-    pc.createAnswer({ offerToReceiveVideo: 1, offerToReceiveAudio: 1 }).then(
-      (sdp) => {
-        pc.setLocalDescription(sdp);
-        sendToPeer("offerOrAnswer", sdp);
-      },
-      (e) => {}
-    );
-  };
-
-  const timerHandler = (value) => {
-    console.log(value, "dapet atau engga");
-    timer.current = value;
-    console.log("apakah ini masuk kesini atau tidak");
-  };
-
-  const timerOpponentHandler = (value) => {
-    timerOpponent.current = value;
-  };
+    pc.createAnswer({offerToReceiveVideo: 1, offerToReceiveAudio:1})
+      .then ( sdp => {
+        pc.setLocalDescription(sdp)
+        sendToPeer('offerOrAnswer', sdp, room)
+      }, e => {})
+  }
 
   return (
     <>
@@ -161,6 +181,18 @@ export const Game = () => {
             </div>
 
             <div className="text-center">
+              {/* <button
+                id="btn"
+                onClick={() => createOffer()}
+                className="btn btn-info  mt-3"
+                style={{ width: "100%" }}
+              >
+                {" "}
+                i am ready{" "}
+              </button> */}
+            </div>
+          </div>
+          <div className="text-center">
               <button
                 id="btn"
                 onClick={() => createOffer()}
@@ -170,34 +202,32 @@ export const Game = () => {
                 {" "}
                 i am ready{" "}
               </button>
-            </div>
+            {/* <button id="btn" onClick={() => createOffer()} className="btn btn-info  mt-3" style={{width:'100%'}}> i am ready </button> */}
           </div>
-          <div id="board" style={{ visibility: "hidden" }}>
-            <Board />
-
-            {/* <h1>
-            hello
-          </h1> */}
+        </div>
+        {/* <div id="board" style={{visibility: 'hidden'}}> */}
+        <div id="board">
+          <Board location={location}/>
+        </div>
+        <div className='d-flex flex-column mt-3 ml-3'>
+          <div style={{paddingRight: '19%'}} >
+            <video 
+              ref={remoteVideoRef} 
+              autoPlay
+              style={{
+                float:"right",
+                width: 240, 
+                height: 240, 
+                margin: 5, 
+                backgroundColor :'black'
+              }}
+              controls
+              >
+            </video>
           </div>
-          <div className="flex-column mt-3 ml-3">
-            <div>
-              <video
-                ref={remoteVideoRef}
-                autoPlay
-                style={{
-                  float: "right",
-                  width: 240,
-                  height: 240,
-                  margin: 5,
-                  backgroundColor: "black",
-                }}
-                controls
-              ></video>
-            </div>
-            <div></div>
-            <div className="text-center">
-              {/* <button onClick={() => createAnswer()} className="btn btn-info  mt-3">i am ready</button> */}
-            </div>
+          <div className="text-center pt-4">
+            <Chat location={location}/>
+            {/* <button onClick={() => createAnswer()} className="btn btn-info  mt-3">i am ready</button> */}
           </div>
           <br />
         </div>
@@ -209,6 +239,15 @@ export const Game = () => {
           style={{ display: "none" }}
         ></textarea>
       </div>
+      <br></br>
+      <br/>
+      <input onChange={ (e) => {
+        setUsername(e.target.value)
+        console.log(username)
+        }} value={username} />
+      <textarea id="myTextArea" ref={ref => textref = ref} style={{display: "none"}}></textarea>
     </>
-  );
-};
+  )
+  
+}
+

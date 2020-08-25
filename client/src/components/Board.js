@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { defineLegalMoves, moveValidation } from "../logics/LogicController";
 import { Modal, Button } from "react-bootstrap";
+import queryString from 'query-string';
 import io from "socket.io-client";
 import { useHistory } from "react-router-dom";
 import swal from "sweetalert";
@@ -23,7 +24,7 @@ const socket = io("http://localhost:9001/");
 const happyFace = require("../asset/happyFace.png");
 const sadFace = require("../asset/sadFace.png");
 
-function Board() {
+function Board({location}) {
   const [mutationUpdateScore] = useMutation(UPDATE_SCORE, {
     refetchQueries: [{ query: GET_USERS }],
     awaitRefetchQueries: true,
@@ -32,6 +33,9 @@ function Board() {
   let isEven = true;
 
   // temp = [row, col, val]
+  const [name, setName] = useState('');
+  const [room, setRoom] = useState('');
+
   const [temp, setTemp] = useState([]);
   const [legalMoves, setLegalMoves] = useState([]);
   const [modalWhite, setModalWhite] = useState(false);
@@ -102,6 +106,21 @@ function Board() {
   });
 
   useEffect(() => {
+    const { name, room } = queryString.parse(location.search);
+
+    setRoom(room);
+    setName(name)
+
+    socket.emit('join', { name, room }, (error) => {
+      if(error) {
+        alert(error);
+      }
+    });
+
+    console.log('masuk use eeffct')
+  }, [location.search]);
+
+  useEffect(() => {
     for (const i in board[0]) {
       if (board[0][i] === -6) setModalBlack(true);
       else if (board[0][i] === 6) setModalWhite(true);
@@ -112,7 +131,7 @@ function Board() {
   //timer logic
 
   useEffect(() => {
-    if (time.s === 0) {
+    if (time.s === 0 && time.m === 0) {
       const updatedScore = {
         username: localStorage.getItem("username"),
         score: -5,
@@ -131,19 +150,19 @@ function Board() {
     }
   }, [time]);
 
-  useEffect(() => {
-    if (time === 0) {
-      const updatedScore = {
-        username: opponentUsername,
-        score: -5,
-      };
-      mutationUpdateScore({
-        variables: {
-          updateScore: updatedScore,
-        },
-      });
-    }
-  }, [time]);
+  // useEffect(() => {
+  //   if (time.s === 0 && time.m === 0) {
+  //     const updatedScore = {
+  //       username: opponentUsername,
+  //       score: -5,
+  //     };
+  //     mutationUpdateScore({
+  //       variables: {
+  //         updateScore: updatedScore,
+  //       },
+  //     });
+  //   }
+  // }, [time]);
 
   useEffect(() => {
     socket.on("moveToLeaderboard", () => {
