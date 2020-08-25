@@ -35,70 +35,74 @@ let board = [
 ];
 
 let turn = true;
-let clients = []
+let clients = [];
 
 io.on("connection", (socket) => {
   clients.push(socket);
-  console.log(clients.length, 'clients connected')
+  console.log(clients.length, "clients connected");
   if (clients.length < 2) {
-    socket.emit('setUp', {board: setUpBoard.reverse(), turn, side: 'white'});
+    socket.emit("setUp", { board: setUpBoard.reverse(), turn, side: "white" });
   } else {
-    socket.emit('setUp', {board: setUpBoard.reverse(), turn: false, side: 'black'});
+    socket.emit("setUp", {
+      board: setUpBoard.reverse(),
+      turn: false,
+      side: "black",
+    });
   }
 
-  socket.on('pawn-evolution', (data) => {
+  socket.on("pawn-evolution", (data) => {
     board = data.board.reverse();
     console.log(board);
-    socket.broadcast.emit('pawn evolution', {board});
-  })
-  
-  socket.on('finishTurn', (data) => {
+    socket.broadcast.emit("pawn evolution", { board });
+  });
+
+  socket.on("finishTurn", (data) => {
     turn = turn;
     board = data.board.reverse();
-    socket.broadcast.emit('endTurn', {board, turn});
-  })
+    socket.broadcast.emit("endTurn", { board, turn });
+  });
   // ============== END : CHESS SOCKET IO ================ //
-  
 
   // // // ========== START : WEB RTC SOCKET IO ================ //
-  let connectedPeers = new Map()
+  let connectedPeers = new Map();
 
-  socket.broadcast.emit('connection-success', {success: `/webrtcPeer#${socket.id}`})
-  connectedPeers.set(socket.id, socket)
+  socket.broadcast.emit("connection-success", {
+    success: `/webrtcPeer#${socket.id}`,
+  });
+  connectedPeers.set(socket.id, socket);
 
-  socket.on('disconnect', () =>{
-    console.log('disconnected')
-    connectedPeers.delete(socket.id)
-  })
+  socket.on("disconnect", () => {
+    console.log("disconnected");
+    connectedPeers.delete(socket.id);
+  });
 
-  socket.on('offerOrAnswer', (data) => {
+  socket.on("offerOrAnswer", (data) => {
     //kirim ke peer lain kalau ada
-    for(const [socketID, socket] of connectedPeers.entries()){
+    for (const [socketID, socket] of connectedPeers.entries()) {
       //jangan kirimke sendiri
-      if(socketID !== data.socketID){
-        console.log(socketID, data.payload.type)
-        socket.emit('offerOrAnswer', data.payload)
+      if (socketID !== data.socketID) {
+        console.log(socketID, data.payload.type);
+        socket.emit("offerOrAnswer", data.payload);
       }
     }
-  })
+  });
 
-  socket.on('candidate', (data) => {
+  socket.on("candidate", (data) => {
     //kirim ke peer lain kalau ada
-    for(const [socketID, socket] of connectedPeers.entries()){
+    for (const [socketID, socket] of connectedPeers.entries()) {
       //jangan kirimke sendiri
-      if(socketID !== data.socketID){
-        console.log(socketID, data.payload.type)
-        socket.emit('candidate', data.payload)
+      if (socketID !== data.socketID) {
+        console.log(socketID, data.payload.type);
+        socket.emit("candidate", data.payload);
       }
     }
-  })
+  });
 
   socket.on("needAnswer", function (txt) {
     socket.broadcast.emit("needAnswer", txt);
   });
 
   // // ========== END : WEB RTC SOCKET IO ================ //
-
 });
 
 if (app.get("env") === "development") {

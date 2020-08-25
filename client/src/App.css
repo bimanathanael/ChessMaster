@@ -171,21 +171,27 @@
   width: 105px;
 }
 
-.motherGame{
+.motherGame {
   display: flex;
   justify-content: center;
   padding-top: 5%;
-  background-color: #2C3539;
+  background-color: #2c3539;
   height: 100vh;
 }
 
-.LogoLogin{
-    width: "15%";
-    background-color: white;
-    border-radius: 25px;
-  
+.historyGame {
+  display: flex;
+  justify-content: center;
+  /* padding-top: 5%; */
+  background-color: white;
+  height: 100%;
+}
+.LogoLogin {
+  width: "15%";
+  background-color: white;
+  border-radius: 25px;
 }
 
-.LogoNav{
+.LogoNav {
   width: "5%";
 }
