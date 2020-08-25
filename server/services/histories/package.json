@@ -1,0 +1,23 @@
+{
+  "name": "historys",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --runInBand --detectOpenHandles --forceExit",
+    "start": "nodemon app.js"
+  },
+  "keywords": [],
+  "author": "Bima Hika Fatur Wiby",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "pg": "^8.3.2",
+    "sequelize": "^6.3.4",
+    "supertest": "^4.0.2"
+  },
+  "devDependencies": {
+    "jest": "^26.4.2"
+  }
+}

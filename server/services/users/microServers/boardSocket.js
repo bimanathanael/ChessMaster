@@ -1,4 +1,4 @@
-const { addUser, removeUser, getUser, getUsersInRoom } = require('./users');
+const { addUser, removeUser, getUser, getUsersInRoom } = require("./users");
 const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 9001;
@@ -16,7 +16,7 @@ const setUpBoard = [
   [0, 0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0],
   [-6, -6, -6, -6, -6, -6, -6, -6],
-  [-5, -4, -3, -2, -1, -3, -4, -5],
+  [-5, -4, -3, -1, -2, -3, -4, -5],
 ];
 
 let board = [
@@ -34,11 +34,13 @@ let turn = true;
 let clients = [];
 
 io.on("connection", (socket) => {
-
   //START : HIKA Timer
 
-  socket.on("timerStart", () => {
-    socket.broadcast.emit("timerStart");
+  socket.on("timerStart", (enemy) => {
+    socket.broadcast.emit("timerStart", enemy);
+  });
+  socket.on("getEnemy", (enemy) => {
+    socket.broadcast.emit("getEnemy", enemy);
   });
 
   socket.on("timerStop", () => {
@@ -49,23 +51,33 @@ io.on("connection", (socket) => {
   });
 
   socket.on("moveToLeaderboard", () => {
-    socket.broadcast.emit("moveToLeaderboard");
+    io.emit("moveToLeaderboard");
+  });
+  socket.on("moveToLeaderboard2", () => {
+    socket.broadcast.emit("moveToLeaderboard2");
   });
   //END : HIKA Timer
 
-
   //START:  FATUR Chess
   clients.push(socket);
-  socket.on('join', ({ name, room }, callback) => {
+  socket.on("join", ({ name, room }, callback) => {
     const { error, user } = addUser({ id: socket.id, name, room });
-    if(error) return callback(error);
+    if (error) return callback(error);
     socket.join(user.room);
 
-    if (getUsersInRoom(user.room).length %2 != 0 ) {
-      io.to(socket.id).emit('setUp', {board: setUpBoard.reverse(), turn, side: 'white'});
+    if (getUsersInRoom(user.room).length % 2 != 0) {
+      io.to(socket.id).emit("setUp", {
+        board: setUpBoard.reverse(),
+        turn,
+        side: "white",
+      });
       io.to(socket.id).emit("showButton", true);
     } else {
-      io.to(socket.id).emit('setUp', {board: setUpBoard.reverse(), turn: false, side: 'black'});
+      io.to(socket.id).emit("setUp", {
+        board: setUpBoard.reverse(),
+        turn: false,
+        side: "black",
+      });
       io.to(socket.id).emit("showButton", false);
     }
   });
@@ -80,9 +92,9 @@ io.on("connection", (socket) => {
   //   });
   //   socket.emit("showButton", false);
   // }
-  socket.on('disconnect', () =>{
-    console.log(clients.length, 'clients.length')
-  })
+  socket.on("disconnect", () => {
+    console.log(clients.length, "clients.length");
+  });
 
   socket.on("finishTurn", (data) => {
     const user = getUser(socket.id);
@@ -94,9 +106,9 @@ io.on("connection", (socket) => {
 
   socket.on("pawn-evolution", (data) => {
     board = data.board.reverse();
-    socket.broadcast.to(user.room).emit("pawn evolution", {board});
+    socket.broadcast.to(user.room).emit("pawn evolution", { board });
     // socket.broadcast.emit("pawn evolution", {board});
-  })
+  });
 });
 
 if (app.get("env") === "development") {
