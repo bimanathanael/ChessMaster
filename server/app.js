@@ -13,7 +13,7 @@ app.use(routes);
 
 if (app.get("env") === "development") {
   server.listen(PORT, function () {
-    console.log(`Now running on PORT ${PORT}`);
+    console.log(`Server running on PORT ${PORT}`);
   });
 }
 

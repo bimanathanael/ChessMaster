@@ -1,12 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useHistory, Link } from "react-router-dom";
 import Cards from "../components/Cards";
 import { Button, Modal } from "react-bootstrap";
 import swal from "sweetalert";
+import io from "socket.io-client";
+const ENDPOINT = "http://localhost:9004/";
 
 export default () => {
+  let socket = io(ENDPOINT);
   const history = useHistory();
 
+  const [room, setRoom] = useState('');
+  const [allRooms, setAllRooms] = useState([]);
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
@@ -18,6 +23,20 @@ export default () => {
     history.push("/login");
   };
 
+  const doCreateRoom = (e) => {
+    e.preventDefault()
+    socket.emit('newRoom', room)
+  }
+
+  useEffect( () => {
+    socket.on("allRooms",(rooms) => {
+      setAllRooms(rooms)
+    })
+    socket.emit("getRooms",() => {
+    })
+  }, [])
+  
+  // console.log(allRooms, 'allRooms')
   return (
     <div className="mainMenu">
       <button
@@ -35,12 +54,13 @@ export default () => {
           Leader Board
         </Button>
         {/* <Link to="/game"> Join game </Link> */}
-        <a href="/game"> 
-          <button className="btn btn-info"> Join Game </button> 
-        </a>
       </div>
       <br />
-      <Cards />
+      <div className="row">
+        {allRooms.map( (room, idx) => {
+          return <Cards key={idx} roomName={room}/>
+        })}
+      </div>
 
       <Modal
         show={show}
@@ -52,26 +72,27 @@ export default () => {
           <Modal.Title>Create Room</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <form>
-            <div class="form-group">
-              <label for="exampleFormControlInput1">Room Name</label>
+          <form onSubmit={(e)=> doCreateRoom(e)}>
+            <div className="form-group">
+              <label htmlFor="exampleFormControlInput1">Room Name</label>
               <input
                 type="text"
-                class="form-control"
+                className="form-control"
+                id="exampleFormControlInput1"
+                onChange={(event) => setRoom(event.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="exampleFormControlInput1">apalah</label>
+              <input
+                type="text"
+                className="form-control"
                 id="exampleFormControlInput1"
               />
             </div>
-            <div class="form-group">
-              <label for="exampleFormControlInput1">apalah</label>
-              <input
-                type="text"
-                class="form-control"
-                id="exampleFormControlInput1"
-              />
-            </div>
-            <div class="form-group">
-              <label for="exampleFormControlSelect1">Rating Select</label>
-              <select class="form-control" id="exampleFormControlSelect1">
+            <div className="form-group">
+              <label htmlFor="exampleFormControlSelect1">Rating Select</label>
+              <select className="form-control" id="exampleFormControlSelect1">
                 <option>1</option>
                 <option>2</option>
                 <option>3</option>
@@ -79,13 +100,13 @@ export default () => {
                 <option>5</option>
               </select>
             </div>
+            <Button type="submit" variant="primary"  onClick={handleClose}>Understood</Button>
           </form>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary">Understood</Button>
         </Modal.Footer>
       </Modal>
     </div>
