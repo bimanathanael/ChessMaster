@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { defineLegalMoves, moveValidation } from "../logics/LogicController";
 import { Modal } from "react-bootstrap";
+import queryString from 'query-string';
+import Timer from './Timer'
 import io from "socket.io-client";
 
 const socket = io("http://localhost:9001/");
 
-function Board() {
+function Board({location}) {
   let isEven = true;
 
   // temp = [row, col, val]
+  const [name, setName] = useState('');
+  const [room, setRoom] = useState('');
+
   const [temp, setTemp] = useState([]);
   const [legalMoves, setLegalMoves] = useState([]);
   const [modalWhite, setModalWhite] = useState(false);
@@ -43,7 +48,9 @@ function Board() {
 
   const [board, setBoard] = useState([]);
 
+  
   socket.on("setUp", data => {
+    console.log("setupini", data.side)
     setBoard(data.board);
     setTurn(data.turn);
     setSide(data.side);
@@ -53,6 +60,21 @@ function Board() {
     setBoard(data.board);
     setTurn(data.turn)
   })
+
+  useEffect(() => {
+    const { name, room } = queryString.parse(location.search);
+
+    setRoom(room);
+    setName(name)
+
+    socket.emit('join', { name, room }, (error) => {
+      if(error) {
+        alert(error);
+      }
+    });
+
+    console.log('masuk use eeffct')
+  }, [location.search]);
 
   useEffect(() => {
     for (const i in board[0]) {
@@ -195,6 +217,7 @@ function Board() {
           })}
         </div>
       </div>
+      {/* <Timer/> */}
 
       <Modal
         show={modalWhite}
