@@ -40,7 +40,8 @@ export default () => {
       swal("success login", "", "success");
     }
   }, [data]);
-  const logo = require("../chess-pack/chess-king-white.png");
+
+  const logo = require("../asset/logo.png");
 
   const usernameLoginHandler = (e) => {
     setUsername(e.target.value);
@@ -64,14 +65,8 @@ export default () => {
       <div style={{ backgroundColor: "#263554" }}>
         <div className="text-center" style={{ color: "white" }}>
           {error && console.log(error, "ini errornya")}
-          <img
-            className="LogoLogin"
-            src={logo}
-            style={{
-              width: "15%",
-            }}
-          />
-          <h1 className="Login-Title">Welcome TO ChessMaster</h1>
+          <img className="LogoLogin" src={logo} />
+          <h1 className="Login-Title">LOGIN</h1>
         </div>
         <br />
         <div style={{ margin: "0 31%", color: "white", paddingBottom: "2.4%" }}>
