@@ -22,7 +22,10 @@ export default () => {
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
-          <Nav.Link onClick={(e) => goToHome(e)}>Home</Nav.Link>
+          <a href="/">
+            Home
+            {/* <Nav.Link>Home</Nav.Link> */}
+          </a>
         </Nav>
         <Form inline>
           <Button variant="danger" onClick={(e) => logoutHandler(e)}>

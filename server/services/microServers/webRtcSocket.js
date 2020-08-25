@@ -3,39 +3,57 @@ const app = express();
 const PORT = process.env.PORT || 9002;
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
+const { addUser, removeUser, getUser, getUsersInRoom } = require('./users');
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 
 let connectedPeers = new Map()
+let peersRooms = {}
 
 io.on("connection", (socket) => {
-
-  socket.broadcast.emit('connection-success', {success: `/webrtcPeer#${socket.id}`})
+  let roomName = socket.handshake.query.roomName.trim().toLowerCase()+'webrtc'
+  socket.to(roomName).emit('connection-success', {success: `/webrtcPeer#${socket.id}`})
   connectedPeers.set(socket.id, socket)
+  
+  socket.on('join', ({ name, room }, callback) => {
+    const { error, user } = addUser({ id: socket.id, name, room: room+'WEBRTC' });
+    if(error) return callback(error);
+    socket.join(user.room);
+  });
 
   socket.on('disconnect', () =>{
-    // console.log('disconnected')
     connectedPeers.delete(socket.id)
+    const user = removeUser(socket.id);
+    delete peersRooms[socket.id]
   })
 
   socket.on('offerOrAnswer', (data) => {
-    //kirim ke peer lain kalau ada
+    let roomName = data.room.trim().toLowerCase()+'webrtc'
+
     for(const [socketID, socket] of connectedPeers.entries()){
       //jangan kirimke sendiri
+      let userRoom = socket.handshake.query.roomName.trim().toLowerCase()+'webrtc'
+
       if(socketID !== data.socketID){
-        socket.emit('offerOrAnswer', data.payload)
+        if(userRoom == roomName){
+          io.to(socketID).emit('offerOrAnswer', data.payload)
+        }
       }
     }
   })
 
   socket.on('candidate', (data) => {
-    //kirim ke peer lain kalau ada
+    let roomName = data.room.trim().toLowerCase()+'webrtc'
+
     for(const [socketID, socket] of connectedPeers.entries()){
       //jangan kirimke sendiri
+      let userRoom = socket.handshake.query.roomName.trim().toLowerCase()+'webrtc'
       if(socketID !== data.socketID){
-        socket.emit('candidate', data.payload)
+        if(userRoom == roomName){
+          io.to(socketID).emit('candidate', data.payload)
+        }
       }
     }
   })
@@ -48,7 +66,7 @@ io.on("connection", (socket) => {
 
 if (app.get("env") === "development") {
   server.listen(PORT, function () {
-    console.log(`Now running on PORT ${PORT}`);
+    console.log(`WebRTC Socket running on PORT ${PORT}`);
   });
 }
 

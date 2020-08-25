@@ -6,6 +6,7 @@ import { Spinner } from "react-bootstrap";
 import { getLeaderboard } from "../store/actions/userAction";
 import { useDispatch, useSelector } from "react-redux";
 import { useQuery, gql } from "@apollo/client";
+import Navbar from '../components/Navbar'
 
 export const GET_USERS = gql`
   query {
@@ -64,12 +65,7 @@ export default () => {
   }
   return (
     <div className="mainMenu">
-      <button
-        className="btn btn-danger buttonLogout"
-        onClick={() => backToMenu()}
-      >
-        Main Menu
-      </button>
+      <Navbar/>
 
       <img
         src={aftermath}

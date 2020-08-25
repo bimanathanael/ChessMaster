@@ -55,6 +55,7 @@ export const postLogin = (data, history) => {
         if (result.access_token) {
           swal("success login", "", "success");
           localStorage.setItem("access_token", result.access_token);
+          localStorage.setItem("username", data.username);
           history.push("/");
         } else if (result.message === "Wrong username/password") {
           swal(result.message, "", "error");
