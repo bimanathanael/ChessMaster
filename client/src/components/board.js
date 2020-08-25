@@ -1,19 +1,41 @@
 import React, { useState, useEffect } from "react";
 import { defineLegalMoves, moveValidation } from "../logics/LogicController";
-import { Modal } from "react-bootstrap";
+import { Modal, Button } from "react-bootstrap";
 import io from "socket.io-client";
 import { useHistory } from "react-router-dom";
 import swal from "sweetalert";
+import { useDispatch } from "react-redux";
+// import { updateScore } from "../store/actiupdateScoreons/userAction";
+import { useMutation, gql } from "@apollo/client";
+import { GET_USERS } from "../pages/LeaderBoard";
+import { GET_USERBYID } from "../pages/MainMenu";
+
+const UPDATE_SCORE = gql`
+  mutation UpdateScoreUser($updateScore: inputUserUpdate) {
+    updateUser(user: $updateScore) {
+      username
+      score
+    }
+  }
+`;
 
 const socket = io("http://localhost:9001/");
+const happyFace = require("../asset/happyFace.png");
+const sadFace = require("../asset/sadFace.png");
 
 function Board() {
+  const [mutationUpdateScore] = useMutation(UPDATE_SCORE, {
+    refetchQueries: [{ query: GET_USERS }],
+    awaitRefetchQueries: true,
+  });
+  const dispatch = useDispatch();
   let isEven = true;
 
   // temp = [row, col, val]
   const [temp, setTemp] = useState([]);
   const [legalMoves, setLegalMoves] = useState([]);
   const [modalWhite, setModalWhite] = useState(false);
+  const [opponentUsername, setOpponentUsername] = useState("");
   const [modalBlack, setModalBlack] = useState(false);
   const [turn, setTurn] = useState(null);
   const [side, setSide] = useState("");
@@ -21,8 +43,8 @@ function Board() {
   //timer state
   const [displayBoard, setDisplayBoard] = useState(false);
   const [displayButton, setDisplayButton] = useState(false);
-  const [time, setTime] = useState({ m: 0, s: 20 });
-  const [timeOpponent, setTimeOpponent] = useState({ m: 0, s: 20 });
+  const [time, setTime] = useState({ m: 0, s: 3 });
+  const [timeOpponent, setTimeOpponent] = useState({ m: 0, s: 3 });
   const [status, setStatus] = useState(0);
   const [interv, setInterv] = useState();
   const [statusOpponent, setStatusOpponent] = useState(0);
@@ -77,7 +99,7 @@ function Board() {
 
   socket.on("pawn evolution", (data) => {
     setBoard(data.board);
-  })
+  });
 
   useEffect(() => {
     for (const i in board[0]) {
@@ -91,15 +113,51 @@ function Board() {
 
   useEffect(() => {
     if (time.s === 0) {
-      swal("You Lose SADSADSAD", "", "error");
+      const updatedScore = {
+        username: localStorage.getItem("username"),
+        score: -5,
+      };
+      mutationUpdateScore({
+        variables: {
+          updateScore: updatedScore,
+        },
+      });
+      // console.log("sadasd");
+      swal({
+        title: "You Lose",
+      });
       history.push("/leaderboard");
-      socket.emit("moveToLeaderboard");
+      socket.emit("moveToLeaderboard", updatedScore);
+    }
+  }, [time]);
+
+  useEffect(() => {
+    if (time === 0) {
+      const updatedScore = {
+        username: opponentUsername,
+        score: -5,
+      };
+      mutationUpdateScore({
+        variables: {
+          updateScore: updatedScore,
+        },
+      });
     }
   }, [time]);
 
   useEffect(() => {
     socket.on("moveToLeaderboard", () => {
-      swal("You WIN YEAY", "", "success");
+      mutationUpdateScore({
+        variables: {
+          updateScore: {
+            username: localStorage.getItem("username"),
+            score: 50,
+          },
+        },
+      });
+      swal({
+        title: "You Win",
+      });
       history.push("/leaderboard");
     });
   }, []);
@@ -122,6 +180,7 @@ function Board() {
 
   useEffect(() => {
     socket.on("timerStart", () => {
+      setOpponentUsername(localStorage.getItem("username"));
       setDisplayBoard(true);
       runOpponent();
       setStatusOpponent(1);
@@ -287,122 +346,129 @@ function Board() {
 
   return (
     <>
-      <div>
-        <h1>
-          {time.m < 10 ? `0${time.m}` : time.m}:
-          {time.s < 10 ? `0${time.s}` : time.s}
-        </h1>
-        {displayButton && !displayBoard && (
-          <button onClick={() => startTimerHandler()} className="btn btn-info">
-            Start Game
-          </button>
-        )}
+      {displayButton && !displayBoard && (
+        <button onClick={() => startTimerHandler()} className="btn btn-info">
+          Start Game
+        </button>
+      )}
 
-        <h1>
-          {timeOpponent.m < 10 ? `0${timeOpponent.m}` : timeOpponent.m}:
-          {timeOpponent.s < 10 ? `0${timeOpponent.s}` : timeOpponent.s}
-        </h1>
-      </div>
-      <div className="motherBoard">
-        <h3>Turn: {turn ? "White" : "Black"}</h3>
-        {displayBoard && (
-          <div className={styleBoard()}>
-            <div className="row justify-content-center">
-              {board.map((boardRow, row) => {
-                return boardRow.map((value, col) => {
-                  return (
-                    <div
-                      className={defineBox(row, col)}
-                      key={col}
-                      onClick={() => handleClick(row, col, value)}
-                    >
-                      {chesspieces(value)}
-                      {isLegalMoves(row, col)}
-                    </div>
-                  );
-                });
-              })}
-            </div>
+      {displayBoard && (
+        <div>
+          <div className="d-flex justify-content-between">
+            <h1>
+              {time.m < 10 ? `0${time.m}` : time.m}:
+              {time.s < 10 ? `0${time.s}` : time.s}
+            </h1>
+            <Button variant="danger">Surrender</Button>
+            <h1>
+              {timeOpponent.m < 10 ? `0${timeOpponent.m}` : timeOpponent.m}:
+              {timeOpponent.s < 10 ? `0${timeOpponent.s}` : timeOpponent.s}
+            </h1>
           </div>
-        )}
+          <div className="motherBoard">
+            {/* <h3>Turn: {turn ? "White" : "Black"}</h3> */}
+            {displayBoard && (
+              <div className={styleBoard()}>
+                <div className="row justify-content-center">
+                  {board.map((boardRow, row) => {
+                    return boardRow.map((value, col) => {
+                      return (
+                        <div
+                          className={defineBox(row, col)}
+                          key={col}
+                          onClick={() => handleClick(row, col, value)}
+                        >
+                          {chesspieces(value)}
+                          {isLegalMoves(row, col)}
+                        </div>
+                      );
+                    });
+                  })}
+                </div>
+              </div>
+            )}
 
-        <Modal
-          show={modalWhite}
-          size="lg"
-          backdrop="static"
-          keyboard={false}
-        >
-          <Modal.Header>
-            <Modal.Title>Choose One</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div className="modal-chess">
-              <img
-                className="pieces"
-                src={queenWhite}
-                alt="queen"
-                onClick={() => pieceChange(2)}
-              />
-              <img
-                className="pieces"
-                src={bishopWhite}
-                alt="bishop"
-                onClick={() => pieceChange(3)}
-              />
-              <img
-                className="pieces"
-                src={knightWhite}
-                alt="knight"
-                onClick={() => pieceChange(4)}
-              />
-              <img
-                className="pieces"
-                src={rookWhite}
-                alt="rook"
-                onClick={() => pieceChange(5)}
-              />
-            </div>
-          </Modal.Body>
-        </Modal>
-        <Modal
-          show={modalBlack}
-          size="lg"
-          backdrop="static"
-          keyboard={false}
-        >
-          <Modal.Header>
-            <Modal.Title>Choose One</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div className="modal-chess">
-              <img
-                className="pieces"
-                src={queenBlack}
-                alt="queen"
-                onClick={() => pieceChange(-2)}
-              />
-              <img
-                className="pieces"
-                src={bishopBlack}
-                alt="bishop"
-                onClick={() => pieceChange(-3)}
-              />
-              <img
-                className="pieces"
-                src={knightBlack}
-                alt="knight"
-                onClick={() => pieceChange(-4)}
-              />
-              <img
-                className="pieces"
-                src={rookBlack}
-                alt="rook"
-                onClick={() => pieceChange(-5)}
-              />
-            </div>
-          </Modal.Body>
-        </Modal>
-      </div>
+            <Modal
+              show={modalWhite}
+              size="lg"
+              onHide={() => setModalWhite(false)}
+              backdrop="static"
+              keyboard={false}
+            >
+              <Modal.Header>
+                <Modal.Title>Choose One</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <div className="modal-chess">
+                  <img
+                    className="pieces"
+                    src={queenWhite}
+                    alt="queen"
+                    onClick={() => pieceChange(2)}
+                  />
+                  <img
+                    className="pieces"
+                    src={bishopWhite}
+                    alt="bishop"
+                    onClick={() => pieceChange(3)}
+                  />
+                  <img
+                    className="pieces"
+                    src={knightWhite}
+                    alt="knight"
+                    onClick={() => pieceChange(4)}
+                  />
+                  <img
+                    className="pieces"
+                    src={rookWhite}
+                    alt="rook"
+                    onClick={() => pieceChange(5)}
+                  />
+                </div>
+              </Modal.Body>
+            </Modal>
+            <Modal
+              show={modalBlack}
+              size="lg"
+              onHide={() => setModalBlack(false)}
+              backdrop="static"
+              keyboard={false}
+            >
+              <Modal.Header>
+                <Modal.Title>Choose One</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <div className="modal-chess">
+                  <img
+                    className="pieces"
+                    src={queenBlack}
+                    alt="queen"
+                    onClick={() => pieceChange(-2)}
+                  />
+                  <img
+                    className="pieces"
+                    src={bishopBlack}
+                    alt="bishop"
+                    onClick={() => pieceChange(-3)}
+                  />
+                  <img
+                    className="pieces"
+                    src={knightBlack}
+                    alt="knight"
+                    onClick={() => pieceChange(-4)}
+                  />
+                  <img
+                    className="pieces"
+                    src={rookBlack}
+                    alt="rook"
+                    onClick={() => pieceChange(-5)}
+                  />
+                </div>
+              </Modal.Body>
+            </Modal>
+          </div>
+        </div>
+      )}
     </>
   );
 }

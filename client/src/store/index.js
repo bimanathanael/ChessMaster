@@ -5,6 +5,7 @@ import thunk from "redux-thunk";
 const initialState = {
   userLogin: [],
   listRoom: [],
+  dataLeaderboard: [],
 };
 
 const userReducer = (state = initialState, action) => {
@@ -19,6 +20,20 @@ const userReducer = (state = initialState, action) => {
       return {
         ...state,
         listRoom: state.listRoom.concat(action.payload),
+      };
+
+    case "DATA_LEADERBOARD":
+      return {
+        ...state,
+        dataLeaderboard: action.payload,
+      };
+
+    case "UPDATE_LEADERBOARD":
+      return {
+        ...state,
+        dataLeaderboard: state.dataLeaderboard
+          .filter((data) => data.username !== action.payload.username)
+          .concat(action.payload),
       };
 
     default:

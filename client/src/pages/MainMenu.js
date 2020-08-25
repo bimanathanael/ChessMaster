@@ -4,10 +4,27 @@ import Cards from "../components/Cards";
 import { Button, Modal, Form, Card } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import swal from "sweetalert";
+import { gql, useQuery } from "@apollo/client";
+import { GET_ROOMS, roomsItem } from "../config/client";
 import Navbar from "../components/Navbar";
+
+export const GET_USERBYID = gql`
+  query GetById($dataUser: String) {
+    user(username: $dataUser) {
+      _id
+      username
+      score
+    }
+  }
+`;
 export default () => {
+  const { data: dataRooms } = useQuery(GET_ROOMS);
+  const { error, loading, data: dataFromApollo } = useQuery(GET_USERBYID, {
+    variables: { dataUser: localStorage.getItem("username") },
+  });
   const [show, setShow] = useState(false);
   const [roomName, setRoomName] = useState("");
+  const [timer, setTimer] = useState(0);
   const [rangedScore, setRangedScore] = useState("");
 
   const history = useHistory();
@@ -21,18 +38,16 @@ export default () => {
     setShow(true);
   };
 
-  const logoutHandler = () => {
-    localStorage.clear();
-    swal("you are successfully logout", "", "success");
-    history.push("/login");
-  };
-
   const formRoomNameHandler = (e) => {
     setRoomName(e.target.value);
   };
 
   const formRangedScoreHandler = (e) => {
     setRangedScore(e.target.value);
+  };
+
+  const formTimerHandler = (e) => {
+    setTimer(e.target.value);
   };
 
   const submitFormRoomHandler = (e) => {
@@ -46,15 +61,27 @@ export default () => {
     } else if (!roomName) {
       swal("name room cannot empty!", "", "error");
     } else {
+      const currentRooms = roomsItem();
+      console.log("asdasd");
+      console.log(currentRooms, "paling baru");
+      console.log(
+        roomName,
+        timer,
+        rangedScore,
+        localStorage.getItem("username")
+      );
       const setData = {
         roomName,
+        timer,
         rangedScore,
         ownerRoom: localStorage.getItem("username"),
       };
-      dispatch({
-        type: "SET_ROOM_GAME",
-        payload: setData,
-      });
+      console.log(setData, "ini data");
+      roomsItem(currentRooms.concat(setData));
+      console.log(currentRooms, "cek");
+
+      dispatch({ type: "SET_ROOM_GAME", payload: setData });
+
       console.log(setData, "cek mamang");
       swal("success create room", "", "success");
       setShow(false);
@@ -70,12 +97,6 @@ export default () => {
     <div>
       <Navbar />
       <div className="mainMenu">
-        <button
-          className="btn btn-danger buttonLogout"
-          onClick={(e) => logoutHandler(e)}
-        >
-          Logout
-        </button>
         <h1>Main Menu</h1>
         <div className="buttonGroup">
           <Link to="/leaderboard">
@@ -87,10 +108,13 @@ export default () => {
             <button className="btn btn-info"> Join Game </button>
           </a>
         </div>
-        <div style={{ padding: "2%", width: "20%" }} className="border">
-          <p>Hello: {localStorage.getItem("username")}</p>
-          <p>Your Score: {localStorage.getItem("score")}</p>
-        </div>
+        {dataFromApollo && (
+          <div style={{ padding: "2%", width: "20%" }} className="border">
+            <p>Hello: {dataFromApollo.user.username}</p>
+            <p>Your Score: {localStorage.getItem("score")}</p>
+          </div>
+        )}
+
         <br />
         <Button variant="primary" onClick={handleShow}>
           Create Room
@@ -110,6 +134,23 @@ export default () => {
                   placeholder="Room Name.."
                   value={roomName}
                 />
+              </Form.Group>
+              <Form.Group controlId="exampleForm.ControlSelect1">
+                <Form.Label>Time</Form.Label>
+                <Form.Control as="select" onChange={(e) => formTimerHandler(e)}>
+                  <option value="" selected disabled hidden>
+                    choose here ....
+                  </option>
+                  <option value="60">1 Minutes</option>
+                  <option value="120">2 Minutes</option>
+                  <option value="180">3 Minutes</option>
+                  <option value="240">4 Minutes</option>
+                  <option value="300">5 Minutes</option>
+                  <option value="360">6 Minutes</option>
+                  <option value="420">7 Minutes</option>
+                  <option value="480">8 Minutes</option>
+                  <option value="540">9 Minutes</option>
+                </Form.Control>
               </Form.Group>
               <Form.Group controlId="exampleForm.ControlSelect1">
                 <Form.Label>Ranged Score</Form.Label>

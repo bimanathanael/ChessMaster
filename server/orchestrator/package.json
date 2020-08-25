@@ -1,0 +1,18 @@
+{
+  "name": "orchestrator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Bima Hika Fatur Wiby",
+  "license": "ISC",
+  "dependencies": {
+    "apollo-server": "^2.16.1",
+    "axios": "^0.20.0",
+    "graphql": "^15.3.0",
+    "ioredis": "^4.17.3"
+  }
+}

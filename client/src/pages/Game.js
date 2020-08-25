@@ -1,6 +1,7 @@
 import React, { createRef, useState, useEffect } from "react";
 import Board from "../components/board";
 import io from "socket.io-client";
+import Navbar from "../components/Navbar";
 
 const socket = io("http://localhost:9002/");
 
@@ -137,74 +138,77 @@ export const Game = () => {
   };
 
   return (
-    <div className="motherLogin">
-      {console.log("masuk return")}
-      <div className="row">
-        <br />
-        <div className="flex-column mt-3  mr-3">
-          <div>
-            <video
-              ref={localVideoref}
-              autoPlay
-              style={{
-                float: "left",
-                width: 240,
-                height: 240,
-                margin: 5,
-                backgroundColor: "black",
-              }}
-              controls
-            ></video>
-          </div>
+    <>
+      <Navbar />
+      <div className="motherGame">
+        {console.log("masuk return")}
+        <div className="row">
+          <br />
+          <div className="flex-column mt-3  mr-3">
+            <div>
+              <video
+                ref={localVideoref}
+                autoPlay
+                style={{
+                  float: "left",
+                  width: 240,
+                  height: 240,
+                  margin: 5,
+                  backgroundColor: "black",
+                }}
+                controls
+              ></video>
+            </div>
 
-          <div className="text-center">
-            <button
-              id="btn"
-              onClick={() => createOffer()}
-              className="btn btn-info  mt-3"
-              style={{ width: "100%" }}
-            >
-              {" "}
-              i am ready{" "}
-            </button>
+            <div className="text-center">
+              <button
+                id="btn"
+                onClick={() => createOffer()}
+                className="btn btn-info  mt-3"
+                style={{ width: "100%" }}
+              >
+                {" "}
+                i am ready{" "}
+              </button>
+            </div>
           </div>
-        </div>
-        <div id="board" style={{ visibility: "hidden" }}>
-          <Board />
+          <div id="board" style={{ visibility: "hidden" }}>
+            <Board />
 
-          {/* <h1>
+            {/* <h1>
             hello
           </h1> */}
-        </div>
-        <div className="flex-column mt-3 ml-3">
-          <div>
-            <video
-              ref={remoteVideoRef}
-              autoPlay
-              style={{
-                float: "right",
-                width: 240,
-                height: 240,
-                margin: 5,
-                backgroundColor: "black",
-              }}
-              controls
-            ></video>
           </div>
-          <div></div>
-          <div className="text-center">
-            {/* <button onClick={() => createAnswer()} className="btn btn-info  mt-3">i am ready</button> */}
+          <div className="flex-column mt-3 ml-3">
+            <div>
+              <video
+                ref={remoteVideoRef}
+                autoPlay
+                style={{
+                  float: "right",
+                  width: 240,
+                  height: 240,
+                  margin: 5,
+                  backgroundColor: "black",
+                }}
+                controls
+              ></video>
+            </div>
+            <div></div>
+            <div className="text-center">
+              {/* <button onClick={() => createAnswer()} className="btn btn-info  mt-3">i am ready</button> */}
+            </div>
           </div>
+          <br />
         </div>
+        <br></br>
         <br />
+        <textarea
+          id="myTextArea"
+          ref={(ref) => (textref = ref)}
+          style={{ display: "none" }}
+        ></textarea>
       </div>
-      <br></br>
-      <br />
-      <textarea
-        id="myTextArea"
-        ref={(ref) => (textref = ref)}
-        style={{ display: "none" }}
-      ></textarea>
-    </div>
+    </>
   );
 };

@@ -5,7 +5,7 @@
 }
 
 .board-grab {
-  margin-top: 150px;
+  /* margin-top: 150px; */
   width: 502px;
   border: #000 solid 2px;
   display: flex;
@@ -14,7 +14,7 @@
 }
 
 .board-grabbing {
-  margin-top: 150px;
+  /* margin-top: 150px; */
   width: 502px;
   border: #000 solid 2px;
   display: flex;
@@ -159,4 +159,12 @@
 .trophy {
   height: 105px;
   width: 105px;
+}
+
+.motherGame{
+  display: flex;
+  justify-content: center;
+  padding-top: 5%;
+  background-color: #2C3539;
+  height: 100vh;
 }

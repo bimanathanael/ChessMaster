@@ -13,6 +13,20 @@ class UserController {
     }
   }
 
+  static async getByUsername(req, res) {
+    try {
+      const params = req.params.username;
+      const checkUser = await UserModel.getByUserName(params);
+      if (!checkUser) {
+        return res.status(400).json({ message: "user not found" });
+      } else {
+        return res.status(200).json(checkUser);
+      }
+    } catch (err) {
+      return res.status(200).json({ message: "internal error server" });
+    }
+  }
+
   static async updateScoreUser(req, res) {
     try {
       const username = req.body.username;
@@ -79,7 +93,11 @@ class UserController {
 
       if (searchUser.length === 0) {
         const User = await UserModel.addOne(newUser);
-        return res.status(201).json({ message: "success register" });
+        const showResult = {
+          username: req.body.username,
+          score: 0,
+        };
+        return res.status(201).json(showResult);
       } else {
         return res
           .status(400)
