@@ -1,13 +1,35 @@
 import React, { useState, useEffect } from "react";
 import { defineLegalMoves, moveValidation } from "../logics/LogicController";
-import { Modal } from "react-bootstrap";
+import { Modal, Button } from "react-bootstrap";
 import queryString from 'query-string';
-import Timer from './Timer'
 import io from "socket.io-client";
+import { useHistory } from "react-router-dom";
+import swal from "sweetalert";
+import { useDispatch } from "react-redux";
+// import { updateScore } from "../store/actiupdateScoreons/userAction";
+import { useMutation, gql } from "@apollo/client";
+import { GET_USERS } from "../pages/LeaderBoard";
+import { GET_USERBYID } from "../pages/MainMenu";
+
+const UPDATE_SCORE = gql`
+  mutation UpdateScoreUser($updateScore: inputUserUpdate) {
+    updateUser(user: $updateScore) {
+      username
+      score
+    }
+  }
+`;
 
 const socket = io("http://localhost:9001/");
+const happyFace = require("../asset/happyFace.png");
+const sadFace = require("../asset/sadFace.png");
 
 function Board({location}) {
+  const [mutationUpdateScore] = useMutation(UPDATE_SCORE, {
+    refetchQueries: [{ query: GET_USERS }],
+    awaitRefetchQueries: true,
+  });
+  const dispatch = useDispatch();
   let isEven = true;
 
   // temp = [row, col, val]
@@ -17,9 +39,25 @@ function Board({location}) {
   const [temp, setTemp] = useState([]);
   const [legalMoves, setLegalMoves] = useState([]);
   const [modalWhite, setModalWhite] = useState(false);
+  const [opponentUsername, setOpponentUsername] = useState("");
   const [modalBlack, setModalBlack] = useState(false);
   const [turn, setTurn] = useState(null);
-  const [side, setSide] = useState('');
+  const [side, setSide] = useState("");
+
+  //timer state
+  const [displayBoard, setDisplayBoard] = useState(false);
+  const [displayButton, setDisplayButton] = useState(false);
+  const [time, setTime] = useState({ m: 0, s: 3 });
+  const [timeOpponent, setTimeOpponent] = useState({ m: 0, s: 3 });
+  const [status, setStatus] = useState(0);
+  const [interv, setInterv] = useState();
+  const [statusOpponent, setStatusOpponent] = useState(0);
+  const [intervOpponent, setIntervOpponent] = useState();
+  var updatedS = time.s;
+  var updatedM = time.m;
+  var updatedSOpponent = timeOpponent.s;
+  var updatedMOpponent = timeOpponent.m;
+  const history = useHistory();
 
   const rookBlack = require("../chess-pack/chess-rook-black.png");
   const rookWhite = require("../chess-pack/chess-rook-white.png");
@@ -48,18 +86,24 @@ function Board({location}) {
 
   const [board, setBoard] = useState([]);
 
-  
-  socket.on("setUp", data => {
-    console.log("setupini", data.side)
+  socket.on("setUp", (data) => {
     setBoard(data.board);
     setTurn(data.turn);
     setSide(data.side);
-  })
+  });
 
   socket.on("endTurn", (data) => {
     setBoard(data.board);
-    setTurn(data.turn)
-  })
+    setTurn(data.turn);
+  });
+
+  socket.on("showButton", (status) => {
+    setDisplayButton(status);
+  });
+
+  socket.on("pawn evolution", (data) => {
+    setBoard(data.board);
+  });
 
   useEffect(() => {
     const { name, room } = queryString.parse(location.search);
@@ -83,6 +127,121 @@ function Board({location}) {
     }
     // eslint-disable-next-line
   }, [board[0]]);
+
+  //timer logic
+
+  useEffect(() => {
+    if (time.s === 0 && time.m === 0) {
+      const updatedScore = {
+        username: localStorage.getItem("username"),
+        score: -5,
+      };
+      mutationUpdateScore({
+        variables: {
+          updateScore: updatedScore,
+        },
+      });
+      // console.log("sadasd");
+      swal({
+        title: "You Lose",
+      });
+      history.push("/leaderboard");
+      socket.emit("moveToLeaderboard", updatedScore);
+    }
+  }, [time]);
+
+  // useEffect(() => {
+  //   if (time.s === 0 && time.m === 0) {
+  //     const updatedScore = {
+  //       username: opponentUsername,
+  //       score: -5,
+  //     };
+  //     mutationUpdateScore({
+  //       variables: {
+  //         updateScore: updatedScore,
+  //       },
+  //     });
+  //   }
+  // }, [time]);
+
+  useEffect(() => {
+    socket.on("moveToLeaderboard", () => {
+      mutationUpdateScore({
+        variables: {
+          updateScore: {
+            username: localStorage.getItem("username"),
+            score: 50,
+          },
+        },
+      });
+      swal({
+        title: "You Win",
+      });
+      history.push("/leaderboard");
+    });
+  }, []);
+  useEffect(() => {
+    socket.on("timerStop", () => {
+      console.log("timerStop");
+      clearInterval(intervOpponent);
+      // setStatusOpponent(1);
+    });
+  }, [intervOpponent]);
+
+  useEffect(() => {
+    socket.on("timerStop2", () => {
+      console.log("timerStop2");
+      run();
+      setStatus(1);
+      setInterv(setInterval(run, 1000));
+    });
+  }, []);
+
+  useEffect(() => {
+    socket.on("timerStart", () => {
+      setOpponentUsername(localStorage.getItem("username"));
+      setDisplayBoard(true);
+      runOpponent();
+      setStatusOpponent(1);
+      setIntervOpponent(setInterval(runOpponent, 1000));
+    });
+  }, []);
+
+  const startTimerHandler = () => {
+    setDisplayBoard(true);
+    run();
+    setInterv(1);
+    setInterv(setInterval(run, 1000));
+    socket.emit("timerStart");
+  };
+
+  const stop = () => {
+    clearInterval(interv);
+    setStatus(1);
+    runOpponent();
+    setStatusOpponent(1);
+    setIntervOpponent(setInterval(runOpponent, 1000));
+    socket.emit("timerStop");
+    socket.emit("timerStop2");
+  };
+
+  const run = () => {
+    if (updatedS === 0) {
+      updatedM--;
+      updatedS = 60;
+    }
+    updatedS--;
+    return setTime({ s: updatedS, m: updatedM });
+  };
+
+  const runOpponent = () => {
+    if (updatedSOpponent === 0) {
+      updatedMOpponent--;
+      updatedSOpponent = 60;
+    }
+    updatedSOpponent--;
+    return setTimeOpponent({ s: updatedSOpponent, m: updatedMOpponent });
+  };
 
   function chesspieces(value) {
     if (value === 1) {
@@ -127,7 +286,7 @@ function Board({location}) {
       isEven = !isEven;
       if (row === temp[0] && col === temp[1]) return "col, selected-box";
 
-      if (side === 'white') {
+      if (side === "white") {
         if (isEven) return "col, black-box";
         else return "col, white-box";
       } else {
@@ -136,7 +295,7 @@ function Board({location}) {
       }
     } else {
       if (row === temp[0] && col === temp[1]) return "col, selected-box";
-      if (side === 'white') {
+      if (side === "white") {
         if (col % 2 === 0) return "col, black-box";
         else return "col, white-box";
       } else {
@@ -159,13 +318,12 @@ function Board({location}) {
     if (!turn) {
       return null;
     }
-    console.log(turn, "<<< turn")
     if (temp.length === 0 && val !== 0) {
-      if(side === 'white' && String(val)[0] === '-') {
+      if (side === "white" && String(val)[0] === "-") {
         return null;
       }
-  
-      if(side === 'black' && String(val)[0] !== '-') {
+
+      if (side === "black" && String(val)[0] !== "-") {
         return null;
       }
       const newTemp = [row, col, val];
@@ -174,12 +332,20 @@ function Board({location}) {
       setLegalMoves(data);
     } else if (temp.length > 0 && temp[2] !== 0) {
       const newBoard = moveValidation(board, temp, row, col, legalMoves);
-      if(newBoard) {
-        socket.emit('finishTurn', {board: newBoard});
+      if (newBoard) {
+        socket.emit("finishTurn", { board: newBoard });
         setTemp([]);
         setBoard(newBoard);
         setLegalMoves([]);
         setTurn(!turn);
+
+        clearInterval(interv);
+        setStatus(1);
+        runOpponent();
+        setStatusOpponent(1);
+        setIntervOpponent(setInterval(runOpponent, 1000));
+        socket.emit("timerStop");
+        socket.emit("timerStop2");
       }
     }
   }
@@ -189,115 +355,140 @@ function Board({location}) {
     for (let i = 0; i < newBoard[0].length; i++) {
       if (newBoard[0][i] === 6 || newBoard[0][i] === -6) {
         newBoard[0][i] = val;
-        }
+      }
     }
+    socket.emit("pawn-evolution", { board: newBoard });
+    setBoard(newBoard);
     if (String(val)[0] === "-") setModalBlack(false);
     else setModalWhite(false);
-    setBoard(newBoard);
   }
 
   return (
-    <div className="motherBoard">
-      <h3>Turn: {turn ? "White" : "Black"}</h3>
-      <div className={styleBoard()}>
-        <div className="row justify-content-center">
-          {board.map((boardRow, row) => {
-            return boardRow.map((value, col) => {
-              return (
-                <div
-                  className={defineBox(row, col)}
-                  key={col}
-                  onClick={() => handleClick(row, col, value)}
-                >
-                  {chesspieces(value)}
-                  {isLegalMoves(row, col)}
-                </div>
-              );
-            });
-          })}
-        </div>
-      </div>
-      {/* <Timer/> */}
+    <>
+      {displayButton && !displayBoard && (
+        <button onClick={() => startTimerHandler()} className="btn btn-info">
+          Start Game
+        </button>
+      )}
 
-      <Modal
-        show={modalWhite}
-        size="lg"
-        onHide={() => setModalWhite(false)}
-        backdrop="static"
-        keyboard={false}
-      >
-        <Modal.Header>
-          <Modal.Title>Choose One</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="modal-chess">
-            <img
-              className="pieces"
-              src={queenWhite}
-              alt="queen"
-              onClick={() => pieceChange(2)}
-            />
-            <img
-              className="pieces"
-              src={bishopWhite}
-              alt="bishop"
-              onClick={() => pieceChange(3)}
-            />
-            <img
-              className="pieces"
-              src={knightWhite}
-              alt="knight"
-              onClick={() => pieceChange(4)}
-            />
-            <img
-              className="pieces"
-              src={rookWhite}
-              alt="rook"
-              onClick={() => pieceChange(5)}
-            />
+      {displayBoard && (
+        <div>
+          <div className="d-flex justify-content-between">
+            <h1>
+              {time.m < 10 ? `0${time.m}` : time.m}:
+              {time.s < 10 ? `0${time.s}` : time.s}
+            </h1>
+            <Button variant="danger">Surrender</Button>
+            <h1>
+              {timeOpponent.m < 10 ? `0${timeOpponent.m}` : timeOpponent.m}:
+              {timeOpponent.s < 10 ? `0${timeOpponent.s}` : timeOpponent.s}
+            </h1>
           </div>
-        </Modal.Body>
-      </Modal>
-      <Modal
-        show={modalBlack}
-        size="lg"
-        onHide={() => setModalBlack(false)}
-        backdrop="static"
-        keyboard={false}
-      >
-        <Modal.Header>
-          <Modal.Title>Choose One</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="modal-chess">
-            <img
-              className="pieces"
-              src={queenBlack}
-              alt="queen"
-              onClick={() => pieceChange(-2)}
-            />
-            <img
-              className="pieces"
-              src={bishopBlack}
-              alt="bishop"
-              onClick={() => pieceChange(-3)}
-            />
-            <img
-              className="pieces"
-              src={knightBlack}
-              alt="knight"
-              onClick={() => pieceChange(-4)}
-            />
-            <img
-              className="pieces"
-              src={rookBlack}
-              alt="rook"
-              onClick={() => pieceChange(-5)}
-            />
+          <div className="motherBoard">
+            {/* <h3>Turn: {turn ? "White" : "Black"}</h3> */}
+            {displayBoard && (
+              <div className={styleBoard()}>
+                <div className="row justify-content-center">
+                  {board.map((boardRow, row) => {
+                    return boardRow.map((value, col) => {
+                      return (
+                        <div
+                          className={defineBox(row, col)}
+                          key={col}
+                          onClick={() => handleClick(row, col, value)}
+                        >
+                          {chesspieces(value)}
+                          {isLegalMoves(row, col)}
+                        </div>
+                      );
+                    });
+                  })}
+                </div>
+              </div>
+            )}
+
+            <Modal
+              show={modalWhite}
+              size="lg"
+              onHide={() => setModalWhite(false)}
+              backdrop="static"
+              keyboard={false}
+            >
+              <Modal.Header>
+                <Modal.Title>Choose One</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <div className="modal-chess">
+                  <img
+                    className="pieces"
+                    src={queenWhite}
+                    alt="queen"
+                    onClick={() => pieceChange(2)}
+                  />
+                  <img
+                    className="pieces"
+                    src={bishopWhite}
+                    alt="bishop"
+                    onClick={() => pieceChange(3)}
+                  />
+                  <img
+                    className="pieces"
+                    src={knightWhite}
+                    alt="knight"
+                    onClick={() => pieceChange(4)}
+                  />
+                  <img
+                    className="pieces"
+                    src={rookWhite}
+                    alt="rook"
+                    onClick={() => pieceChange(5)}
+                  />
+                </div>
+              </Modal.Body>
+            </Modal>
+            <Modal
+              show={modalBlack}
+              size="lg"
+              onHide={() => setModalBlack(false)}
+              backdrop="static"
+              keyboard={false}
+            >
+              <Modal.Header>
+                <Modal.Title>Choose One</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <div className="modal-chess">
+                  <img
+                    className="pieces"
+                    src={queenBlack}
+                    alt="queen"
+                    onClick={() => pieceChange(-2)}
+                  />
+                  <img
+                    className="pieces"
+                    src={bishopBlack}
+                    alt="bishop"
+                    onClick={() => pieceChange(-3)}
+                  />
+                  <img
+                    className="pieces"
+                    src={knightBlack}
+                    alt="knight"
+                    onClick={() => pieceChange(-4)}
+                  />
+                  <img
+                    className="pieces"
+                    src={rookBlack}
+                    alt="rook"
+                    onClick={() => pieceChange(-5)}
+                  />
+                </div>
+              </Modal.Body>
+            </Modal>
           </div>
-        </Modal.Body>
-      </Modal>
-    </div>
+        </div>
+      )}
+    </>
   );
 }
 

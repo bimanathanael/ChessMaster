@@ -3,6 +3,7 @@ import Board from '../components/Board'
 import io from "socket.io-client";
 import Chat from '../components/Chat/Chat'
 import queryString from 'query-string';
+import Navbar from '../components/Navbar'
 
 export const Game = ({location}) =>  {
   
@@ -18,17 +19,17 @@ export const Game = ({location}) =>  {
   console.log(socket, 'socket')
 
   const pc_config = {
-    "iceServers": [
+    iceServers: [
       {
-        "url" : 'stun:stun.l.google.com:19302'
+        url: "stun:stun.l.google.com:19302",
       },
       {
-        "url": "turn:numb.viagenie.ca",
-        "username": "bimanathanael95@gmail.com",
-        "credential": "Theendensor@95"
-      }
-    ]
-  }
+        url: "turn:numb.viagenie.ca",
+        username: "bimanathanael95@gmail.com",
+        credential: "Theendensor@95",
+      },
+    ],
+  };
 
   useEffect(() => {
     socket.emit('join', { name, room }, (error) => {
@@ -42,39 +43,33 @@ export const Game = ({location}) =>  {
   let pc = new RTCPeerConnection(pc_config)
 
   pc.onicecandidate = (e) => {
-    if(e.candidate) {
+    if (e.candidate) {
       // console.log(JSON.stringify(e.candidate))
       sendToPeer('candidate', e.candidate, room)
     }
-  }
+  };
 
   pc.oniceconnectionstatechange = (e) => {
-    console.log(e)
-  }
+    console.log(e);
+  };
 
   pc.ontrack = (e) => {
-    remoteVideoRef.current.srcObject = e.streams[0]
-  }
+    remoteVideoRef.current.srcObject = e.streams[0];
+  };
 
-  socket.on("connection-success", success => {
-    console.log(success)
-  })
-
-  const [teks, setTeks] = useState("");
-
+  socket.on("connection-success", (success) => {
+    console.log(success);
+  });
 
   useEffect(() => {
+    // console.log(needAnswer, "needAnswerneedAnswerneedAnswer");
 
-    socket.on("teks", (txt) => {
-      setTeks(txt);
-    });
-
-    console.log(needAnswer, 'needAnswerneedAnswerneedAnswer')
     socket.on("needAnswer", (txt) => {
       needAnswer.current = true;
-      if(txt.payload === false ){
+      if (txt.payload === false) {
         document.getElementById("btn").style.visibility = "hidden";
         document.getElementById("board").style.visibility = "visible";
+        console.log("masuk useEffect");
       }
     });
 
@@ -131,7 +126,7 @@ export const Game = ({location}) =>  {
     stream.getTracks().forEach(track => {
       pc.addTrack(track, stream);
     });
-  }
+  };
 
   const failure = (e) => {
     console.log('getUserMedia Error: ', e)
@@ -151,9 +146,8 @@ export const Game = ({location}) =>  {
       sendToPeer('needAnswer', false, room )
       document.getElementById("btn").style.visibility = "hidden";
       document.getElementById("board").style.visibility = "visible";
-
     }
-  }
+  };
 
   const createAnswer = () => {
     pc.createAnswer({offerToReceiveVideo: 1, offerToReceiveAudio:1})
@@ -164,27 +158,51 @@ export const Game = ({location}) =>  {
   }
 
   return (
-    <div className="motherLogin">
-      <div className="row">
-        <br />
-        <div className='flex-column mt-3  mr-3'>
-          <div>
-            <video 
-              ref={localVideoref} 
-              autoPlay
-              style={{
-                float:"left",
-                width: 240, 
-                height: 240, 
-                margin: 5, 
-                backgroundColor :'black'
-              }}
-              controls
+    <>
+      <Navbar />
+      <div className="motherGame">
+        {console.log("masuk return")}
+        <div className="row">
+          <br />
+          <div className="flex-column mt-3  mr-3">
+            <div>
+              <video
+                ref={localVideoref}
+                autoPlay
+                style={{
+                  float: "left",
+                  width: 240,
+                  height: 240,
+                  margin: 5,
+                  backgroundColor: "black",
+                }}
+                controls
+              ></video>
+            </div>
+
+            <div className="text-center">
+              {/* <button
+                id="btn"
+                onClick={() => createOffer()}
+                className="btn btn-info  mt-3"
+                style={{ width: "100%" }}
               >
-            </video>
+                {" "}
+                i am ready{" "}
+              </button> */}
+            </div>
           </div>
           <div className="text-center">
-            <button id="btn" onClick={() => createOffer()} className="btn btn-info  mt-3" style={{width:'100%'}}> i am ready </button>
+              <button
+                id="btn"
+                onClick={() => createOffer()}
+                className="btn btn-info  mt-3"
+                style={{ width: "100%" }}
+              >
+                {" "}
+                i am ready{" "}
+              </button>
+            {/* <button id="btn" onClick={() => createOffer()} className="btn btn-info  mt-3" style={{width:'100%'}}> i am ready </button> */}
           </div>
         </div>
         {/* <div id="board" style={{visibility: 'hidden'}}> */}
@@ -211,8 +229,15 @@ export const Game = ({location}) =>  {
             <Chat location={location}/>
             {/* <button onClick={() => createAnswer()} className="btn btn-info  mt-3">i am ready</button> */}
           </div>
+          <br />
         </div>
-        <br/>
+        <br></br>
+        <br />
+        <textarea
+          id="myTextArea"
+          ref={(ref) => (textref = ref)}
+          style={{ display: "none" }}
+        ></textarea>
       </div>
       <br></br>
       <br/>
@@ -221,7 +246,7 @@ export const Game = ({location}) =>  {
         console.log(username)
         }} value={username} />
       <textarea id="myTextArea" ref={ref => textref = ref} style={{display: "none"}}></textarea>
-    </div>
+    </>
   )
   
 }
