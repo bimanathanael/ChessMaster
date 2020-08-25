@@ -72,8 +72,8 @@ function Board({ location }) {
   //timer state
   const [displayBoard, setDisplayBoard] = useState(false);
   const [displayButton, setDisplayButton] = useState(false);
-  const [time, setTime] = useState({ m: 0, s: 3 });
-  const [timeOpponent, setTimeOpponent] = useState({ m: 0, s: 3 });
+  const [time, setTime] = useState({ m: 3, s: 3 });
+  const [timeOpponent, setTimeOpponent] = useState({ m: 3, s: 3 });
   const [status, setStatus] = useState(0);
   const [interv, setInterv] = useState();
   const [statusOpponent, setStatusOpponent] = useState(0);
@@ -314,6 +314,36 @@ function Board({ location }) {
     return setTimeOpponent({ s: updatedSOpponent, m: updatedMOpponent });
   };
 
+  //surender handler
+  const surrenderHandler = () => {
+    const updatedScore = {
+      username: localStorage.getItem("username"),
+      score: -5,
+    };
+    mutationUpdateScore({
+      variables: {
+        updateScore: updatedScore,
+      },
+    });
+    const newPlayer = {
+      player: localStorage.getItem("username"),
+      opponent: opponentUsername,
+      status: "lose",
+      score: "-5",
+    };
+    if (opponentUsername) {
+      mutationAddHistory({
+        variables: { addHistoryGame: newPlayer },
+      });
+    }
+    swal({
+      title: "You Lose",
+    });
+    history.push("/leaderboard");
+    socket.emit("moveToLeaderboard");
+    socket.emit("moveToLeaderboard2");
+  };
+
   function chesspieces(value) {
     if (value === 1) {
       return <img className="pieces" src={kingWhite} alt="" />;
@@ -456,7 +486,9 @@ function Board({ location }) {
               {time.m < 10 ? `0${time.m}` : time.m}:
               {time.s < 10 ? `0${time.s}` : time.s}
             </h1>
-            <Button variant="danger">Surrender</Button>
+            <Button variant="danger" onClick={() => surrenderHandler()}>
+              Surrender
+            </Button>
             <h1>
               {timeOpponent.m < 10 ? `0${timeOpponent.m}` : timeOpponent.m}:
               {timeOpponent.s < 10 ? `0${timeOpponent.s}` : timeOpponent.s}
