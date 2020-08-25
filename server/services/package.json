@@ -2,11 +2,11 @@
   "name": "chess-master",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "dev": "NODE_ENV=development nodemon app.js",
     "test": "jest --runInBand --detectOpenHandles --forceExit",
-    "start": "concurrently 'nodemon app.js' 'nodemon microServers/boardSocket.js' 'nodemon microServers/webRtcSocket.js'"
+    "start": "concurrently 'nodemon app.js' 'nodemon microServers/boardSocket.js' 'nodemon microServers/webRtcSocket.js' 'nodemon microServers/roomSocket.js'"
   },
   "keywords": [],
   "author": "Bima, Fatur, Wiby, Hika",

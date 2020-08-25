@@ -1,14 +1,45 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useHistory, useRouteMatch, Link } from "react-router-dom";
 import { postLogin } from "../store/actions/userAction";
 import { useDispatch } from "react-redux";
 import { Button } from "react-bootstrap";
+import { useMutation, gql } from "@apollo/client";
+import swal from "sweetalert";
+const jwt = require("jsonwebtoken");
+const TOKEN_KEY = "chessMaster";
+const jwtVerify = (data) => {
+  var decoded = jwt.verify(data, TOKEN_KEY);
+  return decoded;
+};
 
+const LOGIN_USER = gql`
+  mutation LoginUser($userLogin: inputLoginUser) {
+    loginUser(user: $userLogin) {
+      access_token
+    }
+  }
+`;
 export default () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const history = useHistory();
-  const dispatch = useDispatch();
+  const [mutationLoginUser, { error, data }] = useMutation(LOGIN_USER, {
+    onError: () => {
+      swal("wrong username/password", "", "error");
+    },
+  });
+
+  useEffect(() => {
+    if (data) {
+      let access_token = data.loginUser.access_token;
+      localStorage.setItem("access_token", access_token);
+      const dataFromJWT = jwtVerify(access_token, TOKEN_KEY);
+      localStorage.setItem("username", dataFromJWT.username);
+      localStorage.setItem("score", dataFromJWT.score);
+      history.push("/");
+      swal("success login", "", "success");
+    }
+  }, [data]);
   const logo = require("../chess-pack/chess-king-white.png");
 
   const usernameLoginHandler = (e) => {
@@ -18,19 +49,21 @@ export default () => {
     setPassword(e.target.value);
   };
 
-  const formLoginHandler = (e) => {
+  const formLoginHandler = async (e) => {
     e.preventDefault();
-    const loginUser = {
+    const dataUser = {
       username,
       password,
     };
-    dispatch(postLogin(loginUser, history));
+
+    mutationLoginUser({ variables: { userLogin: dataUser } });
   };
 
   return (
     <div className="motherLogin">
       <div style={{ backgroundColor: "#263554" }}>
         <div className="text-center" style={{ color: "white" }}>
+          {error && console.log(error, "ini errornya")}
           <img
             className="LogoLogin"
             src={logo}
