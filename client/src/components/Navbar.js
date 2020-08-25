@@ -12,13 +12,23 @@ export default () => {
     history.push("/login");
   };
 
+  const logo = require("../asset/logo.png");
+
   const goToHome = () => {
     history.push("/");
   };
 
   return (
     <Navbar bg="light" expand="lg">
-      <Navbar.Brand>Chess Master</Navbar.Brand>
+      <Navbar.Brand>
+        <img
+          className="LogoLogin"
+          src={logo}
+          style={{
+            width: "15%",
+          }}
+        />
+      </Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">

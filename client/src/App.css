@@ -168,3 +168,9 @@
   background-color: #2C3539;
   height: 100vh;
 }
+
+.LogoLogin{
+  width: "30%";
+  background-color: white;
+  border-radius: 25px;
+}
