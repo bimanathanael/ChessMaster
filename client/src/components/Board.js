@@ -10,6 +10,8 @@ import { useDispatch } from "react-redux";
 import { useMutation, gql } from "@apollo/client";
 import { GET_USERS } from "../pages/LeaderBoard";
 import { GET_USERBYID } from "../pages/MainMenu";
+import { ImFlag } from 'react-icons/im';
+
 
 const UPDATE_SCORE = gql`
   mutation UpdateScoreUser($updateScore: inputUserUpdate) {
@@ -47,8 +49,8 @@ function Board({location}) {
   //timer state
   const [displayBoard, setDisplayBoard] = useState(false);
   const [displayButton, setDisplayButton] = useState(false);
-  const [time, setTime] = useState({ m: 0, s: 3 });
-  const [timeOpponent, setTimeOpponent] = useState({ m: 0, s: 3 });
+  const [time, setTime] = useState({ m: 60, s: 3 });
+  const [timeOpponent, setTimeOpponent] = useState({ m: 60, s: 3 });
   const [status, setStatus] = useState(0);
   const [interv, setInterv] = useState();
   const [statusOpponent, setStatusOpponent] = useState(0);
@@ -366,7 +368,7 @@ function Board({location}) {
   return (
     <>
       {displayButton && !displayBoard && (
-        <button onClick={() => startTimerHandler()} className="btn btn-info">
+        <button onClick={() => startTimerHandler()} className="btn btn-info" style={{width: '100%'}}>
           Start Game
         </button>
       )}
@@ -374,12 +376,12 @@ function Board({location}) {
       {displayBoard && (
         <div>
           <div className="d-flex justify-content-between">
-            <h1>
+            <h1 class="timer">
               {time.m < 10 ? `0${time.m}` : time.m}:
               {time.s < 10 ? `0${time.s}` : time.s}
             </h1>
-            <Button variant="danger">Surrender</Button>
-            <h1>
+            <Button style={{backgroundColor: 'rgb(174, 25, 26) ', border: '1px solid #2f2525'}}>Surrender &nbsp; <ImFlag style={{ marginBottom: '7px'}}/></Button>
+            <h1 class="timer">
               {timeOpponent.m < 10 ? `0${timeOpponent.m}` : timeOpponent.m}:
               {timeOpponent.s < 10 ? `0${timeOpponent.s}` : timeOpponent.s}
             </h1>
