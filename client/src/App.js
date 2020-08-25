@@ -1,7 +1,13 @@
 import React from "react";
 
 import "./App.css";
-import { LoginPages, MainMenu, RegisterPage, LeaderBoard } from "./pages";
+import {
+  LoginPages,
+  MainMenu,
+  RegisterPage,
+  LeaderBoard,
+  HistoryGame,
+} from "./pages";
 import { Game } from "./pages/Game";
 
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
@@ -42,9 +48,13 @@ function App() {
                 path="/leaderboard"
                 component={LeaderBoard}
               />
+              <ProtectedRouteAfterLogin
+                exact
+                path="/users/:username"
+                component={HistoryGame}
+              />
             </Switch>
           </Router>
-
         </div>
       </Provider>
     </ApolloProvider>

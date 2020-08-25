@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { defineLegalMoves, moveValidation } from "../logics/LogicController";
+import {
+  defineLegalMoves,
+  moveValidation,
+  isCheckMate,
+} from "../logics/LogicController";
+import { checkChecker } from "../logics/CheckLogic";
 import { Modal, Button } from "react-bootstrap";
-import queryString from 'query-string';
+import queryString from "query-string";
 import io from "socket.io-client";
 import { useHistory } from "react-router-dom";
 import swal from "sweetalert";
@@ -12,6 +17,18 @@ import { GET_USERS } from "../pages/LeaderBoard";
 import { GET_USERBYID } from "../pages/MainMenu";
 import { ImFlag } from 'react-icons/im';
 
+import { GET_HISTORYGAME } from "../pages/HistoryGame";
+
+const ADD_TO_HISTORYGAME = gql`
+  mutation AddToHistory($addHistoryGame: inputNewHistory) {
+    addHistory(history: $addHistoryGame) {
+      player
+      opponent
+      status
+      score
+    }
+  }
+`;
 
 const UPDATE_SCORE = gql`
   mutation UpdateScoreUser($updateScore: inputUserUpdate) {
@@ -26,17 +43,23 @@ const socket = io("http://localhost:9001/");
 const happyFace = require("../asset/happyFace.png");
 const sadFace = require("../asset/sadFace.png");
 
-function Board({location}) {
+function Board({ location }) {
   const [mutationUpdateScore] = useMutation(UPDATE_SCORE, {
     refetchQueries: [{ query: GET_USERS }],
     awaitRefetchQueries: true,
+  });
+
+  const [mutationAddHistory, { error }] = useMutation(ADD_TO_HISTORYGAME, {
+    onError: () => {
+      swal("wawa", "asdas", "success");
+    },
   });
   const dispatch = useDispatch();
   let isEven = true;
 
   // temp = [row, col, val]
-  const [name, setName] = useState('');
-  const [room, setRoom] = useState('');
+  const [name, setName] = useState("");
+  const [room, setRoom] = useState("");
 
   const [temp, setTemp] = useState([]);
   const [legalMoves, setLegalMoves] = useState([]);
@@ -45,12 +68,14 @@ function Board({location}) {
   const [modalBlack, setModalBlack] = useState(false);
   const [turn, setTurn] = useState(null);
   const [side, setSide] = useState("");
+  const [isCheck, setIsCheck] = useState(false);
+  const [checkMate, setCheckMate] = useState(false);
 
   //timer state
   const [displayBoard, setDisplayBoard] = useState(false);
   const [displayButton, setDisplayButton] = useState(false);
-  const [time, setTime] = useState({ m: 60, s: 3 });
-  const [timeOpponent, setTimeOpponent] = useState({ m: 60, s: 3 });
+  const [time, setTime] = useState({ m: 3, s: 3 });
+  const [timeOpponent, setTimeOpponent] = useState({ m: 3, s: 3 });
   const [status, setStatus] = useState(0);
   const [interv, setInterv] = useState();
   const [statusOpponent, setStatusOpponent] = useState(0);
@@ -73,18 +98,6 @@ function Board({location}) {
   const knightBlack = require("../chess-pack/chess-knight-black.png");
   const queenWhite = require("../chess-pack/chess-queen-white.png");
   const queenBlack = require("../chess-pack/chess-queen-black.png");
-
-  // 1 = Raja, 2 = PM, 3 = Peluncur, 4 = Kuda, 5 = Benteng, 6 = Pion
-  // const [board, setBoard] = useState([
-  //   [5, 4, 3, 2, 1, 3, 4, 5],
-  //   [6, 6, 6, 6, 6, 6, 6, 6],
-  //   [0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0],
-  //   [-6, -6, -6, -6, -6, -6, -6, -6],
-  //   [-5, -4, -3, -1, -2, -3, -4, -5],
-  // ]);
 
   const [board, setBoard] = useState([]);
 
@@ -111,15 +124,15 @@ function Board({location}) {
     const { name, room } = queryString.parse(location.search);
 
     setRoom(room);
-    setName(name)
+    setName(name);
 
-    socket.emit('join', { name, room }, (error) => {
-      if(error) {
+    socket.emit("join", { name, room }, (error) => {
+      if (error) {
         alert(error);
       }
     });
 
-    console.log('masuk use eeffct')
+    console.log("masuk use eeffct");
   }, [location.search]);
 
   useEffect(() => {
@@ -130,41 +143,95 @@ function Board({location}) {
     // eslint-disable-next-line
   }, [board[0]]);
 
+  useEffect(() => {
+    if (board.length > 0 && side !== "") {
+      const { status: returnFunc, path, kingRow, kingCol } = checkChecker(
+        board,
+        side
+      );
+      setIsCheck(returnFunc);
+      if (returnFunc) {
+        const checkmateStat = isCheckMate(board, side, path, kingRow, kingCol);
+        setCheckMate(checkmateStat);
+        if (checkmateStat || (time.s === 0 && time.m === 0)) {
+          const updatedScore = {
+            username: localStorage.getItem("username"),
+            score: -5,
+          };
+          mutationUpdateScore({
+            variables: {
+              updateScore: updatedScore,
+            },
+          });
+          // console.log("sadasd");
+          history.push("/leaderboard");
+          socket.emit("moveToLeaderboard", updatedScore);
+        }
+      }
+    }
+  }, [board]);
+
   //timer logic
 
   useEffect(() => {
     if (time.s === 0 && time.m === 0) {
-      const updatedScore = {
-        username: localStorage.getItem("username"),
-        score: -5,
-      };
-      mutationUpdateScore({
-        variables: {
-          updateScore: updatedScore,
-        },
-      });
-      // console.log("sadasd");
-      swal({
-        title: "You Lose",
-      });
       history.push("/leaderboard");
-      socket.emit("moveToLeaderboard", updatedScore);
+      socket.emit("moveToLeaderboard");
     }
   }, [time]);
 
-  // useEffect(() => {
-  //   if (time.s === 0 && time.m === 0) {
-  //     const updatedScore = {
-  //       username: opponentUsername,
-  //       score: -5,
-  //     };
-  //     mutationUpdateScore({
-  //       variables: {
-  //         updateScore: updatedScore,
-  //       },
-  //     });
-  //   }
-  // }, [time]);
+  useEffect(() => {
+    socket.on("moveToLeaderboard", () => {
+      history.push("/leaderboard");
+    });
+  }, []);
+  useEffect(() => {
+    socket.on("timerStop", () => {
+      console.log("timerStop");
+      clearInterval(intervOpponent);
+      // setStatusOpponent(1);
+    });
+  }, [intervOpponent]);
+
+  useEffect(() => {
+    if (time.s === 0 && time.m === 0 && opponentUsername) {
+      const newPlayer = {
+        player: localStorage.getItem("username"),
+        opponent: opponentUsername,
+        status: "lose",
+        score: "-5",
+      };
+      if (opponentUsername) {
+        mutationAddHistory({
+          variables: { addHistoryGame: newPlayer },
+        });
+      }
+      swal({
+        title: "You Lose",
+      });
+      socket.emit("moveToLeaderboard2");
+    }
+  }, [time, opponentUsername]);
+
+  useEffect(() => {
+    socket.on("moveToLeaderboard2", () => {
+      const newPlayer = {
+        player: localStorage.getItem("username"),
+        opponent: opponentUsername,
+        status: "win",
+        score: "+50",
+      };
+      if (opponentUsername) {
+        mutationAddHistory({
+          variables: { addHistoryGame: newPlayer },
+        });
+      }
+      swal({
+        title: "You Win",
+      });
+      history.push("/leaderboard");
+    });
+  }, [opponentUsername]);
 
   useEffect(() => {
     socket.on("moveToLeaderboard", () => {
@@ -175,9 +242,6 @@ function Board({location}) {
             score: 50,
           },
         },
-      });
-      swal({
-        title: "You Win",
       });
       history.push("/leaderboard");
     });
@@ -200,12 +264,19 @@ function Board({location}) {
   }, []);
 
   useEffect(() => {
-    socket.on("timerStart", () => {
-      setOpponentUsername(localStorage.getItem("username"));
+    socket.on("timerStart", (enemy) => {
+      socket.emit("getEnemy", localStorage.getItem("username"));
+      setOpponentUsername(enemy);
       setDisplayBoard(true);
       runOpponent();
       setStatusOpponent(1);
       setIntervOpponent(setInterval(runOpponent, 1000));
+    });
+  }, []);
+
+  useEffect(() => {
+    socket.on("getEnemy", (enemy) => {
+      setOpponentUsername(enemy);
     });
   }, []);
 
@@ -214,7 +285,7 @@ function Board({location}) {
     run();
     setInterv(1);
     setInterv(setInterval(run, 1000));
-    socket.emit("timerStart");
+    socket.emit("timerStart", localStorage.getItem("username"));
   };
 
   const stop = () => {
@@ -243,6 +314,36 @@ function Board({location}) {
     }
     updatedSOpponent--;
     return setTimeOpponent({ s: updatedSOpponent, m: updatedMOpponent });
+  };
+
+  //surender handler
+  const surrenderHandler = () => {
+    const updatedScore = {
+      username: localStorage.getItem("username"),
+      score: -5,
+    };
+    mutationUpdateScore({
+      variables: {
+        updateScore: updatedScore,
+      },
+    });
+    const newPlayer = {
+      player: localStorage.getItem("username"),
+      opponent: opponentUsername,
+      status: "lose",
+      score: "-5",
+    };
+    if (opponentUsername) {
+      mutationAddHistory({
+        variables: { addHistoryGame: newPlayer },
+      });
+    }
+    swal({
+      title: "You Lose",
+    });
+    history.push("/leaderboard");
+    socket.emit("moveToLeaderboard");
+    socket.emit("moveToLeaderboard2");
   };
 
   function chesspieces(value) {
@@ -323,9 +424,7 @@ function Board({location}) {
     if (temp.length === 0 && val !== 0) {
       if (side === "white" && String(val)[0] === "-") {
         return null;
-      }
-
-      if (side === "black" && String(val)[0] !== "-") {
+      } else if (side === "black" && String(val)[0] !== "-") {
         return null;
       }
       const newTemp = [row, col, val];
@@ -335,19 +434,28 @@ function Board({location}) {
     } else if (temp.length > 0 && temp[2] !== 0) {
       const newBoard = moveValidation(board, temp, row, col, legalMoves);
       if (newBoard) {
-        socket.emit("finishTurn", { board: newBoard });
-        setTemp([]);
-        setBoard(newBoard);
-        setLegalMoves([]);
-        setTurn(!turn);
+        const { status: returnFunc } = checkChecker(newBoard, side);
+        if (!returnFunc) {
+          socket.emit("finishTurn", { board: newBoard });
+          setTemp([]);
+          setBoard(newBoard);
+          setLegalMoves([]);
+          setTurn(!turn);
 
-        clearInterval(interv);
-        setStatus(1);
-        runOpponent();
-        setStatusOpponent(1);
-        setIntervOpponent(setInterval(runOpponent, 1000));
-        socket.emit("timerStop");
-        socket.emit("timerStop2");
+          clearInterval(interv);
+          setStatus(1);
+          runOpponent();
+          setStatusOpponent(1);
+          setIntervOpponent(setInterval(runOpponent, 1000));
+          socket.emit("timerStop");
+          socket.emit("timerStop2");
+        } else {
+          setLegalMoves([]);
+          setTemp([]);
+        }
+      } else {
+        setLegalMoves([]);
+        setTemp([]);
       }
     }
   }
@@ -380,7 +488,11 @@ function Board({location}) {
               {time.m < 10 ? `0${time.m}` : time.m}:
               {time.s < 10 ? `0${time.s}` : time.s}
             </h1>
-            <Button style={{backgroundColor: 'rgb(174, 25, 26) ', border: '1px solid #2f2525'}}>Surrender &nbsp; <ImFlag style={{ marginBottom: '7px'}}/></Button>
+            <Button style={{
+              backgroundColor: 'rgb(174, 25, 26) ', 
+              border: '1px solid #2f2525'}}
+              onClick={() => surrenderHandler()}
+              >Surrender &nbsp; <ImFlag style={{ marginBottom: '7px'}}/></Button>
             <h1 class="timer">
               {timeOpponent.m < 10 ? `0${timeOpponent.m}` : timeOpponent.m}:
               {timeOpponent.s < 10 ? `0${timeOpponent.s}` : timeOpponent.s}

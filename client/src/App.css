@@ -99,12 +99,23 @@
 }
 
 .Card {
-  height: 250px;
-  width: 250px;
+  height: 196px;
+  width: 200px;
+  /* margin: 30px; */
+  /* margin: 30px auto 30px; */
+  border-radius: 5px;
+  background-color: white;
+  /* box-shadow: 3px 3px 10px black; */
+}
+
+.CardShadow {
+  height: 200px;
+  width: 200px;
   /* margin: 30px; */
   margin: 30px auto 30px;
   border-radius: 5px;
-  background-color: grey;
+  background-color: rgb(150, 142, 142);
+  box-shadow: 6px 6px 10px #151f33;
 }
 
 .cardLogo {
@@ -117,7 +128,6 @@
   text-align: center;
   /* width: 50%; */
   /* height: 50%; */
-  background-color: #000;
 }
 
 .mainMenu {
@@ -163,11 +173,11 @@
   width: 105px;
 }
 
-.motherGame{
+.motherGame {
   display: flex;
   justify-content: center;
   padding-top: 5%;
-  background-color: #2C3539;
+  background-color: #2c3539;
   height: 100vh;
 }
 
@@ -194,4 +204,20 @@
   background-color:#ebecf1;
   border-radius: 10px;
   display: none !important;
+}
+.historyGame {
+  display: flex;
+  justify-content: center;
+  /* padding-top: 5%; */
+  background-color: white;
+  height: 100%;
+}
+.LogoLogin {
+  width: "15%";
+  background-color: white;
+  border-radius: 25px;
+}
+
+.LogoNav {
+  width: "5%";
 }

@@ -5,7 +5,7 @@ import { Button, Modal, Form, Card } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import swal from "sweetalert";
 import io from "socket.io-client";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useQuery, useMutation } from "@apollo/client";
 import { GET_ROOMS, roomsItem } from "../config/client";
 import Navbar from "../components/Navbar";
 
@@ -20,6 +20,18 @@ export const GET_USERBYID = gql`
     }
   }
 `;
+
+const ADD_TO_HISTORYGAME = gql`
+  mutation AddToHistory($addHistoryGame: inputNewHistory) {
+    addHistory(history: $addHistoryGame) {
+      player
+      opponent
+      status
+      score
+    }
+  }
+`;
+
 export default () => {
   let socket = io(ENDPOINT);
   const { data: dataRooms } = useQuery(GET_ROOMS);
@@ -35,7 +47,7 @@ export default () => {
   const dispatch = useDispatch();
   const { listRoom, userLogin } = useSelector((state) => state);
 
-  const [room, setRoom] = useState('');
+  const [room, setRoom] = useState("");
   const [allRooms, setAllRooms] = useState([]);
   const handleClose = () => {
     setShow(false);
@@ -82,7 +94,7 @@ export default () => {
         rangedScore,
         ownerRoom: localStorage.getItem("username"),
       };
-      socket.emit('newRoom', setData.roomName)
+      socket.emit("newRoom", setData.roomName);
 
       // console.log(setData, "ini data");
       // roomsItem(currentRooms.concat(setData));
@@ -97,29 +109,29 @@ export default () => {
     }
   };
 
-  const goToRoom = () => {
-    history.push("/hahah");
-  };
-
   // const doCreateRoom = (e) => {
   //   e.preventDefault()
   //   socket.emit('newRoom', room)
   // }
 
-  useEffect( () => {
-    socket.on("allRooms",(rooms) => {
-      setAllRooms(rooms)
-    })
-    socket.emit("getRooms",() => {
-    })
-  }, [])
-  
+  const moveToDetailUser = () => {
+    history.push(`/users/${localStorage.getItem("username")}`);
+  };
+
+  useEffect(() => {
+    socket.on("allRooms", (rooms) => {
+      setAllRooms(rooms);
+    });
+    socket.emit("getRooms", () => {});
+  }, []);
+
   // console.log(allRooms, 'allRooms')
   return (
     <div>
       <Navbar />
       <div className="mainMenu">
         <h1>Main Menu</h1>
+
         <div className="buttonGroup">
           <Link to="/leaderboard">
             <Button variant="primary" style={{ marginRight: "20px" }}>
@@ -130,13 +142,17 @@ export default () => {
             <button className="btn btn-info"> Join Game </button>
           </a> */}
         </div>
-        {dataFromApollo && (
-          <div style={{ padding: "2%", width: "20%" }} className="border">
-            <p>Hello: {dataFromApollo.user.username}</p>
-            <p>Your Score: {dataFromApollo.user.score}</p>
-          </div>
-        )}
-
+        <div
+          onClick={(e) => moveToDetailUser(e)}
+          style={{ cursor: "pointer", width: "20%" }}
+        >
+          {dataFromApollo && (
+            <div style={{ padding: "2%" }} className="border">
+              <p>Hello: {dataFromApollo.user.username}</p>
+              <p>Your Score: {dataFromApollo.user.score}</p>
+            </div>
+          )}
+        </div>
         <br />
         <Button variant="primary" onClick={handleShow}>
           Create Room
@@ -204,8 +220,8 @@ export default () => {
         <h2 style={{ marginTop: "50px" }}>Avalaible Room:</h2>
         {allRooms.length === 0 && <h2>Tidak ada room yang tersedia</h2>}
         <div className="row">
-          {allRooms.map( (room, idx) => {
-            return <Cards key={idx} roomName={room}/>
+          {allRooms.map((room, idx) => {
+            return <Cards key={idx} roomName={room} />;
           })}
         </div>
 

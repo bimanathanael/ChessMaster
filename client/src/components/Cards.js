@@ -7,19 +7,22 @@ const Card = ({ roomName }) => {
 
   return (
     <div className="col-4">
-      <div className="Card">
-        <div className="vs">
-          <img className="cardLogo" src={kingW} />
-          vs
-          <img className="cardLogo" src={kingB} />
+      <a
+        href={`/game?name=${localStorage.getItem("username")}&room=${roomName}`}
+      >
+        <div className="CardShadow">
+          <div className="Card">
+            <div className="vs">
+              <img className="cardLogo" src={kingW} />
+              vs
+              <img className="cardLogo" src={kingB} />
+            </div>
+            <p className="card-title"> Room Name: </p>
+            <p className="card-text">{roomName}</p>
+          </div>
         </div>
-        <p> {roomName} </p>
-        <a href={`/game?name=${localStorage.getItem('username')}&room=${roomName}`}> 
-          <button className="btn btn-info"> Join Game </button> 
-        </a>
-      </div>
+      </a>
     </div>
-    
   );
 };
 

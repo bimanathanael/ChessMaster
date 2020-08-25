@@ -31,7 +31,7 @@ export default () => {
   const [password, setPassword] = useState("");
   const history = useHistory();
   const dispatch = useDispatch();
-  const logo = require("../chess-pack/chess-pawn-black.png");
+  const logo = require("../asset/logo.png");
 
   const usernameRegisterHandler = (e) => {
     setUsername(e.target.value);
@@ -65,14 +65,8 @@ export default () => {
     <div className="motherLogin">
       <div style={{ backgroundColor: "#263554" }}>
         <div className="text-center" style={{ color: "white" }}>
-          <img
-            className="LogoLogin"
-            src={logo}
-            style={{
-              width: "15%",
-            }}
-          />
-          <h1 className="Login-Title">Welcome TO ChessMaster</h1>
+          <img className="LogoLogin" src={logo} />
+          <h1 className="Login-Title">REGISTER</h1>
         </div>
         <br />
         <div style={{ margin: "0 31%", color: "white", paddingBottom: "2.4%" }}>
