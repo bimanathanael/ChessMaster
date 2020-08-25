@@ -14,6 +14,8 @@ export default () => {
     history.push("/login");
   };
 
+  const logo = require("../asset/logo.png");
+
   const goToHome = () => {
     history.push("/");
   };

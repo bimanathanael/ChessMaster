@@ -129,6 +129,11 @@ export function legalKingMoves(board, row, col) {
       [arr[0]-1, arr[1]+2], [arr[0]+1, arr[1]+2]
     ]
 
+    if (arr[0] > 7 || arr[0] < 0 || arr[1] > 7 || arr[1] < 0) {
+      legalMoves = legalMoves.filter(e => e !== arr);
+      return;
+    }
+
     if (arr[0] >= 0 && arr[0] < 8 && arr[1] >= 0 && arr[1] < 8) {
       if (board[arr[0]][arr[1]] !== 0 && flag === isNaN(String(board[arr[0]][arr[1]])[0])) {
         legalMoves = legalMoves.filter(e => e !== arr);
@@ -172,48 +177,65 @@ export function legalKingMoves(board, row, col) {
       }
 
       // cek all diagonal box is clear from opponent
-      for(let i = arr[0] + 1, j = arr[1] + 1; i < board.length && j < board.length; i++) {
+      for(let i = arr[0] + 1, j = arr[1] + 1; i < board.length && j < board.length; i++, j++) {
         if(isNaN(String(board[i][j])[0]) !== flag && board[i][j] !== 0 &&
         (board[i][j] === 3 || board[i][j] === -3 || board[i][j] === 2 || board[i][j] === -2)) {
-          legalMoves = legalMoves.filter(e => e !== arr);
+          legalMoves = legalMoves.filter(e => {
+            if (e === arr || (e[0] === arr[0] - 2 && e[1] === arr[1] - 2)) {
+              return false;
+            }
+            return true;
+          });
           return;
         } else if(board[i][j] !== 0) {
           break;
         }
-        j++;
+        
       }
-      for(let i = arr[0] + 1, j = arr[1] - 1; i < board.length && j <= 0; i++) {
+      for(let i = arr[0] + 1, j = arr[1] - 1; i < board.length && j <= 0; i++, j--) {
         if(isNaN(String(board[i][j])[0]) !== flag && board[i][j] !== 0 &&
         (board[i][j] === 3 || board[i][j] === -3 || board[i][j] === 2 || board[i][j] === -2)) {
-          legalMoves = legalMoves.filter(e => e !== arr);
+          legalMoves = legalMoves.filter(e => {
+            if (e === arr || (e[0] === arr[0] - 2 && e[1] === arr[1] + 2)) {
+              return false;
+            }
+            return true;
+          });
           return;
         }
         else if(board[i][j] !== 0) {
           break;
         }
-        j--;
       }
-      for(let i = arr[0] - 1, j = arr[1] - 1; i >= 0 && j >= 0; i--) {
+      for(let i = arr[0] - 1, j = arr[1] - 1; i >= 0 && j >= 0; i--, j--) {
         if(isNaN(String(board[i][j])[0]) !== flag && board[i][j] !== 0 &&
         (board[i][j] === 3 || board[i][j] === -3 || board[i][j] === 2 || board[i][j] === -2)) {
-          legalMoves = legalMoves.filter(e => e !== arr);
+          legalMoves = legalMoves.filter(e => {
+            if (e === arr || (e[0] === arr[0] + 2 && e[1] === arr[1] + 2)) {
+              return false;
+            }
+            return true;
+          });
           return;
         }
         else if(board[i][j] !== 0) {
           break;
         }
-        j--;
       }
-      for(let i = arr[0] - 1, j = arr[1] + 1; i >= 0 && j < board.length; i--) {
+      for(let i = arr[0] - 1, j = arr[1] + 1; i >= 0 && j < board.length; i--, j++) {
         if(isNaN(String(board[i][j])[0]) !== flag && board[i][j] !== 0 &&
         (board[i][j] === 3 || board[i][j] === -3 || board[i][j] === 2 || board[i][j] === -2)) {
-          legalMoves = legalMoves.filter(e => e !== arr);
+          legalMoves = legalMoves.filter(e => {
+            if (e === arr || (e[0] === arr[0] + 2 && e[1] === arr[1] - 2)) {
+              return false;
+            }
+            return true;
+          });
           return;
         }
         else if(board[i][j] !== 0) {
           break;
         }
-        j++;
       }
       
 
@@ -221,7 +243,12 @@ export function legalKingMoves(board, row, col) {
       for(let i = arr[1] + 1; i < board[arr[0]].length; i++) {
         if(isNaN(String(board[arr[0]][i])[0]) !== flag && board[arr[0]][i] !== 0 &&
         (board[arr[0]][i] === 2 || board[arr[0]][i] === -2 || board[arr[0]][i] === 5 || board[arr[0]][i] === -5)) {
-          legalMoves = legalMoves.filter(e => e !== arr);
+          legalMoves = legalMoves.filter(e => {
+            if (e === arr || (e[0] === arr[0] && e[1] === arr[1] - 2)) {
+              return false;
+            }
+            return true;
+          });
           return;
         } else if(board[arr[0]][i] !== 0) {
           break;
@@ -230,7 +257,12 @@ export function legalKingMoves(board, row, col) {
       for(let i = arr[1] - 1; i >= 0; i--) {
         if(isNaN(String(board[arr[0]][i])[0]) !== flag && board[arr[0]][i] !== 0 &&
         (board[arr[0]][i] === 2 || board[arr[0]][i] === -2 || board[arr[0]][i] === 5 || board[arr[0]][i] === -5)) {
-          legalMoves = legalMoves.filter(e => e !== arr);
+          legalMoves = legalMoves.filter(e => {
+            if (e === arr || (e[0] === arr[0] && e[1] === arr[1] + 2)) {
+              return false;
+            }
+            return true;
+          });
           return;
         } else if(board[arr[0]][i] !== 0) {
           break;
@@ -239,7 +271,12 @@ export function legalKingMoves(board, row, col) {
       for(let i = arr[0] - 1; i >= 0; i--) {
         if(isNaN(String(board[i][arr[1]])[0]) !== flag && board[i][arr[1]] !== 0 &&
         (board[i][arr[1]] === 2 || board[i][arr[1]] === -2 || board[i][arr[1]] === 5 || board[i][arr[1]] === -5)) {
-          legalMoves = legalMoves.filter(e => e !== arr);
+          legalMoves = legalMoves.filter(e => {
+            if (e === arr || (e[0] === arr[0] + 2 && e[1] === arr[1])) {
+              return false;
+            }
+            return true;
+          });
           return;
         } else if(board[i][arr[1]] !== 0) {
           break;
@@ -248,7 +285,12 @@ export function legalKingMoves(board, row, col) {
       for(let i = arr[0] + 1; i < board.length; i++) {
         if(isNaN(String(board[i][arr[1]])[0]) !== flag && board[i][arr[1]] !== 0 &&
         (board[i][arr[1]] === 2 || board[i][arr[1]] === -2 || board[i][arr[1]] === 5 || board[i][arr[1]] === -5)) {
-          legalMoves = legalMoves.filter(e => e !== arr);
+          legalMoves = legalMoves.filter(e => {
+            if (e === arr || (e[0] === arr[0] - 2 && e[1] === arr[1])) {
+              return false;
+            }
+            return true;
+          });
           return;
         } else if(board[i][arr[1]] !== 0) {
           break;
