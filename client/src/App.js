@@ -20,7 +20,7 @@ function App() {
   return (
     <Provider store={store}>
       <div className="App">
-        <Router>
+        {/* <Router>
           <Switch>
             <ProtectedRouteBeforeLogin
               exact
@@ -43,11 +43,11 @@ function App() {
               component={LeaderBoard}
             />
           </Switch>
-        </Router>
+        </Router> */}
 
         {/* <RegisterPage /> */}
         {/* <LeaderBoard /> */}
-        {/* <Board /> */}
+        <Board />
       </div>
     </Provider>
   );

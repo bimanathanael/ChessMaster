@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { defineLegalMoves, moveValidation } from "../logics/LogicController";
+import { defineLegalMoves, moveValidation, isCheckMate } from "../logics/LogicController";
+import { checkChecker } from '../logics/CheckLogic';
 import { Modal } from "react-bootstrap";
 import io from "socket.io-client";
 import { useHistory } from "react-router-dom";
@@ -17,6 +18,8 @@ function Board() {
   const [modalBlack, setModalBlack] = useState(false);
   const [turn, setTurn] = useState(null);
   const [side, setSide] = useState("");
+  const [isCheck, setIsCheck] = useState(false);
+  const [checkMate, setCheckMate] = useState(false);
 
   //timer state
   const [displayBoard, setDisplayBoard] = useState(false);
@@ -45,18 +48,6 @@ function Board() {
   const knightBlack = require("../chess-pack/chess-knight-black.png");
   const queenWhite = require("../chess-pack/chess-queen-white.png");
   const queenBlack = require("../chess-pack/chess-queen-black.png");
-
-  // 1 = Raja, 2 = PM, 3 = Peluncur, 4 = Kuda, 5 = Benteng, 6 = Pion
-  // const [board, setBoard] = useState([
-  //   [5, 4, 3, 2, 1, 3, 4, 5],
-  //   [6, 6, 6, 6, 6, 6, 6, 6],
-  //   [0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0],
-  //   [0, 0, 0, 0, 0, 0, 0, 0],
-  //   [-6, -6, -6, -6, -6, -6, -6, -6],
-  //   [-5, -4, -3, -1, -2, -3, -4, -5],
-  // ]);
 
   const [board, setBoard] = useState([]);
 
@@ -87,29 +78,40 @@ function Board() {
     // eslint-disable-next-line
   }, [board[0]]);
 
+  useEffect(() => {
+    if (board.length > 0 && side !== "") {
+      const {status: returnFunc, path, kingRow, kingCol} = checkChecker(board, side);
+      setIsCheck(returnFunc);
+      if (returnFunc) {
+        const checkmateStat = isCheckMate(board, side, path, kingRow, kingCol);
+        setCheckMate(checkmateStat);
+      }
+    }
+  }, [board])
+
   //timer logic
 
-  useEffect(() => {
-    if (time.s === 0) {
-      swal("You Lose SADSADSAD", "", "error");
-      history.push("/leaderboard");
-      socket.emit("moveToLeaderboard");
-    }
-  }, [time]);
+  // useEffect(() => {
+  //   if (time.s === 0) {
+  //     swal("You Lose SADSADSAD", "", "error");
+  //     history.push("/leaderboard");
+  //     socket.emit("moveToLeaderboard");
+  //   }
+  // }, [time]);
 
-  useEffect(() => {
-    socket.on("moveToLeaderboard", () => {
-      swal("You WIN YEAY", "", "success");
-      history.push("/leaderboard");
-    });
-  }, []);
-  useEffect(() => {
-    socket.on("timerStop", () => {
-      console.log("timerStop");
-      clearInterval(intervOpponent);
-      // setStatusOpponent(1);
-    });
-  }, [intervOpponent]);
+  // useEffect(() => {
+  //   socket.on("moveToLeaderboard", () => {
+  //     swal("You WIN YEAY", "", "success");
+  //     history.push("/leaderboard");
+  //   });
+  // }, []);
+  // useEffect(() => {
+  //   socket.on("timerStop", () => {
+  //     console.log("timerStop");
+  //     clearInterval(intervOpponent);
+  //     // setStatusOpponent(1);
+  //   });
+  // }, [intervOpponent]);
 
   useEffect(() => {
     socket.on("timerStop2", () => {
@@ -243,9 +245,7 @@ function Board() {
     if (temp.length === 0 && val !== 0) {
       if (side === "white" && String(val)[0] === "-") {
         return null;
-      }
-
-      if (side === "black" && String(val)[0] !== "-") {
+      } else if (side === "black" && String(val)[0] !== "-") {
         return null;
       }
       const newTemp = [row, col, val];
@@ -255,19 +255,28 @@ function Board() {
     } else if (temp.length > 0 && temp[2] !== 0) {
       const newBoard = moveValidation(board, temp, row, col, legalMoves);
       if (newBoard) {
-        socket.emit("finishTurn", { board: newBoard });
-        setTemp([]);
-        setBoard(newBoard);
+        const {status: returnFunc} = checkChecker(newBoard, side);
+        if (!returnFunc) {
+          socket.emit("finishTurn", { board: newBoard });
+          setTemp([]);
+          setBoard(newBoard);
+          setLegalMoves([]);
+          setTurn(!turn);
+  
+          clearInterval(interv);
+          setStatus(1);
+          runOpponent();
+          setStatusOpponent(1);
+          setIntervOpponent(setInterval(runOpponent, 1000));
+          socket.emit("timerStop");
+          socket.emit("timerStop2");
+        } else {
+          setLegalMoves([]);
+          setTemp([]);  
+        }
+      } else {
         setLegalMoves([]);
-        setTurn(!turn);
-
-        clearInterval(interv);
-        setStatus(1);
-        runOpponent();
-        setStatusOpponent(1);
-        setIntervOpponent(setInterval(runOpponent, 1000));
-        socket.emit("timerStop");
-        socket.emit("timerStop2");
+        setTemp([]);
       }
     }
   }
@@ -304,7 +313,7 @@ function Board() {
         </h1>
       </div>
       <div className="motherBoard">
-        <h3>Turn: {turn ? "White" : "Black"}</h3>
+        <h3>CheckMate (SKAK Mati): {checkMate ? "true" : "false"}</h3>
         {displayBoard && (
           <div className={styleBoard()}>
             <div className="row justify-content-center">
@@ -325,7 +334,6 @@ function Board() {
             </div>
           </div>
         )}
-
         <Modal
           show={modalWhite}
           size="lg"
