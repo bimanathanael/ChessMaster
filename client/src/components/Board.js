@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { defineLegalMoves, moveValidation } from "../logics/LogicController";
 import { Modal, Button } from "react-bootstrap";
-import queryString from 'query-string';
+import queryString from "query-string";
 import io from "socket.io-client";
 import { useHistory } from "react-router-dom";
 import swal from "sweetalert";
@@ -24,7 +24,7 @@ const socket = io("http://localhost:9001/");
 const happyFace = require("../asset/happyFace.png");
 const sadFace = require("../asset/sadFace.png");
 
-function Board({location}) {
+function Board({ location }) {
   const [mutationUpdateScore] = useMutation(UPDATE_SCORE, {
     refetchQueries: [{ query: GET_USERS }],
     awaitRefetchQueries: true,
@@ -33,8 +33,8 @@ function Board({location}) {
   let isEven = true;
 
   // temp = [row, col, val]
-  const [name, setName] = useState('');
-  const [room, setRoom] = useState('');
+  const [name, setName] = useState("");
+  const [room, setRoom] = useState("");
 
   const [temp, setTemp] = useState([]);
   const [legalMoves, setLegalMoves] = useState([]);
@@ -47,8 +47,8 @@ function Board({location}) {
   //timer state
   const [displayBoard, setDisplayBoard] = useState(false);
   const [displayButton, setDisplayButton] = useState(false);
-  const [time, setTime] = useState({ m: 0, s: 3 });
-  const [timeOpponent, setTimeOpponent] = useState({ m: 0, s: 3 });
+  const [time, setTime] = useState({ m: 60, s: 3 });
+  const [timeOpponent, setTimeOpponent] = useState({ m: 60, s: 3 });
   const [status, setStatus] = useState(0);
   const [interv, setInterv] = useState();
   const [statusOpponent, setStatusOpponent] = useState(0);
@@ -109,15 +109,15 @@ function Board({location}) {
     const { name, room } = queryString.parse(location.search);
 
     setRoom(room);
-    setName(name)
+    setName(name);
 
-    socket.emit('join', { name, room }, (error) => {
-      if(error) {
+    socket.emit("join", { name, room }, (error) => {
+      if (error) {
         alert(error);
       }
     });
 
-    console.log('masuk use eeffct')
+    console.log("masuk use eeffct");
   }, [location.search]);
 
   useEffect(() => {
