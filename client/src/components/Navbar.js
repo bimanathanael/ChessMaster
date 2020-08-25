@@ -6,11 +6,15 @@ import swal from "sweetalert";
 export default () => {
   const history = useHistory();
 
+  const logo = require("../asset/logo.png");
+
   const logoutHandler = () => {
     localStorage.clear();
     swal("you are successfully logout", "", "success");
     history.push("/login");
   };
+
+  const logo = require("../asset/logo.png");
 
   const goToHome = () => {
     history.push("/");
@@ -18,7 +22,9 @@ export default () => {
 
   return (
     <Navbar bg="light" expand="lg">
-      <Navbar.Brand>Chess Master</Navbar.Brand>
+      <Navbar.Brand>
+        <img src={logo} style={{ width: "100px" }} />
+      </Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">

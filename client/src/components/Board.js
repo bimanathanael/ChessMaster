@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { defineLegalMoves, moveValidation, isCheckMate } from "../logics/LogicController";
-import { checkChecker } from '../logics/CheckLogic';
+import {
+  defineLegalMoves,
+  moveValidation,
+  isCheckMate,
+} from "../logics/LogicController";
+import { checkChecker } from "../logics/CheckLogic";
 import { Modal, Button } from "react-bootstrap";
-import queryString from 'query-string';
+import queryString from "query-string";
 import io from "socket.io-client";
 import { useHistory } from "react-router-dom";
 import swal from "sweetalert";
@@ -25,7 +29,7 @@ const socket = io("http://localhost:9001/");
 const happyFace = require("../asset/happyFace.png");
 const sadFace = require("../asset/sadFace.png");
 
-function Board({location}) {
+function Board({ location }) {
   const [mutationUpdateScore] = useMutation(UPDATE_SCORE, {
     refetchQueries: [{ query: GET_USERS }],
     awaitRefetchQueries: true,
@@ -34,8 +38,8 @@ function Board({location}) {
   let isEven = true;
 
   // temp = [row, col, val]
-  const [name, setName] = useState('');
-  const [room, setRoom] = useState('');
+  const [name, setName] = useState("");
+  const [room, setRoom] = useState("");
 
   const [temp, setTemp] = useState([]);
   const [legalMoves, setLegalMoves] = useState([]);
@@ -100,15 +104,15 @@ function Board({location}) {
     const { name, room } = queryString.parse(location.search);
 
     setRoom(room);
-    setName(name)
+    setName(name);
 
-    socket.emit('join', { name, room }, (error) => {
-      if(error) {
+    socket.emit("join", { name, room }, (error) => {
+      if (error) {
         alert(error);
       }
     });
 
-    console.log('masuk use eeffct')
+    console.log("masuk use eeffct");
   }, [location.search]);
 
   useEffect(() => {
@@ -121,12 +125,15 @@ function Board({location}) {
 
   useEffect(() => {
     if (board.length > 0 && side !== "") {
-      const {status: returnFunc, path, kingRow, kingCol} = checkChecker(board, side);
+      const { status: returnFunc, path, kingRow, kingCol } = checkChecker(
+        board,
+        side
+      );
       setIsCheck(returnFunc);
       if (returnFunc) {
         const checkmateStat = isCheckMate(board, side, path, kingRow, kingCol);
         setCheckMate(checkmateStat);
-        if(checkmateStat || time.s === 0 && time.m === 0) {
+        if (checkmateStat || (time.s === 0 && time.m === 0)) {
           const updatedScore = {
             username: localStorage.getItem("username"),
             score: -5,
@@ -143,10 +150,9 @@ function Board({location}) {
           history.push("/leaderboard");
           socket.emit("moveToLeaderboard", updatedScore);
         }
-        
       }
     }
-  }, [board])
+  }, [board]);
 
   //timer logic
 
@@ -352,14 +358,14 @@ function Board({location}) {
     } else if (temp.length > 0 && temp[2] !== 0) {
       const newBoard = moveValidation(board, temp, row, col, legalMoves);
       if (newBoard) {
-        const {status: returnFunc} = checkChecker(newBoard, side);
+        const { status: returnFunc } = checkChecker(newBoard, side);
         if (!returnFunc) {
           socket.emit("finishTurn", { board: newBoard });
           setTemp([]);
           setBoard(newBoard);
           setLegalMoves([]);
           setTurn(!turn);
-  
+
           clearInterval(interv);
           setStatus(1);
           runOpponent();
@@ -369,7 +375,7 @@ function Board({location}) {
           socket.emit("timerStop2");
         } else {
           setLegalMoves([]);
-          setTemp([]);  
+          setTemp([]);
         }
       } else {
         setLegalMoves([]);
