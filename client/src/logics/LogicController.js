@@ -207,3 +207,25 @@ export function isCheckMate(board, side, path, row, col) {
 
   return status;
 }
+
+export function catslingHandler(newBoard, side) {
+  const flag = side === 'white' ? false : true;
+
+  if(isNaN(String(newBoard[7][7])[0]) === flag &&
+  (newBoard[7][7] === 5 || newBoard[7][7] === -5) &&
+  isNaN(String(newBoard[7][6])[0]) === flag &&
+  (newBoard[7][6] === 1 || newBoard[7][6] === -1)) {
+    newBoard[7][7] = 0;
+    newBoard[7][5] = flag ? -5 : 5;
+  }
+
+  if(isNaN(String(newBoard[7][0])[0]) === flag &&
+  (newBoard[7][0] === 5 || newBoard[7][0] === -5) &&
+  isNaN(String(newBoard[7][2])[0]) === flag &&
+  (newBoard[7][2] === 1 || newBoard[7][2] === -1)) {
+    newBoard[7][0] = 0;
+    newBoard[7][3] = flag ? -5 : 5;
+  }
+
+  return newBoard;
+}
