@@ -176,7 +176,7 @@ export const Game = ({location}) =>  {
                   id="btn"
                   onClick={() => createOffer()}
                   className="btn btn-info"
-                  style={{ width: "100%" }}
+                  style={{ width: "100%" , boxShadow: 'rgba(0, 0, 0, 0.75) 2px 3px 5px 0px'}}
                 >
                   I am ready 
                 </button>

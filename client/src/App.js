@@ -9,6 +9,7 @@ import {
   HistoryGame,
 } from "./pages";
 import { Game } from "./pages/Game";
+import Footer from "./components/Footer";
 
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import {
@@ -54,6 +55,7 @@ function App() {
                 component={HistoryGame}
               />
             </Switch>
+            <Footer/>
           </Router>
         </div>
       </Provider>
