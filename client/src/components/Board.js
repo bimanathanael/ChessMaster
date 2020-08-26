@@ -69,7 +69,6 @@ function Board({ location }) {
   const [turn, setTurn] = useState(null);
   const [side, setSide] = useState("");
   const [isCheck, setIsCheck] = useState(false);
-  const [checkMate, setCheckMate] = useState(false);
   const [enableCastling, setEnableCastling] = useState(true);
 
   //timer state
@@ -153,8 +152,6 @@ function Board({ location }) {
       setIsCheck(returnFunc);
       if (returnFunc) {
         setEnableCastling(false);
-        // const checkmateStat = isCheckMate(board, side, path, kingRow, kingCol);
-        // setCheckMate(checkmateStat);
         if (isCheckMate(board, side, path, kingRow, kingCol) || (time.s === 0 && time.m === 0)) {
           const updatedScore = {
             username: localStorage.getItem("username"),
@@ -433,7 +430,7 @@ function Board({ location }) {
         return null;
       }
       const newTemp = [row, col, val];
-      const data = defineLegalMoves(board, row, col, val);
+      const data = defineLegalMoves(board, row, col, val, enableCastling);
       setTemp(newTemp);
       setLegalMoves(data);
     } else if (temp.length > 0 && temp[2] !== 0) {
