@@ -6,7 +6,7 @@ const Card = ({ roomName }) => {
   const kingB = require("../chess-pack/chess-king-black.png");
 
   return (
-    <div className="col-4">
+    <div className="col-sm-3">
       <div className="CardShadow">
         <div className="Card">
           <div className="vs">
