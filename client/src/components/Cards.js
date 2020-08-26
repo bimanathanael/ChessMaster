@@ -7,9 +7,7 @@ const Card = ({ roomName }) => {
 
   return (
     <div className="col-4">
-      <a
-        href={`/game?name=${localStorage.getItem("username")}&room=${roomName}`}
-      >
+      
         <div className="CardShadow">
           <div className="Card">
             <div className="vs">
@@ -17,11 +15,16 @@ const Card = ({ roomName }) => {
               vs
               <img className="cardLogo" src={kingB} />
             </div>
-            <p className="card-title"> Room Name: </p>
-            <p className="card-text">{roomName}</p>
+            <p className="card-title text-danger"> Room Name: </p>
+            <p className="card-text text-danger">{roomName}</p>
+            <a
+              href={`/game?name=${localStorage.getItem("username")}&room=${roomName}`}
+            >
+              <button className="btn btn-info"> Join Game </button>
+
+            </a>
           </div>
         </div>
-      </a>
     </div>
   );
 };

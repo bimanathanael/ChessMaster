@@ -1,7 +1,7 @@
 .outerContainer {
   display: flex;
   justify-content: center;
-  height: 60vh;
+  height: 68vh;
   background-color: transparent;
 }
 
@@ -9,10 +9,12 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background: #FFFFFF;
-  border-radius: 8px;
-  height: 60%;
-  width: 35%;
+  /* background: #FFFFFF; */
+  padding: 0px !important;
+  border-radius: 14px;
+  width: 94%;
+  height: 100%;
+  background-color: #2c3539;
 }
 
 @media (min-width: 320px) and (max-width: 480px) {
@@ -23,6 +25,8 @@
   .container {
     width: 100%;
     height: 100%;
+    background-color: #ebecf1;
+    padding: 0px !important;
   }
 }
 
@@ -37,17 +41,21 @@
   align-items: center;
   justify-content: space-between;
   background: #17a2b8;
-  border-radius: 4px 4px 0 0;
   height: 60px;
   width: 100%;
+  border-left: solid 5px #ebecf1;
+  border-radius: 44px 8px 0 0;
+  border-right: solid 5px #ebecf1;
+
 }
 
 .leftInnerContainer {
   flex: 0.5;
   display: flex;
+  width: 200px;
   align-items: center;
   margin-left: 5%;
-  color: white;
+  color: #ebecf1;
 }
 
 .rightInnerContainer {
@@ -64,6 +72,9 @@
 .form {
   display: flex;
   border-top: 2px solid #D3D3D3;
+  border-radius: 0 0 14px 14px;
+  border-left: solid 5px #ebecf1;
+  background-color: #2c3539;
 }
 
 .input {
@@ -72,6 +83,9 @@
   padding: 5%;
   width: 80%;
   font-size: 1.2em;
+  background-color:#f3f3f3;
+  border-radius: 0 0 0 14px;
+
 }
 
 input:focus, textarea:focus, select:focus{
@@ -87,10 +101,18 @@ input:focus, textarea:focus, select:focus{
   display: inline-block;
   border: none;
   width: 20%;
+  border-radius: 0 0 44px 0 ;
+  border-right: solid 5px #ebecf1;
+  /* border-bottom: solid 5px black; */
+
 }
 
 .messages {
   padding: 5% 0;
   overflow: auto;
   flex: auto;
+  background-color: #ebecf1;
+  border-left: solid 5px #ebecf1;
+  border-right: solid 5px #ebecf1;
+
 }

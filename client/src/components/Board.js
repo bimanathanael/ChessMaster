@@ -15,6 +15,8 @@ import { useDispatch } from "react-redux";
 import { useMutation, gql } from "@apollo/client";
 import { GET_USERS } from "../pages/LeaderBoard";
 import { GET_USERBYID } from "../pages/MainMenu";
+import { ImFlag } from 'react-icons/im';
+
 import { GET_HISTORYGAME } from "../pages/HistoryGame";
 
 const ADD_TO_HISTORYGAME = gql`
@@ -474,7 +476,7 @@ function Board({ location }) {
   return (
     <>
       {displayButton && !displayBoard && (
-        <button onClick={() => startTimerHandler()} className="btn btn-info">
+        <button onClick={() => startTimerHandler()} className="btn btn-info" style={{width: '100%'}}>
           Start Game
         </button>
       )}
@@ -482,14 +484,16 @@ function Board({ location }) {
       {displayBoard && (
         <div>
           <div className="d-flex justify-content-between">
-            <h1>
+            <h1 class="timer">
               {time.m < 10 ? `0${time.m}` : time.m}:
               {time.s < 10 ? `0${time.s}` : time.s}
             </h1>
-            <Button variant="danger" onClick={() => surrenderHandler()}>
-              Surrender
-            </Button>
-            <h1>
+            <Button style={{
+              backgroundColor: 'rgb(174, 25, 26) ', 
+              border: '1px solid #2f2525'}}
+              onClick={() => surrenderHandler()}
+              >Surrender &nbsp; <ImFlag style={{ marginBottom: '7px'}}/></Button>
+            <h1 class="timer">
               {timeOpponent.m < 10 ? `0${timeOpponent.m}` : timeOpponent.m}:
               {timeOpponent.s < 10 ? `0${timeOpponent.s}` : timeOpponent.s}
             </h1>
