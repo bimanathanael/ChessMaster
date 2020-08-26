@@ -6,7 +6,6 @@ import {
   MainMenu,
   RegisterPage,
   LeaderBoard,
-  HistoryGame,
 } from "./pages";
 import { Game } from "./pages/Game";
 import Footer from "./components/Footer";
@@ -37,23 +36,24 @@ function App() {
 
               <ProtectedRouteBeforeLogin
                 exact
+                path="/"
+                component={LoginPages}
+              />
+
+              <ProtectedRouteBeforeLogin
+                exact
                 path="/register"
                 component={RegisterPage}
               />
 
               <ProtectedRouteAfterLogin exact path="/game" component={Game} />
 
-              <ProtectedRouteAfterLogin exact path="/" component={MainMenu} />
               <ProtectedRouteAfterLogin
                 exact
                 path="/leaderboard"
                 component={LeaderBoard}
               />
-              <ProtectedRouteAfterLogin
-                exact
-                path="/users/:username"
-                component={HistoryGame}
-              />
+              <ProtectedRouteAfterLogin exact path="/:username" component={MainMenu} />
             </Switch>
             <Footer/>
           </Router>

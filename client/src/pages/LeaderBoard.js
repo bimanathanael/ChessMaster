@@ -67,17 +67,6 @@ export default () => {
     <>
       <Navbar/>
       <div className="mainMenu">
-      <img
-        className="mt-3"
-        src={aftermath}
-        style={{ 
-          margin: "0 auto", 
-          width: "5%", 
-          height: "10%",
-          backgroundColor: 'white',
-          padding: '5px',
-          borderRadius: '6px', }}
-      />
       <div>
         <h1>Leader Board</h1>
       </div>

@@ -37,7 +37,7 @@ export default () => {
       const dataFromJWT = jwtVerify(access_token, TOKEN_KEY);
       localStorage.setItem("username", dataFromJWT.username);
       localStorage.setItem("score", dataFromJWT.score);
-      history.push("/");
+      history.push(`/${dataFromJWT.username}`);
       swal("success login", "", "success");
     }
   }, [data]);

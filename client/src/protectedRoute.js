@@ -12,7 +12,7 @@ export const ProtectedRouteBeforeLogin = ({
         if (!localStorage.getItem("access_token")) {
           return <Component {...props} />;
         } else {
-          return <Redirect to="/" />;
+          return <Redirect to={`/${localStorage.getItem('username')}`} />;
         }
       }}
     />
