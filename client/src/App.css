@@ -93,9 +93,10 @@
 }
 
 .motherLogin {
-  background-color: #263554;
-  height: 100vh;
+  background-image: url("https://cdn2.aoe.com/fileadmin/_processed_/a/a/csm_Fotolia_94900081_Chess_Pieces_930_590_70_2fe5d1b6a3.jpg");
+  background-size: cover;
   padding-top: 9%;
+  padding-bottom: 9%;
   /* display: flex;
   justify-content: center; */
   color: white;
@@ -185,7 +186,7 @@
   /* height: 100vh; */
 }
 
-.timer{
+.timer {
   color: rgb(235, 236, 241);
   padding-left: 10px;
   padding-right: 10px;
@@ -194,7 +195,7 @@
   border-radius: 0 14px;
 }
 
-.video{
+.video {
   float: left;
   width: 100%;
   height: 271px;
@@ -202,13 +203,13 @@
   background-color: #ebecf1;
   border: 5px solid #ebecf1;
   outline: 5px solid #ebecf1;
-  -webkit-box-shadow: 9px 13px 22px 2px rgba(0,0,0,0.58);
-  -moz-box-shadow: 9px 13px 22px 2px rgba(0,0,0,0.58);
-  box-shadow: 9px 13px 22px 2px rgba(0,0,0,0.58);
+  -webkit-box-shadow: 9px 13px 22px 2px rgba(0, 0, 0, 0.58);
+  -moz-box-shadow: 9px 13px 22px 2px rgba(0, 0, 0, 0.58);
+  box-shadow: 9px 13px 22px 2px rgba(0, 0, 0, 0.58);
 }
 
-.versus{
-  background-color:#ebecf1;
+.versus {
+  background-color: #ebecf1;
   border-radius: 10px;
   display: none !important;
 }
@@ -220,9 +221,10 @@
   height: 100%;
 }
 .LogoLogin {
-  width: "15%";
+  /* width: "15%"; */
   background-color: white;
-  border-radius: 25px;
+  width: 20%;
+  border-radius: 10px;
 }
 
 .LogoNav {
