@@ -155,9 +155,9 @@ function Board({ location }) {
       setIsCheck(returnFunc);
       if (returnFunc) {
         setEnableCastling(false);
-        const checkmateStat = isCheckMate(board, side, path, kingRow, kingCol);
-        setCheckMate(checkmateStat);
-        if (checkmateStat || (time.s === 0 && time.m === 0)) {
+        // const checkmateStat = isCheckMate(board, side, path, kingRow, kingCol);
+        // setCheckMate(checkmateStat);
+        if (isCheckMate(board, side, path, kingRow, kingCol) || (time.s === 0 && time.m === 0)) {
           const updatedScore = {
             username: localStorage.getItem("username"),
             score: -5,
