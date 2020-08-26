@@ -97,7 +97,7 @@ export function isCheckMate(board, side, path, row, col) {
     ];
     
     // cek if there's pawn to save the king
-    if(arr[0]+2 < 7) {
+    if(arr[0]+2 < 7 && board[arr[0]+2][arr[1]] !== undefined) {
       if(arr[0] > 3 && board[arr[0]][arr[1]] === 0 &&
       isNaN(String(board[arr[0]+2][arr[1]])[0]) === flag &&
       (board[arr[0]+2][arr[1]] === 6 || board[arr[0]+2][arr[1]] === -6)) {
@@ -105,7 +105,7 @@ export function isCheckMate(board, side, path, row, col) {
       }
     }
 
-    if(board[arr[0]][arr[1]]) {
+    if(board[arr[0]+1][arr[1]] !== undefined) {
       if(board[arr[0]][arr[1]] === 0 &&
       isNaN(String(board[arr[0]+1][arr[1]])[0]) === flag && 
       (board[arr[0]+1][arr[1]] === 6 || board[arr[0]+1][arr[1]] === -6)) {
