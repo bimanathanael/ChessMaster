@@ -3,6 +3,7 @@ import {
   defineLegalMoves,
   moveValidation,
   isCheckMate,
+  catslingHandler
 } from "../logics/LogicController";
 import { checkChecker } from "../logics/CheckLogic";
 import { Modal, Button } from "react-bootstrap";
@@ -57,10 +58,11 @@ function Board({ location }) {
   const dispatch = useDispatch();
   let isEven = true;
 
-  // temp = [row, col, val]
   const [name, setName] = useState("");
   const [room, setRoom] = useState("");
-
+  
+  const dic = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+  const [historyMoves, setHistoryMoves] = useState([]);
   const [temp, setTemp] = useState([]);
   const [legalMoves, setLegalMoves] = useState([]);
   const [modalWhite, setModalWhite] = useState(false);
@@ -70,6 +72,7 @@ function Board({ location }) {
   const [side, setSide] = useState("");
   const [isCheck, setIsCheck] = useState(false);
   const [checkMate, setCheckMate] = useState(false);
+  const [enableCastling, setEnableCastling] = useState(true);
 
   //timer state
   const [displayBoard, setDisplayBoard] = useState(false);
@@ -151,6 +154,7 @@ function Board({ location }) {
       );
       setIsCheck(returnFunc);
       if (returnFunc) {
+        setEnableCastling(false);
         const checkmateStat = isCheckMate(board, side, path, kingRow, kingCol);
         setCheckMate(checkmateStat);
         if (checkmateStat || (time.s === 0 && time.m === 0)) {
@@ -432,8 +436,17 @@ function Board({ location }) {
       setTemp(newTemp);
       setLegalMoves(data);
     } else if (temp.length > 0 && temp[2] !== 0) {
-      const newBoard = moveValidation(board, temp, row, col, legalMoves);
+      let newBoard = moveValidation(board, temp, row, col, legalMoves);
       if (newBoard) {
+        if(temp[2] === 1 || temp[2] === -1) {
+          if(!isCheck && enableCastling && temp[0] === 7 && temp[1] === 4) {
+            newBoard = catslingHandler(newBoard, side);
+          }
+          setEnableCastling(false);
+        }
+        let moves = historyMoves;
+        moves.push([`[${dic[temp[1]]}${temp[0]+1} to ${dic[col]}${row+1}]`]);
+        setHistoryMoves(moves);
         const { status: returnFunc } = checkChecker(newBoard, side);
         if (!returnFunc) {
           socket.emit("finishTurn", { board: newBoard });
@@ -473,6 +486,7 @@ function Board({ location }) {
     else setModalWhite(false);
   }
 
+  console.log(historyMoves, "<<<< historyMoves")
   return (
     <>
       {displayButton && !displayBoard && (
