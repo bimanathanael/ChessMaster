@@ -15,9 +15,12 @@ import swal from "sweetalert";
 import io from "socket.io-client";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { GET_ROOMS, roomsItem } from "../config/client";
-import Navbar from "../components/Navbar";
+import { SideNavMainMenu } from "../components/SideNavMainMenu";
+import NavbarMainMenu from "../components/NavbarMainMenu";
 
 const ENDPOINT = "http://localhost:9004/";
+const backgroundImg =
+  "https://cdn2.aoe.com/fileadmin/_processed_/a/a/csm_Fotolia_94900081_Chess_Pieces_930_590_70_2fe5d1b6a3.jpg";
 
 export const GET_USERBYID = gql`
   query GetById($dataUser: String) {
@@ -134,90 +137,84 @@ export default () => {
   }, []);
 
   return (
-    <div>
-      <Navbar />
-
-      <div className="mainMenu2">
-        <h1>Main Menu</h1>
-        <div className="cardContainer" style={{ width: "20%" }}>
-          <div className="cardProfile">
-            {dataFromApollo && (
-              <div style={{ padding: "2%" }}>
-                <p>Hello: {dataFromApollo.user.username}</p>
-                <p>Your Score: {dataFromApollo.user.score}</p>
-              </div>
-            )}
-          </div>
+    <div className="row">
+      <div
+        className="col-2"
+        style={{ paddingLeft: "0px", paddingRight: "0px" }}
+      >
+        <SideNavMainMenu />
+      </div>
+      <div className="col" style={{ marginLeft: "-3%", paddingRight: "0px" }}>
+        <div className="row">
+          <NavbarMainMenu />
         </div>
-        <div className="cardButton">
-          <button
-            onClick={(e) => moveToDetailUser(e)}
-            className="btn btn-primary profbutton"
-          >
-            {" "}
-            Game History
-          </button>
-        </div>{" "}
-        <div>
-          <div className="buttonGroup">
-            <Link to="/leaderboard">
-              <Button
-                variant="info"
-                style={{
-                  marginRight: "20px",
-                  boxShadow: "2px 3px 5px 0px rgba(0,0,0,0.75)",
-                }}
-              >
-                Leader Board
-              </Button>
-            </Link>
-            {/* <a href="/game">
-            <button className="btn btn-info"> Join Game </button>
-          </a> */}
-          </div>
-        </div>
-        <Modal show={show} onHide={handleClose}>
-          <Modal.Header closeButton>
-            <Modal.Title>Form Add room</Modal.Title>
-          </Modal.Header>
-          <Form onSubmit={(e) => submitFormRoomHandler(e)}>
-            <Modal.Body>
-              <Form.Group controlId="exampleForm.ControlInput1">
-                <Form.Label>Room Name</Form.Label>
-                <Form.Control
-                  onChange={(e) => formRoomNameHandler(e)}
-                  type="text"
-                  placeholder="Room Name.."
-                  value={roomName}
-                />
-              </Form.Group>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="primary" type="submit">
-                Create Room
-              </Button>
-              <Button variant="secondary" onClick={handleClose}>
-                Cancel
-              </Button>
-            </Modal.Footer>
-          </Form>
-        </Modal>
-        <Button
-          variant="info"
-          onClick={handleShow}
-          style={{ boxShadow: "2px 3px 5px 0px rgba(0,0,0,0.75)" }}
+        <div
+          className="row"
+          style={{
+            backgroundImage: `url(${backgroundImg})`,
+            backgroundRepeat: "cover",
+          }}
         >
-          Create Room
-        </Button>
-        <div>
-          {" "}
-          <h2 style={{ marginTop: "50px" }}>Avalaible Room:</h2>
-          {allRooms.length === 0 && <h2>Tidak ada room yang tersedia</h2>}
-          <div className="row">
-            {allRooms.map((room, idx) => {
-              return <Cards key={idx} roomName={room} />;
-            })}
-          </div>
+          <Container style={{ minHeight: "72vh" }}>
+            <Row>
+              <Col md={12}>
+                <Row>
+                  <Col className="text-center">
+                    <Modal show={show} onHide={handleClose}>
+                      <Modal.Header closeButton>
+                        <Modal.Title>Form Add room</Modal.Title>
+                      </Modal.Header>
+                      <Form onSubmit={(e) => submitFormRoomHandler(e)}>
+                        <Modal.Body>
+                          <Form.Group controlId="exampleForm.ControlInput1">
+                            <Form.Label>Room Name</Form.Label>
+                            <Form.Control
+                              onChange={(e) => formRoomNameHandler(e)}
+                              type="text"
+                              placeholder="Room Name.."
+                              value={roomName}
+                            />
+                          </Form.Group>
+                        </Modal.Body>
+                        <Modal.Footer>
+                          <Button variant="primary" type="submit">
+                            + Create Room +
+                          </Button>
+                          <Button variant="secondary" onClick={handleClose}>
+                            Cancel
+                          </Button>
+                        </Modal.Footer>
+                      </Form>
+                    </Modal>
+                    <Button
+                      variant="info"
+                      onClick={handleShow}
+                      style={{ boxShadow: "2px 3px 5px 0px rgba(0,0,0,0.75)" }}
+                      className="mt-5"
+                    >
+                      + Create Room +
+                    </Button>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col className="text-center text-white">
+                    <div>
+                      {" "}
+                      <h2 style={{ marginTop: "50px" }}>Avalaible Room</h2>
+                      {allRooms.length === 0 && (
+                        <h2>No room available . . .</h2>
+                      )}
+                      <div className="row">
+                        {allRooms.map((room, idx) => {
+                          return <Cards key={idx} roomName={room} />;
+                        })}
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+          </Container>
         </div>
       </div>
     </div>

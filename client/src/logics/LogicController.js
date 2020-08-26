@@ -4,13 +4,13 @@ import {
   legalKingMoves, legalKnightMoves
 } from './LegalMovesChecker';
 
-export function defineLegalMoves(board, row, col, val) {
+export function defineLegalMoves(board, row, col, val, castling) {
   let legalMoves = [];
   
   switch (val) {
     case -1:
     case 1:
-      legalMoves = legalKingMoves(board, row, col);
+      legalMoves = legalKingMoves(board, row, col, castling);
       break;
     case -2:
     case 2:
@@ -97,7 +97,7 @@ export function isCheckMate(board, side, path, row, col) {
     ];
     
     // cek if there's pawn to save the king
-    if(arr[0]+2 < 7) {
+    if(arr[0]+2 < 7 && board[arr[0]+2][arr[1]] !== undefined) {
       if(arr[0] > 3 && board[arr[0]][arr[1]] === 0 &&
       isNaN(String(board[arr[0]+2][arr[1]])[0]) === flag &&
       (board[arr[0]+2][arr[1]] === 6 || board[arr[0]+2][arr[1]] === -6)) {
@@ -105,7 +105,7 @@ export function isCheckMate(board, side, path, row, col) {
       }
     }
 
-    if(board[arr[0]][arr[1]]) {
+    if(board[arr[0]+1][arr[1]] !== undefined) {
       if(board[arr[0]][arr[1]] === 0 &&
       isNaN(String(board[arr[0]+1][arr[1]])[0]) === flag && 
       (board[arr[0]+1][arr[1]] === 6 || board[arr[0]+1][arr[1]] === -6)) {
@@ -206,4 +206,26 @@ export function isCheckMate(board, side, path, row, col) {
   })
 
   return status;
+}
+
+export function catslingHandler(newBoard, side) {
+  const flag = side === 'white' ? false : true;
+
+  if(isNaN(String(newBoard[7][7])[0]) === flag &&
+  (newBoard[7][7] === 5 || newBoard[7][7] === -5) &&
+  isNaN(String(newBoard[7][6])[0]) === flag &&
+  (newBoard[7][6] === 1 || newBoard[7][6] === -1)) {
+    newBoard[7][7] = 0;
+    newBoard[7][5] = flag ? -5 : 5;
+  }
+
+  if(isNaN(String(newBoard[7][0])[0]) === flag &&
+  (newBoard[7][0] === 5 || newBoard[7][0] === -5) &&
+  isNaN(String(newBoard[7][2])[0]) === flag &&
+  (newBoard[7][2] === 1 || newBoard[7][2] === -1)) {
+    newBoard[7][0] = 0;
+    newBoard[7][3] = flag ? -5 : 5;
+  }
+
+  return newBoard;
 }
