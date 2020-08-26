@@ -109,6 +109,7 @@
   border-radius: 5px;
   background-color: white;
   /* box-shadow: 3px 3px 10px black; */
+  color: black;
 }
 
 .CardShadow {
@@ -119,6 +120,35 @@
   border-radius: 5px;
   background-color: rgb(150, 142, 142);
   box-shadow: 6px 6px 10px #151f33;
+}
+
+.cardProfile{
+  /* height: 200px;
+  width: 200px; */
+  /* margin: 30px; */
+  /* margin: 30px auto 30px; */
+  padding-top: 40px;
+  border-radius: 5px 0 0 5px;
+  background-color: white;
+  border-right: 1px solid black;
+  color: black;
+}
+
+.cardContainer {
+  border-radius: 5px ;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 150px;
+  width: 200px;
+  background-color: white;
+  box-shadow: 0 3px rgb(150, 142, 142) ;
+  margin: 20px auto 0;
+}
+
+.profbutton{
+  margin-top: 40px;
+  height: 50%;
+  width: 70%;
 }
 
 .cardLogo {
