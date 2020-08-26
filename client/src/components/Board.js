@@ -16,7 +16,7 @@ import { useDispatch } from "react-redux";
 import { useMutation, gql } from "@apollo/client";
 import { GET_USERS } from "../pages/LeaderBoard";
 import { GET_USERBYID } from "../pages/MainMenu";
-import { ImFlag } from 'react-icons/im';
+import { ImFlag } from "react-icons/im";
 
 const ADD_TO_HISTORYGAME = gql`
   mutation AddToHistory($addHistoryGame: inputNewHistory) {
@@ -236,14 +236,24 @@ function Board({ location }) {
 
   useEffect(() => {
     socket.on("moveToLeaderboard", () => {
+      let updateScore = {
+        username: localStorage.getItem("username"),
+        score: 50,
+      };
       mutationUpdateScore({
         variables: {
-          updateScore: {
-            username: localStorage.getItem("username"),
-            score: 50,
-          },
+          updateScore,
         },
       });
+      history.push("/leaderboard");
+      socket.emit("editLeaderboard", updateScore);
+    });
+  }, []);
+
+  useEffect(() => {
+    socket.on("editLeaderboard", (update) => {
+      console.log("<<<>>>><<<>>>>");
+      mutationUpdateScore({ variables: { updateScore: update } });
       history.push(`/leaderboard`);
 
     });
@@ -283,11 +293,11 @@ function Board({ location }) {
   }, []);
 
   const startTimerHandler = () => {
-    setDisplayBoard(true);
     run();
     setInterv(1);
     setInterv(setInterval(run, 1000));
     socket.emit("timerStart", localStorage.getItem("username"));
+    setDisplayBoard(true);
   };
 
   const stop = () => {
@@ -487,9 +497,16 @@ function Board({ location }) {
   console.log(historyMoves, "<<<< historyMoves")
   return (
     <>
+      {console.log(time.m, time.s, "cekcek")}
       {displayButton && !displayBoard && (
-        <button onClick={() => startTimerHandler()} className="btn btn-info" 
-        style={{width: '100%', boxShadow: 'rgba(0, 0, 0, 0.75) 2px 3px 5px 0px'}}>
+        <button
+          onClick={() => startTimerHandler()}
+          className="btn btn-info"
+          style={{
+            width: "100%",
+            boxShadow: "rgba(0, 0, 0, 0.75) 2px 3px 5px 0px",
+          }}
+        >
           Start Game
         </button>
       )}
@@ -501,11 +518,15 @@ function Board({ location }) {
               {time.m < 10 ? `0${time.m}` : time.m}:
               {time.s < 10 ? `0${time.s}` : time.s}
             </h1>
-            <Button style={{
-              backgroundColor: 'rgb(174, 25, 26) ', 
-              border: '1px solid #2f2525'}}
+            <Button
+              style={{
+                backgroundColor: "rgb(174, 25, 26) ",
+                border: "1px solid #2f2525",
+              }}
               onClick={() => surrenderHandler()}
-              >Surrender &nbsp; <ImFlag style={{ marginBottom: '7px'}}/></Button>
+            >
+              Surrender &nbsp; <ImFlag style={{ marginBottom: "7px" }} />
+            </Button>
             <h1 class="timer">
               {timeOpponent.m < 10 ? `0${timeOpponent.m}` : timeOpponent.m}:
               {timeOpponent.s < 10 ? `0${timeOpponent.s}` : timeOpponent.s}
