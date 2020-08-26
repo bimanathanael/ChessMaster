@@ -8,14 +8,13 @@ const Card = ({ roomName }) => {
   return (
     <div className="col-sm-3">
       <div className="CardShadow">
-        <div className="Card">
+        <div className="Card pt-3" style={{backgroundColor: '#ebecf1'}}>
           <div className="vs">
             <img className="cardLogo" src={kingW} />
             vs
             <img className="cardLogo" src={kingB} />
           </div>
-          <p className="card-title"> Room Name: </p>
-          <p className="card-text">{roomName}</p>
+          <p className="card-text mt-2">{roomName}</p>
           <a
             href={`/game?name=${localStorage.getItem(
               "username"
