@@ -112,7 +112,7 @@ export function legalBlackPawnMoves(board, row, col) {
 }
 
 
-export function legalKingMoves(board, row, col) {
+export function legalKingMoves(board, row, col, castling) {
   const flag = isNaN(String(board[row][col])[0]);
   
   let legalMoves = [
@@ -121,19 +121,21 @@ export function legalKingMoves(board, row, col) {
     [row-1, col-1], [row-1, col], [row-1, col+1]
   ]
 
-  if(row === 7 && col === 4) {
-    for(let i = col+1; i < board.length; i++) {
-      if(i < 7 && board[row][i] !== 0) break;
-      if(i === 7 && isNaN(String(board[row][i])[0]) === flag &&
-      (board[row][i] === 5 || board[row][i] === -5)) {
-        legalMoves.push([row, col+2]);
+  if(castling) {
+    if(row === 7 && col === 4) {
+      for(let i = col+1; i < board.length; i++) {
+        if(i < 7 && board[row][i] !== 0) break;
+        if(i === 7 && isNaN(String(board[row][i])[0]) === flag &&
+        (board[row][i] === 5 || board[row][i] === -5)) {
+          legalMoves.push([row, col+2]);
+        }
       }
-    }
-    for(let i = col-1; i >= 0; i--) {
-      if(i > 0 && board[7][i] !== 0) break;
-      if(i === 0 && isNaN(String(board[row][i])[0]) === flag &&
-      (board[row][i] === 5 || board[row][i] === -5)) {
-        legalMoves.push([row, col-2]);
+      for(let i = col-1; i >= 0; i--) {
+        if(i > 0 && board[7][i] !== 0) break;
+        if(i === 0 && isNaN(String(board[row][i])[0]) === flag &&
+        (board[row][i] === 5 || board[row][i] === -5)) {
+          legalMoves.push([row, col-2]);
+        }
       }
     }
   }

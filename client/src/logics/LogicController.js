@@ -4,13 +4,13 @@ import {
   legalKingMoves, legalKnightMoves
 } from './LegalMovesChecker';
 
-export function defineLegalMoves(board, row, col, val) {
+export function defineLegalMoves(board, row, col, val, castling) {
   let legalMoves = [];
   
   switch (val) {
     case -1:
     case 1:
-      legalMoves = legalKingMoves(board, row, col);
+      legalMoves = legalKingMoves(board, row, col, castling);
       break;
     case -2:
     case 2:
