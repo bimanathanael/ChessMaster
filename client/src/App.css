@@ -93,9 +93,10 @@
 }
 
 .motherLogin {
-  background-color: #263554;
-  height: 100vh;
+  background-image: url("https://cdn2.aoe.com/fileadmin/_processed_/a/a/csm_Fotolia_94900081_Chess_Pieces_930_590_70_2fe5d1b6a3.jpg");
+  background-size: cover;
   padding-top: 9%;
+  padding-bottom: 9%;
   /* display: flex;
   justify-content: center; */
   color: white;
@@ -109,6 +110,7 @@
   border-radius: 5px;
   background-color: white;
   /* box-shadow: 3px 3px 10px black; */
+  color: black;
 }
 
 .CardShadow {
@@ -119,6 +121,35 @@
   border-radius: 5px;
   background-color: rgb(150, 142, 142);
   box-shadow: 6px 6px 10px #151f33;
+}
+
+.cardProfile {
+  /* height: 200px;
+  width: 200px; */
+  /* margin: 30px; */
+  /* margin: 30px auto 30px; */
+  padding-top: 40px;
+  border-radius: 5px 0 0 5px;
+  background-color: white;
+  border-right: 1px solid black;
+  color: black;
+}
+
+.cardContainer {
+  border-radius: 5px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 150px;
+  width: 200px;
+  background-color: white;
+  box-shadow: 0 3px rgb(150, 142, 142);
+  margin: 20px auto 0;
+}
+
+.profbutton {
+  margin-top: 40px;
+  height: 50%;
+  width: 70%;
 }
 
 .cardLogo {
@@ -134,11 +165,23 @@
 }
 
 .mainMenu {
-  background-color: #263554;
-  height: 100vh;
+  /* background-color: #263554; */
+  background-image: url("https://cdn2.aoe.com/fileadmin/_processed_/a/a/csm_Fotolia_94900081_Chess_Pieces_930_590_70_2fe5d1b6a3.jpg");
+  background-size: cover;
+  height: 83vh;
   justify-content: center;
   color: white;
   text-align: center;
+  padding-top: 2%;
+}
+
+.mainMenu2 {
+  background-image: url("https://cdn2.aoe.com/fileadmin/_processed_/a/a/csm_Fotolia_94900081_Chess_Pieces_930_590_70_2fe5d1b6a3.jpg");
+  background-size: cover;
+  justify-content: center;
+  color: white;
+  text-align: center;
+  padding-top: 2%;
 }
 
 .buttonGroup {
@@ -179,13 +222,13 @@
 .motherGame {
   display: flex;
   justify-content: center;
-  padding-top: 5%;
+  padding-top: 2%;
   background-color: #2c3539;
-  padding-bottom: 10%;
+  padding-bottom: 4%;
   /* height: 100vh; */
 }
 
-.timer{
+.timer {
   color: rgb(235, 236, 241);
   padding-left: 10px;
   padding-right: 10px;
@@ -194,7 +237,7 @@
   border-radius: 0 14px;
 }
 
-.video{
+.video {
   float: left;
   width: 100%;
   height: 271px;
@@ -202,13 +245,13 @@
   background-color: #ebecf1;
   border: 5px solid #ebecf1;
   outline: 5px solid #ebecf1;
-  -webkit-box-shadow: 9px 13px 22px 2px rgba(0,0,0,0.58);
-  -moz-box-shadow: 9px 13px 22px 2px rgba(0,0,0,0.58);
-  box-shadow: 9px 13px 22px 2px rgba(0,0,0,0.58);
+  -webkit-box-shadow: 9px 13px 22px 2px rgba(0, 0, 0, 0.58);
+  -moz-box-shadow: 9px 13px 22px 2px rgba(0, 0, 0, 0.58);
+  box-shadow: 9px 13px 22px 2px rgba(0, 0, 0, 0.58);
 }
 
-.versus{
-  background-color:#ebecf1;
+.versus {
+  background-color: #ebecf1;
   border-radius: 10px;
   display: none !important;
 }
@@ -220,11 +263,16 @@
   height: 100%;
 }
 .LogoLogin {
-  width: "15%";
+  /* width: "15%"; */
   background-color: white;
-  border-radius: 25px;
+  width: 20%;
+  border-radius: 10px;
 }
 
 .LogoNav {
   width: "5%";
+}
+
+.App {
+  font-family: "Roboto Condensed", sans-serif;
 }

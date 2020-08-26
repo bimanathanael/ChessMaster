@@ -3,6 +3,7 @@ import { postRegister } from "../store/actions/userAction";
 import { useHistory, useRouteMatch, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "react-bootstrap";
+import { Card } from "react-bootstrap";
 import swal from "sweetalert";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { GET_USERS } from "./LeaderBoard";
@@ -63,48 +64,56 @@ export default () => {
 
   return (
     <div className="motherLogin">
-      <div style={{ backgroundColor: "#263554" }}>
-        <div className="text-center" style={{ color: "white" }}>
-          <img className="LogoLogin" src={logo} />
-          <h1 className="Login-Title">REGISTER</h1>
-        </div>
-        <br />
-        <div style={{ margin: "0 31%", color: "white", paddingBottom: "2.4%" }}>
-          <form onSubmit={(e) => formRegisterHandler(e)}>
-            <div className="form-group">
-              <label>Username</label>
-              <input
-                type="text"
-                className="form-control"
-                onChange={(e) => usernameRegisterHandler(e)}
-                style={{ width: "100%" }}
-              />
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <Card style={{ width: "30%", color: "black" }} className="shadow-lg">
+          <Card.Body>
+            <div
+              style={{
+                margin: "3% 7%",
+              }}
+            >
+              <div>
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                  <img src={logo} style={{ marginBottom: "14%" }} />
+                </div>
+                <form onSubmit={(e) => formRegisterHandler(e)}>
+                  <div className="form-group">
+                    <label>Username</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      onChange={(e) => usernameRegisterHandler(e)}
+                      style={{ width: "100%" }}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Password</label>
+                    <input
+                      type="password"
+                      className="form-control"
+                      onChange={(e) => passwordRegisterHandler(e)}
+                    />
+                  </div>
+                  <div className="text-center">
+                    <button
+                      type="submit"
+                      className="btn btn-info"
+                      style={{ width: "100%" }}
+                    >
+                      Register
+                    </button>
+                  </div>
+                </form>
+                <p style={{ marginTop: "10%" }}>
+                  Already have account?{" "}
+                  <Link to="/login">
+                    <Button variant="info">Click Here</Button>
+                  </Link>
+                </p>
+              </div>
             </div>
-            <div className="form-group">
-              <label>Password</label>
-              <input
-                type="password"
-                className="form-control"
-                onChange={(e) => passwordRegisterHandler(e)}
-              />
-            </div>
-            <div className="text-center">
-              <button
-                type="submit"
-                className="btn btn-info"
-                style={{ width: "100%" }}
-              >
-                Register
-              </button>
-            </div>
-          </form>
-          <p style={{ marginTop: "10%" }}>
-            Already have account ?{" "}
-            <Link to="/login">
-              <Button variant="info">Click Here</Button>
-            </Link>
-          </p>
-        </div>
+          </Card.Body>
+        </Card>
       </div>
     </div>
   );
