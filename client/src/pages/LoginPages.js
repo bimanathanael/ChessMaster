@@ -6,7 +6,6 @@ import { Card } from "react-bootstrap";
 import { Button } from "react-bootstrap";
 import { useMutation, gql } from "@apollo/client";
 import swal from "sweetalert";
-const loginSvg = require("../asset/undraw_Login_re_4vu2.svg");
 const jwt = require("jsonwebtoken");
 const TOKEN_KEY = "chessMaster";
 const jwtVerify = (data) => {

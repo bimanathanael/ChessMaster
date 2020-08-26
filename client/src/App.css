@@ -123,7 +123,7 @@
   box-shadow: 6px 6px 10px #151f33;
 }
 
-.cardProfile{
+.cardProfile {
   /* height: 200px;
   width: 200px; */
   /* margin: 30px; */
@@ -136,17 +136,17 @@
 }
 
 .cardContainer {
-  border-radius: 5px ;
+  border-radius: 5px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   height: 150px;
   width: 200px;
   background-color: white;
-  box-shadow: 0 3px rgb(150, 142, 142) ;
+  box-shadow: 0 3px rgb(150, 142, 142);
   margin: 20px auto 0;
 }
 
-.profbutton{
+.profbutton {
   margin-top: 40px;
   height: 50%;
   width: 70%;
@@ -165,8 +165,19 @@
 }
 
 .mainMenu {
-  background-color: #263554;
+  /* background-color: #263554; */
+  background-image: url("https://cdn2.aoe.com/fileadmin/_processed_/a/a/csm_Fotolia_94900081_Chess_Pieces_930_590_70_2fe5d1b6a3.jpg");
+  background-size: cover;
   height: 83vh;
+  justify-content: center;
+  color: white;
+  text-align: center;
+  padding-top: 2%;
+}
+
+.mainMenu2 {
+  background-image: url("https://cdn2.aoe.com/fileadmin/_processed_/a/a/csm_Fotolia_94900081_Chess_Pieces_930_590_70_2fe5d1b6a3.jpg");
+  background-size: cover;
   justify-content: center;
   color: white;
   text-align: center;
@@ -262,6 +273,6 @@
   width: "5%";
 }
 
-.App{
-  font-family: 'Roboto Condensed', sans-serif;
+.App {
+  font-family: "Roboto Condensed", sans-serif;
 }
