@@ -9,8 +9,8 @@ export default ({ data, idx }) => {
 
   return (
     <div style={{ margin: "0 30%", paddingTop: "2.4%" }}>
-      <Table striped bordered hover variant="dark">
-        <thead>
+      <Table striped bordered hover variant="light">
+        <thead variant="dark">
           <tr>
             <th>No</th>
             <th>Thropy</th>

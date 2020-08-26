@@ -20,7 +20,7 @@ const Card = ({ roomName }) => {
             <a
               href={`/game?name=${localStorage.getItem("username")}&room=${roomName}`}
             >
-              <button className="btn btn-info"> Join Game </button>
+              <button className="btn btn-info" style={{boxShadow: 'rgba(0, 0, 0, 0.75) 1px 2px 3px 0px'}}> Join Game </button>
 
             </a>
           </div>
