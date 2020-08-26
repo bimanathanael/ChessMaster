@@ -65,6 +65,7 @@ export default () => {
   }
   return (
     <>
+      <Navbar/>
       <div className="mainMenu">
       <div>
         <h1>Leader Board</h1>

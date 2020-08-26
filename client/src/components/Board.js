@@ -166,7 +166,7 @@ function Board({ location }) {
             },
           });
           // console.log("sadasd");
-          history.push(`/${localStorage.getItem('username')}`);
+          history.push(`/leaderboard`);
           socket.emit("moveToLeaderboard", updatedScore);
         }
       }
@@ -177,7 +177,7 @@ function Board({ location }) {
 
   useEffect(() => {
     if (time.s === 0 && time.m === 0) {
-    history.push(`/${localStorage.getItem('username')}`);
+    history.push(`/leaderboard`);
 
       socket.emit("moveToLeaderboard");
     }
@@ -185,7 +185,7 @@ function Board({ location }) {
 
   useEffect(() => {
     socket.on("moveToLeaderboard", () => {
-    history.push(`/${localStorage.getItem('username')}`);
+    history.push(`/leaderboard`);
 
     });
   }, []);
@@ -233,7 +233,7 @@ function Board({ location }) {
       swal({
         title: "You Win",
       });
-    history.push(`/${localStorage.getItem('username')}`);
+    history.push(`/leaderboard`);
     });
   }, [opponentUsername]);
 
@@ -247,7 +247,7 @@ function Board({ location }) {
           },
         },
       });
-      history.push(`/${localStorage.getItem('username')}`);
+      history.push(`/leaderboard`);
 
     });
   }, []);
@@ -346,7 +346,7 @@ function Board({ location }) {
     swal({
       title: "You Lose",
     });
-    history.push(`/${localStorage.getItem('username')}`);
+    history.push(`/leaderboard`);
     socket.emit("moveToLeaderboard");
     socket.emit("moveToLeaderboard2");
   };

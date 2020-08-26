@@ -48,12 +48,12 @@ function App() {
 
               <ProtectedRouteAfterLogin exact path="/game" component={Game} />
 
-              <ProtectedRouteAfterLogin exact path="/:username" component={MainMenu} />
               <ProtectedRouteAfterLogin
                 exact
                 path="/leaderboard"
                 component={LeaderBoard}
               />
+              <ProtectedRouteAfterLogin exact path="/:username" component={MainMenu} />
             </Switch>
             <Footer/>
           </Router>
