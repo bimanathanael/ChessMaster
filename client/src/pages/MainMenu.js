@@ -134,7 +134,7 @@ export default () => {
 
         <div className="buttonGroup">
           <Link to="/leaderboard">
-            <Button variant="primary" style={{ marginRight: "20px" }}>
+            <Button variant="info" style={{ marginRight: "20px", boxShadow: '2px 3px 5px 0px rgba(0,0,0,0.75)' }}>
               Leader Board
             </Button>
           </Link>
@@ -142,19 +142,27 @@ export default () => {
             <button className="btn btn-info"> Join Game </button>
           </a> */}
         </div>
-        <div
-          onClick={(e) => moveToDetailUser(e)}
-          style={{ cursor: "pointer", width: "20%" }}
-        >
-          {dataFromApollo && (
-            <div style={{ padding: "2%" }} className="border">
-              <p>Hello: {dataFromApollo.user.username}</p>
-              <p>Your Score: {dataFromApollo.user.score}</p>
-            </div>
-          )}
+        <div className="cardContainer" style={{ width: "20%" }}>
+          <div className="cardProfile">
+            {dataFromApollo && (
+              <div style={{ padding: "2%" }}>
+                <p>Hello: {dataFromApollo.user.username}</p>
+                <p>Your Score: {dataFromApollo.user.score}</p>
+              </div>
+            )}
+          </div>
+          <div className="cardButton">
+            <button
+              onClick={(e) => moveToDetailUser(e)}
+              className="btn btn-primary profbutton"
+            >
+              {" "}
+              Game History
+            </button>
+          </div>
         </div>
         <br />
-        <Button variant="primary" onClick={handleShow}>
+        <Button variant="info" onClick={handleShow} style={{boxShadow: '2px 3px 5px 0px rgba(0,0,0,0.75)'}}>
           Create Room
         </Button>
 

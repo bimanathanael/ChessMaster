@@ -476,7 +476,8 @@ function Board({ location }) {
   return (
     <>
       {displayButton && !displayBoard && (
-        <button onClick={() => startTimerHandler()} className="btn btn-info" style={{width: '100%'}}>
+        <button onClick={() => startTimerHandler()} className="btn btn-info" 
+        style={{width: '100%', boxShadow: 'rgba(0, 0, 0, 0.75) 2px 3px 5px 0px'}}>
           Start Game
         </button>
       )}

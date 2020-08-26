@@ -19,26 +19,30 @@ export default () => {
   };
 
   return (
-    <Navbar bg="light" expand="lg">
-      <Navbar.Brand>
+    <nav className="d-flex justify-content-center" style={{ backgroundColor: '#316a5d', borderBottom: '3px solid ghostwhite'}}>
+      <div className="row-3" style={{marginTop: '1.5%'}}>
+        <a href="/">
+          <button className="btn btn-info" style={{boxShadow: '2px 3px 5px 0px rgba(0,0,0,0.75)'}}>
+            Home
+          </button>
+        </a>
+      </div>
+      <div className="row-3" style={{
+        backgroundColor: 'white', 
+        borderRadius: '44px', 
+        margin: '11px', 
+        marginRight: '15px', 
+        marginLeft: '15px', 
+      }} >
         <a href="/">
           <img src={logo} style={{ width: "100px" }} />
         </a>
-      </Navbar.Brand>
-      <Navbar.Toggle aria-controls="basic-navbar-nav" />
-      <Navbar.Collapse id="basic-navbar-nav">
-        <Nav className="mr-auto">
-          <a href="/">
-            Home
-            {/* <Nav.Link>Home</Nav.Link> */}
-          </a>
-        </Nav>
-        <Form inline>
-          <Button variant="danger" onClick={(e) => logoutHandler(e)}>
-            Logout
-          </Button>
-        </Form>
-      </Navbar.Collapse>
-    </Navbar>
+      </div>
+      <div className="row-3" style={{marginTop: '1.5%'}}>
+        <Button variant="danger" onClick={(e) => logoutHandler(e)} style={{boxShadow: '2px 3px 5px 0px rgba(0,0,0,0.75)'}}>
+          Logout
+        </Button>
+      </div>
+    </nav>
   );
 };
