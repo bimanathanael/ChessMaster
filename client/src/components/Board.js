@@ -18,8 +18,6 @@ import { GET_USERS } from "../pages/LeaderBoard";
 import { GET_USERBYID } from "../pages/MainMenu";
 import { ImFlag } from 'react-icons/im';
 
-import { GET_HISTORYGAME } from "../pages/HistoryGame";
-
 const ADD_TO_HISTORYGAME = gql`
   mutation AddToHistory($addHistoryGame: inputNewHistory) {
     addHistory(history: $addHistoryGame) {
@@ -168,7 +166,7 @@ function Board({ location }) {
             },
           });
           // console.log("sadasd");
-          history.push("/leaderboard");
+          history.push(`/leaderboard`);
           socket.emit("moveToLeaderboard", updatedScore);
         }
       }
@@ -179,14 +177,16 @@ function Board({ location }) {
 
   useEffect(() => {
     if (time.s === 0 && time.m === 0) {
-      history.push("/leaderboard");
+    history.push(`/leaderboard`);
+
       socket.emit("moveToLeaderboard");
     }
   }, [time]);
 
   useEffect(() => {
     socket.on("moveToLeaderboard", () => {
-      history.push("/leaderboard");
+    history.push(`/leaderboard`);
+
     });
   }, []);
   useEffect(() => {
@@ -233,7 +233,7 @@ function Board({ location }) {
       swal({
         title: "You Win",
       });
-      history.push("/leaderboard");
+    history.push(`/leaderboard`);
     });
   }, [opponentUsername]);
 
@@ -247,7 +247,8 @@ function Board({ location }) {
           },
         },
       });
-      history.push("/leaderboard");
+      history.push(`/leaderboard`);
+
     });
   }, []);
   useEffect(() => {
@@ -345,7 +346,7 @@ function Board({ location }) {
     swal({
       title: "You Lose",
     });
-    history.push("/leaderboard");
+    history.push(`/leaderboard`);
     socket.emit("moveToLeaderboard");
     socket.emit("moveToLeaderboard2");
   };

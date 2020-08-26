@@ -175,6 +175,14 @@
   padding-top: 2%;
 }
 
+.historyMenu {
+  /* background-color: #263554; */
+  justify-content: center;
+  color: white;
+  text-align: center;
+  padding-top: 2%;
+}
+
 .mainMenu2 {
   background-image: url("https://cdn2.aoe.com/fileadmin/_processed_/a/a/csm_Fotolia_94900081_Chess_Pieces_930_590_70_2fe5d1b6a3.jpg");
   background-size: cover;
