@@ -134,7 +134,7 @@ export default () => {
 
         <div className="buttonGroup">
           <Link to="/leaderboard">
-            <Button variant="primary" style={{ marginRight: "20px" }}>
+            <Button variant="info" style={{ marginRight: "20px", boxShadow: '2px 3px 5px 0px rgba(0,0,0,0.75)' }}>
               Leader Board
             </Button>
           </Link>
@@ -154,7 +154,7 @@ export default () => {
           )}
         </div>
         <br />
-        <Button variant="primary" onClick={handleShow}>
+        <Button variant="info" onClick={handleShow} style={{boxShadow: '2px 3px 5px 0px rgba(0,0,0,0.75)'}}>
           Create Room
         </Button>
 
