@@ -2,6 +2,7 @@
   background: #F3F3F3;
   border-radius: 20px;
   padding: 5px 20px;
+  padding-bottom: 0px !important;
   color: white;
   display: inline-block;
   max-width: 80%;

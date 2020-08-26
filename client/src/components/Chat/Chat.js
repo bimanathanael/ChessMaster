@@ -4,6 +4,7 @@ import io from "socket.io-client";
 import onlineIcon from '../../icons/onlineIcon.png';
 import ScrollToBottom from 'react-scroll-to-bottom';
 import Message from '../Message/Message';
+import { AiOutlineSend } from 'react-icons/ai';
 
 import './Chat.css';
 
@@ -26,26 +27,26 @@ const Chat = ({ location }) => {
     setName(name)
 
     socket.emit('join', { name, room }, (error) => {
-      if(error) {
+      if (error) {
         alert(error);
       }
     });
   }, [ENDPOINT, location.search]);
-  
+
   useEffect(() => {
     socket.on('message', message => {
-      setMessages(messages => [ ...messages, message ]);
+      setMessages(messages => [...messages, message]);
     });
-    
+
     socket.on("roomData", ({ users }) => {
       setUsers(users);
-      });
+    });
   }, []);
 
   const sendMessage = (event) => {
     event.preventDefault();
 
-    if(message) {
+    if (message) {
       socket.emit('sendMessage', message, () => setMessage(''));
     }
   }
@@ -56,13 +57,13 @@ const Chat = ({ location }) => {
         <div className="infoBar">
           <div className="leftInnerContainer">
             <img className="onlineIcon" src={onlineIcon} alt="online icon" />
-            <h5>{room}</h5>
+            <h6 style={{ marginBottom: '0px'}}>{room}</h6>
           </div>
         </div>
         {/* <div> */}
-          <ScrollToBottom className="messages">
-            {messages.map((message, i) => <div key={i}><Message message={message} name={name}/></div>)}
-          </ScrollToBottom>
+        <ScrollToBottom className="messages">
+          {messages.map((message, i) => <div key={i}><Message message={message} name={name} /></div>)}
+        </ScrollToBottom>
         {/* </div> */}
         {/* <Messages messages={messages} name={name} /> */}
         <div>
@@ -75,10 +76,10 @@ const Chat = ({ location }) => {
               onChange={({ target: { value } }) => setMessage(value)}
               onKeyPress={event => event.key === 'Enter' ? sendMessage(event) : null}
             />
-            <button className="sendButton" onClick={e => sendMessage(e)}>Send</button>
+            <button className="sendButton" onClick={e => sendMessage(e)}> <AiOutlineSend /> </button>
           </form>
         </div>
-          {/* <Input message={message} setMessage={setMessage} sendMessage={sendMessage} /> */}
+        {/* <Input message={message} setMessage={setMessage} sendMessage={sendMessage} /> */}
       </div>
     </div>
   );

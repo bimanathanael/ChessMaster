@@ -21,7 +21,9 @@ export default () => {
   return (
     <Navbar bg="light" expand="lg">
       <Navbar.Brand>
-        <img src={logo} style={{ width: "100px" }} />
+        <a href="/">
+          <img src={logo} style={{ width: "100px" }} />
+        </a>
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
