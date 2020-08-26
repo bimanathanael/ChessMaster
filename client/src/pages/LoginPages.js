@@ -13,6 +13,7 @@ const jwtVerify = (data) => {
   return decoded;
 };
 
+const logo1 = require("../asset/tameng.png");
 const LOGIN_USER = gql`
   mutation LoginUser($userLogin: inputLoginUser) {
     loginUser(user: $userLogin) {
@@ -73,7 +74,7 @@ export default () => {
             >
               <div>
                 <div style={{ display: "flex", justifyContent: "center" }}>
-                  <img src={logo} style={{ marginBottom: "14%" }} />
+                  <img src={logo1} style={{ marginBottom: "14%" }} />
                 </div>
                 <form onSubmit={(e) => formLoginHandler(e)}>
                   <div className="form-group">
