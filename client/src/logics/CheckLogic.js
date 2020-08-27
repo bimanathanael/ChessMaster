@@ -51,14 +51,14 @@ export function checkChecker(board, side) {
   }
   
   // cek is check by pawn or not
-  if(board[row-1][col+1]) {
+  if(board[row-1][col+1] !== undefined) {
     if (board[row-1][col+1] !== 0 && (isNaN(String(board[row-1][col+1])[0]) !== flag) &&
     (board[row-1][col+1] === 6 || board[row-1][col+1] === -6)) {
       path.push([row-1, col+1])
       status = true;
     }
   }
-  if(board[row-1][col-1]) {
+  if(board[row-1][col-1] !== undefined) {
     if (board[row-1][col-1] !== 0 && (isNaN(String(board[row-1][col-1])[0]) !== flag) &&
     (board[row-1][col-1] === 6 || board[row-1][col-1] === -6)) {
       path.push([row-1, col-1])
@@ -205,14 +205,14 @@ export function isCheckMate(board, side, path, row, col) {
   if(kingMoves.length > 0) return false;
 
   // cek if there's pawn to save the king
-  if(board[target[0]+1][target[1]+1]) {
+  if(board[target[0]+1][target[1]+1] !== undefined) {
     if(isNaN(String(board[target[0]+1][target[1]+1])[0]) === flag &&
     (board[target[0]+1][target[1]+1] === 6 || board[target[0]+1][target[1]+1] === -6)) {
       return false;
     }
   }
 
-  if (board[target[0]+1][target[1]-1]) {
+  if (board[target[0]+1][target[1]-1] !== undefined) {
     if(isNaN(String(board[target[0]+1][target[1]-1])[0]) === flag &&
     (board[target[0]+1][target[1]-1] === 6 || board[target[0]+1][target[1]-1] === -6)) {
       return false;
