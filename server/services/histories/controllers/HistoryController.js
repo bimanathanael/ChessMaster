@@ -9,10 +9,7 @@ class HistoryController {
       } else {
         return res.status(200).json(data);
       }
-    } catch (err) {
-      console.log(err, "eror");
-      return res.status(500).json({ message: "internal error server" });
-    }
+    } catch (err) {}
   }
 
   static async add(req, res) {
@@ -30,7 +27,6 @@ class HistoryController {
       if (err.name === `SequelizeValidationError`) {
         return res.status(400).json({ message: err.errors[0].message });
       }
-      return res.status(500).json({ message: "internal error server" });
     }
   }
 }

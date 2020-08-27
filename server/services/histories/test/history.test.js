@@ -1,8 +1,16 @@
 const request = require("supertest");
-const app = require("../app");
+
 const { sequelize } = require("../models");
 const { queryInterface } = sequelize;
+var server;
 
+beforeEach(function () {
+  server = require("../app");
+});
+
+afterEach(function () {
+  server.close();
+});
 beforeAll(async (done) => {
   try {
     await queryInterface.bulkInsert("Histories", [
@@ -39,7 +47,9 @@ describe("history route = (/histories)", () => {
         status: "win",
         score: "+50",
       };
-      const response = await request(app).post("/histories").send(newHistory);
+      const response = await request(server)
+        .post("/histories")
+        .send(newHistory);
       const { body, status } = response;
       expect(status).toBe(201);
       expect(body).toHaveProperty("player");
@@ -59,7 +69,9 @@ describe("history route = (/histories)", () => {
         status: "win",
         score: "+50",
       };
-      const response = await request(app).post("/histories").send(newHistory);
+      const response = await request(server)
+        .post("/histories")
+        .send(newHistory);
       const { body, status } = response;
       expect(status).toBe(400);
       expect(body).toHaveProperty("message", "player cannot empty");
@@ -77,7 +89,9 @@ describe("history route = (/histories)", () => {
         status: "win",
         score: "+50",
       };
-      const response = await request(app).post("/histories").send(newHistory);
+      const response = await request(server)
+        .post("/histories")
+        .send(newHistory);
       const { body, status } = response;
       expect(status).toBe(400);
       expect(body).toHaveProperty("message", "opponent cannot empty");
@@ -95,7 +109,9 @@ describe("history route = (/histories)", () => {
         status: "",
         score: "+50",
       };
-      const response = await request(app).post("/histories").send(newHistory);
+      const response = await request(server)
+        .post("/histories")
+        .send(newHistory);
       const { body, status } = response;
       expect(status).toBe(400);
       expect(body).toHaveProperty("message", "status cannot empty");
@@ -113,7 +129,9 @@ describe("history route = (/histories)", () => {
         status: "win",
         score: "",
       };
-      const response = await request(app).post("/histories").send(newHistory);
+      const response = await request(server)
+        .post("/histories")
+        .send(newHistory);
       const { body, status } = response;
       expect(status).toBe(400);
       expect(body).toHaveProperty("message", "score cannot empty");
@@ -126,7 +144,7 @@ describe("history route = (/histories)", () => {
   test("200 success read by username", async (done) => {
     try {
       const params = "budianton";
-      const response = await request(app).get(`/histories/${params}`);
+      const response = await request(server).get(`/histories/${params}`);
       const { body, status } = response;
       expect(status).toBe(200);
       expect(body).toEqual(expect.any(Array));
@@ -136,13 +154,23 @@ describe("history route = (/histories)", () => {
     }
   });
 
-  test("200 success read by username", async (done) => {
+  test("200 failed read by username", async (done) => {
     try {
       const params = "budiganteng";
-      const response = await request(app).get(`/histories/${params}`);
+      const response = await request(server).get(`/histories/${params}`);
       const { body, status } = response;
       expect(status).toBe(400);
       expect(body).toHaveProperty("message", "player not found");
+      done();
+    } catch (err) {
+      done(err);
+    }
+  });
+
+  test("200 failed read by username", (done) => {
+    try {
+      const response = process.env.NODE_ENV;
+      expect(response).toEqual("test");
       done();
     } catch (err) {
       done(err);
