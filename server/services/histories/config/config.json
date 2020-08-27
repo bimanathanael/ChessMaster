@@ -7,8 +7,8 @@
     "dialect": "postgres"
   },
   "test": {
-    "username": "postgres",
-    "password": "postgres",
+    "username": "admin",
+    "password": "admin",
     "database": "HistoryChessMaster_Testing",
     "host": "127.0.0.1",
     "dialect": "postgres"
