@@ -153,6 +153,7 @@ function Board({ location }) {
       if (returnFunc) {
         setEnableCastling(false);
         if (isCheckMate(board, side, path, kingRow, kingCol) || (time.s === 0 && time.m === 0)) {
+          
           const updatedScore = {
             username: localStorage.getItem("username"),
             score: -5,
@@ -162,9 +163,13 @@ function Board({ location }) {
               updateScore: updatedScore,
             },
           });
+          swal({
+            title: "You Lose",
+          });
           // console.log("sadasd");
           history.push(`/leaderboard`);
           socket.emit("moveToLeaderboard", updatedScore);
+          socket.emit("moveToLeaderboard2", updatedScore);
         }
       }
     }
