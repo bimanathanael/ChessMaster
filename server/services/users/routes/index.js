@@ -7,8 +7,4 @@ router.get("/users", UsersController.getUser);
 router.get("/users/:username", UsersController.getByUsername);
 router.put("/users", UsersController.updateScoreUser);
 
-router.get("/", (req, res) => {
-  res.send("welcome, /users , /leaderboards");
-});
-
 module.exports = router;

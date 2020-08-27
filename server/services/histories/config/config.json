@@ -1,14 +1,14 @@
 {
   "development": {
-    "username": "admin",
-    "password": "admin",
+    "username": "postgres",
+    "password": "postgres",
     "database": "HistoryChessMaster",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
   "test": {
-    "username": "admin",
-    "password": "admin",
+    "username": "postgres",
+    "password": "postgres",
     "database": "HistoryChessMaster_Testing",
     "host": "127.0.0.1",
     "dialect": "postgres"

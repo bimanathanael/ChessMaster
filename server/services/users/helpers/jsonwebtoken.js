@@ -6,9 +6,4 @@ const jwtSignIn = (data) => {
   return token;
 };
 
-const jwtVerify = (data) => {
-  var decoded = jwt.verify(data, TOKEN_KEY);
-  return decoded;
-};
-
-module.exports = { jwtSignIn, jwtVerify };
+module.exports = { jwtSignIn };

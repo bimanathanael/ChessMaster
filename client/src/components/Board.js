@@ -3,7 +3,7 @@ import {
   defineLegalMoves,
   moveValidation,
   isCheckMate,
-  catslingHandler
+  catslingHandler,
 } from "../logics/LogicController";
 import { checkChecker } from "../logics/CheckLogic";
 import { Modal, Button } from "react-bootstrap";
@@ -58,8 +58,8 @@ function Board({ location }) {
 
   const [name, setName] = useState("");
   const [room, setRoom] = useState("");
-  
-  const dic = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+
+  const dic = ["a", "b", "c", "d", "e", "f", "g", "h"];
   const [historyMoves, setHistoryMoves] = useState([]);
   const [temp, setTemp] = useState([]);
   const [legalMoves, setLegalMoves] = useState([]);
@@ -152,8 +152,10 @@ function Board({ location }) {
       setIsCheck(returnFunc);
       if (returnFunc) {
         setEnableCastling(false);
-        if (isCheckMate(board, side, path, kingRow, kingCol) || (time.s === 0 && time.m === 0)) {
-          
+        if (
+          isCheckMate(board, side, path, kingRow, kingCol) ||
+          (time.s === 0 && time.m === 0)
+        ) {
           const updatedScore = {
             username: localStorage.getItem("username"),
             score: -5,
@@ -163,13 +165,23 @@ function Board({ location }) {
               updateScore: updatedScore,
             },
           });
+          const newPlayer = {
+            player: localStorage.getItem("username"),
+            opponent: opponentUsername,
+            status: "lose",
+            score: "-5",
+          };
+          if (opponentUsername) {
+            mutationAddHistory({
+              variables: { addHistoryGame: newPlayer },
+            });
+          }
           swal({
             title: "You Lose",
           });
-          // console.log("sadasd");
           history.push(`/leaderboard`);
-          socket.emit("moveToLeaderboard", updatedScore);
-          socket.emit("moveToLeaderboard2", updatedScore);
+          socket.emit("moveToLeaderboard");
+          socket.emit("moveToLeaderboard2");
         }
       }
     }
@@ -179,18 +191,21 @@ function Board({ location }) {
 
   useEffect(() => {
     if (time.s === 0 && time.m === 0) {
-    history.push(`/leaderboard`);
+      const updatedScore = {
+        username: localStorage.getItem("username"),
+        score: -5,
+      };
+      mutationUpdateScore({
+        variables: {
+          updateScore: updatedScore,
+        },
+      });
+      history.push(`/leaderboard`);
 
       socket.emit("moveToLeaderboard");
     }
   }, [time]);
 
-  useEffect(() => {
-    socket.on("moveToLeaderboard", () => {
-    history.push(`/leaderboard`);
-
-    });
-  }, []);
   useEffect(() => {
     socket.on("timerStop", () => {
       console.log("timerStop");
@@ -235,7 +250,7 @@ function Board({ location }) {
       swal({
         title: "You Win",
       });
-    history.push(`/leaderboard`);
+      history.push(`/leaderboard`);
     });
   }, [opponentUsername]);
 
@@ -250,17 +265,14 @@ function Board({ location }) {
           updateScore,
         },
       });
-      history.push("/leaderboard");
       socket.emit("editLeaderboard", updateScore);
     });
   }, []);
 
   useEffect(() => {
     socket.on("editLeaderboard", (update) => {
-      console.log("<<<>>>><<<>>>>");
       mutationUpdateScore({ variables: { updateScore: update } });
       history.push(`/leaderboard`);
-
     });
   }, []);
   useEffect(() => {
@@ -451,14 +463,16 @@ function Board({ location }) {
     } else if (temp.length > 0 && temp[2] !== 0) {
       let newBoard = moveValidation(board, temp, row, col, legalMoves);
       if (newBoard) {
-        if(temp[2] === 1 || temp[2] === -1) {
-          if(!isCheck && enableCastling && temp[0] === 7 && temp[1] === 4) {
+        if (temp[2] === 1 || temp[2] === -1) {
+          if (!isCheck && enableCastling && temp[0] === 7 && temp[1] === 4) {
             newBoard = catslingHandler(newBoard, side);
           }
           setEnableCastling(false);
         }
         let moves = historyMoves;
-        moves.push([`[${dic[temp[1]]}${temp[0]+1} to ${dic[col]}${row+1}]`]);
+        moves.push([
+          `[${dic[temp[1]]}${temp[0] + 1} to ${dic[col]}${row + 1}]`,
+        ]);
         setHistoryMoves(moves);
         const { status: returnFunc } = checkChecker(newBoard, side);
         if (!returnFunc) {
@@ -499,7 +513,7 @@ function Board({ location }) {
     else setModalWhite(false);
   }
 
-  console.log(historyMoves, "<<<< historyMoves")
+  console.log(historyMoves, "<<<< historyMoves");
   return (
     <>
       {console.log(time.m, time.s, "cekcek")}
