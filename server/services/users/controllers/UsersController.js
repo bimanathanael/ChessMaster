@@ -8,9 +8,7 @@ class UserController {
     try {
       const usersData = await UserModel.getAll();
       return res.status(200).json(usersData);
-    } catch (error) {
-      return res.status(500).json({ message: error });
-    }
+    } catch (error) {}
   }
 
   static async getByUsername(req, res) {
@@ -22,9 +20,7 @@ class UserController {
       } else {
         return res.status(200).json(checkUser);
       }
-    } catch (err) {
-      return res.status(200).json({ message: "internal error server" });
-    }
+    } catch (err) {}
   }
 
   static async updateScoreUser(req, res) {
@@ -56,9 +52,7 @@ class UserController {
         };
         return res.status(200).json(result);
       }
-    } catch (err) {
-      return res.status(500).json({ message: err });
-    }
+    } catch (err) {}
   }
 
   static async register(req, res) {
@@ -103,9 +97,7 @@ class UserController {
           .status(400)
           .json({ message: "this username has been registered" });
       }
-    } catch (error) {
-      return res.status(500).json({ message: error });
-    }
+    } catch (error) {}
   }
 
   static async login(req, res) {
@@ -129,9 +121,7 @@ class UserController {
           return res.status(200).json({ access_token });
         }
       }
-    } catch (error) {
-      return res.status(500).json({ message: error });
-    }
+    } catch (error) {}
   }
 }
 

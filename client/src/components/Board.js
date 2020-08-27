@@ -165,12 +165,23 @@ function Board({ location }) {
               updateScore: updatedScore,
             },
           });
+          const newPlayer = {
+            player: localStorage.getItem("username"),
+            opponent: opponentUsername,
+            status: "lose",
+            score: "-5",
+          };
+          if (opponentUsername) {
+            mutationAddHistory({
+              variables: { addHistoryGame: newPlayer },
+            });
+          }
           swal({
             title: "You Lose",
           });
           history.push(`/leaderboard`);
-          socket.emit("moveToLeaderboard", updatedScore);
-          socket.emit("moveToLeaderboard2", updatedScore);
+          socket.emit("moveToLeaderboard");
+          socket.emit("moveToLeaderboard2");
         }
       }
     }
@@ -180,17 +191,21 @@ function Board({ location }) {
 
   useEffect(() => {
     if (time.s === 0 && time.m === 0) {
+      const updatedScore = {
+        username: localStorage.getItem("username"),
+        score: -5,
+      };
+      mutationUpdateScore({
+        variables: {
+          updateScore: updatedScore,
+        },
+      });
       history.push(`/leaderboard`);
 
       socket.emit("moveToLeaderboard");
     }
   }, [time]);
 
-  useEffect(() => {
-    socket.on("moveToLeaderboard", () => {
-      history.push(`/leaderboard`);
-    });
-  }, []);
   useEffect(() => {
     socket.on("timerStop", () => {
       console.log("timerStop");
@@ -250,14 +265,12 @@ function Board({ location }) {
           updateScore,
         },
       });
-      history.push("/leaderboard");
       socket.emit("editLeaderboard", updateScore);
     });
   }, []);
 
   useEffect(() => {
     socket.on("editLeaderboard", (update) => {
-      console.log("<<<>>>><<<>>>>");
       mutationUpdateScore({ variables: { updateScore: update } });
       history.push(`/leaderboard`);
     });

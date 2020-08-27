@@ -109,6 +109,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("pawn-evolution", (data) => {
+    const user = getUser(socket.id);
     board = data.board.reverse();
     socket.broadcast.to(user.room).emit("pawn evolution", { board });
     // socket.broadcast.emit("pawn evolution", {board});
