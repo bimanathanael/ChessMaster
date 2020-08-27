@@ -9,8 +9,8 @@ app.use(express.json());
 app.use(cors());
 app.use(routes);
 
-app.listen(PORT, function () {
+let server = app.listen(PORT, function () {
   console.log(`NOW RUNNING ON PORT ${PORT}`);
 });
 
-module.exports = app;
+module.exports = server;

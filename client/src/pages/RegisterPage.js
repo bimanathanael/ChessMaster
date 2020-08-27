@@ -8,6 +8,8 @@ import swal from "sweetalert";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { GET_USERS } from "./LeaderBoard";
 
+const logo1 = require("../asset/tameng.png");
+const logo2 = require("../asset/kudav2.png");
 const ADD_USER = gql`
   mutation AddNewUser($newUser: inputNewUser) {
     addUser(user: $newUser) {
@@ -74,7 +76,7 @@ export default () => {
             >
               <div>
                 <div style={{ display: "flex", justifyContent: "center" }}>
-                  <img src={logo} style={{ marginBottom: "14%" }} />
+                  <img src={logo1} style={{ marginBottom: "14%" }} />
                 </div>
                 <form onSubmit={(e) => formRegisterHandler(e)}>
                   <div className="form-group">

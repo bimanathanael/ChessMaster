@@ -1,8 +1,16 @@
 const request = require("supertest");
-const app = require("../app");
 const db = require("../config/mongo");
 const { hashPassword, decodePassword } = require("../helpers/bcrypt");
 const { jwtSignIn } = require("../helpers/jsonwebtoken");
+var server;
+
+beforeEach(function () {
+  server = require("../app");
+});
+
+afterEach(function () {
+  server.close();
+});
 
 beforeAll(async (done) => {
   try {
@@ -31,7 +39,7 @@ afterAll(async (done) => {
 describe("check and update data user, route = /user", () => {
   test("200 sucess read data user", async (done) => {
     try {
-      const response = await request(app).get("/users");
+      const response = await request(server).get("/users");
       const { body, status } = response;
       expect(status).toBe(200);
       expect(body).toEqual(expect.any(Array));
@@ -43,7 +51,7 @@ describe("check and update data user, route = /user", () => {
   test("200 sucess read data user by username", async (done) => {
     try {
       const username = "tono1234";
-      const response = await request(app).get(`/users/${username}`);
+      const response = await request(server).get(`/users/${username}`);
       const { body, status } = response;
       expect(status).toBe(200);
       expect(body).toHaveProperty("username");
@@ -60,7 +68,7 @@ describe("check and update data user, route = /user", () => {
         username: "tono1234",
         score: 30,
       };
-      const response = await request(app).put("/users").send(updateUser);
+      const response = await request(server).put("/users").send(updateUser);
       const { body, status } = response;
       expect(status).toBe(200);
       expect(body).toHaveProperty("username");
@@ -74,7 +82,7 @@ describe("check and update data user, route = /user", () => {
   test("400 failed read data user by username", async (done) => {
     try {
       const username = "tono12342222";
-      const response = await request(app).get(`/users/${username}`);
+      const response = await request(server).get(`/users/${username}`);
       const { body, status } = response;
       expect(status).toBe(400);
       expect(body).toHaveProperty("message");
@@ -89,7 +97,7 @@ describe("check and update data user, route = /user", () => {
         username: "",
         score: 30,
       };
-      const response = await request(app).put("/users").send(updateUser);
+      const response = await request(server).put("/users").send(updateUser);
       const { body, status } = response;
       expect(status).toBe(400);
       expect(body).toHaveProperty("message", "username cannot empty");
@@ -106,7 +114,7 @@ describe("check and update data user, route = /user", () => {
         username: "tono1234",
         score: "",
       };
-      const response = await request(app).put("/users").send(updateUser);
+      const response = await request(server).put("/users").send(updateUser);
       const { body, status } = response;
       expect(status).toBe(400);
       expect(body).toHaveProperty("message", "score cannot empty");
@@ -123,7 +131,7 @@ describe("check and update data user, route = /user", () => {
         username: "kakakak",
         score: 30,
       };
-      const response = await request(app).put("/users").send(updateUser);
+      const response = await request(server).put("/users").send(updateUser);
       const { body, status } = response;
       expect(status).toBe(404);
       expect(body).toHaveProperty("message", "username cannot found");
@@ -143,7 +151,7 @@ describe("register user, route = (/register)", () => {
         password: "budi1343",
         score: 0,
       };
-      const response = await request(app).post("/register").send(newUser);
+      const response = await request(server).post("/register").send(newUser);
       const { body, status } = response;
       expect(status).toBe(201);
       expect(body).toHaveProperty("username");
@@ -160,7 +168,7 @@ describe("register user, route = (/register)", () => {
         password: "budi134",
         score: 0,
       };
-      const response = await request(app).post("/register").send(newUser);
+      const response = await request(server).post("/register").send(newUser);
       const { body, status } = response;
       expect(status).toBe(400);
       expect(body).toHaveProperty("message", "username cannot empty");
@@ -177,7 +185,7 @@ describe("register user, route = (/register)", () => {
         password: "",
         score: 0,
       };
-      const response = await request(app).post("/register").send(newUser);
+      const response = await request(server).post("/register").send(newUser);
       const { body, status } = response;
       expect(status).toBe(400);
       expect(body).toHaveProperty("message", "password cannot empty");
@@ -193,7 +201,7 @@ describe("register user, route = (/register)", () => {
         password: "tono1342",
         score: 0,
       };
-      const response = await request(app).post("/register").send(newUser);
+      const response = await request(server).post("/register").send(newUser);
       const { body, status } = response;
       expect(status).toBe(400);
       expect(body).toHaveProperty(
@@ -212,7 +220,7 @@ describe("register user, route = (/register)", () => {
         password: "tono134",
         score: 0,
       };
-      const response = await request(app).post("/register").send(newUser);
+      const response = await request(server).post("/register").send(newUser);
       const { body, status } = response;
       expect(status).toBe(400);
       expect(body).toHaveProperty("message", "username at least 6 characters");
@@ -229,7 +237,7 @@ describe("register user, route = (/register)", () => {
         password: "tono",
         score: 0,
       };
-      const response = await request(app).post("/register").send(newUser);
+      const response = await request(server).post("/register").send(newUser);
       const { body, status } = response;
       expect(status).toBe(400);
       expect(body).toHaveProperty("message", "password at least 8 characters");
@@ -247,7 +255,7 @@ describe("login user, route = /login", () => {
         username: "tono1234",
         password: "tono1234",
       };
-      const response = await request(app).post("/login").send(loginUser);
+      const response = await request(server).post("/login").send(loginUser);
       const { body, status } = response;
       expect(status).toBe(200);
       expect(body).toHaveProperty("access_token");
@@ -263,7 +271,7 @@ describe("login user, route = /login", () => {
         username: "jokondokondo",
         password: "tono1234",
       };
-      const response = await request(app).post("/login").send(loginUser);
+      const response = await request(server).post("/login").send(loginUser);
       const { body, status } = response;
       expect(status).toBe(400);
       expect(body).toHaveProperty("message", "Wrong username/password");
@@ -279,7 +287,7 @@ describe("login user, route = /login", () => {
         username: "tono1234",
         password: "joko",
       };
-      const response = await request(app).post("/login").send(loginUser);
+      const response = await request(server).post("/login").send(loginUser);
       const { body, status } = response;
       expect(status).toBe(400);
       expect(body).toHaveProperty("message", "Wrong username/password");

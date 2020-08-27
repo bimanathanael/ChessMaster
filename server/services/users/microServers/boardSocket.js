@@ -51,10 +51,14 @@ io.on("connection", (socket) => {
   });
 
   socket.on("moveToLeaderboard", () => {
-    io.emit("moveToLeaderboard");
+    socket.broadcast.emit("moveToLeaderboard");
   });
   socket.on("moveToLeaderboard2", () => {
     socket.broadcast.emit("moveToLeaderboard2");
+  });
+
+  socket.on("editLeaderboard", (update) => {
+    socket.broadcast.emit("editLeaderboard", update);
   });
   //END : HIKA Timer
 
@@ -105,6 +109,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("pawn-evolution", (data) => {
+    const user = getUser(socket.id);
     board = data.board.reverse();
     socket.broadcast.to(user.room).emit("pawn evolution", { board });
     // socket.broadcast.emit("pawn evolution", {board});
