@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "dev": "NODE_ENV=development nodemon app.js",
-    "test": "jest --runInBand --detectOpenHandles --forceExit",
+    "test": "jest --runInBand --detectOpenHandles --forceExit --coverage",
     "start": "concurrently 'nodemon app.js' 'nodemon microServers/boardSocket.js' 'nodemon microServers/webRtcSocket.js' 'nodemon microServers/roomSocket.js'"
   },
   "keywords": [],
