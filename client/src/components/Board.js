@@ -3,7 +3,6 @@ import {
   defineLegalMoves,
   moveValidation,
   catslingHandler,
-  catslingHandler,
 } from "../logics/LogicController";
 import { checkChecker, isCheckMate, } from "../logics/CheckLogic";
 import { Modal, Button } from "react-bootstrap";
