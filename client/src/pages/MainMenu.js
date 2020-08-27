@@ -16,9 +16,11 @@ import io from "socket.io-client";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { GET_ROOMS, roomsItem } from "../config/client";
 import { SideNavMainMenu } from "../components/SideNavMainMenu";
-import  NavbarMainMenu from "../components/NavbarMainMenu";
+import NavbarMainMenu from "../components/NavbarMainMenu";
 
 const ENDPOINT = "http://localhost:9004/";
+const backgroundImg =
+  "https://cdn2.aoe.com/fileadmin/_processed_/a/a/csm_Fotolia_94900081_Chess_Pieces_930_590_70_2fe5d1b6a3.jpg";
 
 export const GET_USERBYID = gql`
   query GetById($dataUser: String) {
@@ -136,17 +138,24 @@ export default () => {
 
   return (
     <div className="row">
-      <div className="col-2" style={{paddingLeft: '0px', paddingRight: '0px'}}>
+      <div
+        className="col-2"
+        style={{ paddingLeft: "0px", paddingRight: "0px" }}
+      >
         <SideNavMainMenu />
       </div>
-      <div className="col" style={{marginLeft: '-3%', paddingRight: '0px'}}>
+      <div className="col" style={{ marginLeft: "-3%", paddingRight: "0px" }}>
         <div className="row">
-          <NavbarMainMenu/>
+          <NavbarMainMenu />
         </div>
-        <div className="row" style={{backgroundColor: '#1f4068'}}>
-          <Container
-            style={{ minHeight: "72vh" }}
-          >
+        <div
+          className="row"
+          style={{
+            backgroundImage: `url(${backgroundImg})`,
+            backgroundRepeat: "cover",
+          }}
+        >
+          <Container style={{ minHeight: "72vh" }}>
             <Row>
               <Col md={12}>
                 <Row>
@@ -183,7 +192,7 @@ export default () => {
                       style={{ boxShadow: "2px 3px 5px 0px rgba(0,0,0,0.75)" }}
                       className="mt-5"
                     >
-                       + Create Room +
+                      + Create Room +
                     </Button>
                   </Col>
                 </Row>
@@ -207,7 +216,7 @@ export default () => {
             </Row>
           </Container>
         </div>
-    </div>
+      </div>
     </div>
   );
 };

@@ -9,8 +9,10 @@ app.use(express.json());
 app.use(cors());
 app.use(routes);
 
-app.listen(PORT, function () {
-  console.log(`NOW RUNNING ON PORT ${PORT}`);
-});
+if (app.get("env") === "development") {
+  app.listen(PORT, function () {
+    console.log(`NOW RUNNING ON PORT ${PORT}`);
+  });
+}
 
 module.exports = app;
