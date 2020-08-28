@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import {
   defineLegalMoves,
   moveValidation,
-  isCheckMate,
   catslingHandler,
 } from "../logics/LogicController";
-import { checkChecker } from "../logics/CheckLogic";
+import { checkChecker, isCheckMate, } from "../logics/CheckLogic";
 import { Modal, Button } from "react-bootstrap";
 import queryString from "query-string";
 import io from "socket.io-client";
@@ -572,7 +571,6 @@ function Board({ location }) {
             </h1>
           </div>
           <div className="motherBoard">
-            {/* <h3>Turn: {turn ? "White" : "Black"}</h3> */}
             {displayBoard && (
               <div className={styleBoard()}>
                 <div className="row justify-content-center">

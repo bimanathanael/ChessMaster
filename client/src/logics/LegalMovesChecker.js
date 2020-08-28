@@ -140,7 +140,6 @@ export function legalKingMoves(board, row, col, castling) {
     }
   }
 
-
   legalMoves.forEach(arr => {
     const knightMoves = [
       [arr[0]+2, arr[1]-1], [arr[0]+2, arr[1]+1],
@@ -323,6 +322,7 @@ export function legalKingMoves(board, row, col, castling) {
   
   return legalMoves;
 }
+
 
 export function legalKnightMoves(board, row, col) {
   const flag = isNaN(String(board[row][col])[0]);
