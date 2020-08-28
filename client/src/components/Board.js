@@ -174,6 +174,15 @@ function Board({ location }) {
             mutationAddHistory({
               variables: { addHistoryGame: newPlayer },
             });
+            let update = {
+              username: opponentUsername,
+              score: 50,
+            };
+            mutationUpdateScore({
+              variables: {
+                updateScore: update,
+              },
+            });
           }
           swal({
             title: "You Lose",
@@ -184,7 +193,7 @@ function Board({ location }) {
         }
       }
     }
-  }, [board]);
+  }, [board, opponentUsername]);
 
   //timer logic
 
@@ -199,11 +208,23 @@ function Board({ location }) {
           updateScore: updatedScore,
         },
       });
+
+      if (opponentUsername) {
+        let update = {
+          username: opponentUsername,
+          score: 50,
+        };
+        mutationUpdateScore({
+          variables: {
+            updateScore: update,
+          },
+        });
+      }
       history.push(`/leaderboard`);
 
       socket.emit("moveToLeaderboard");
     }
-  }, [time]);
+  }, [time, opponentUsername]);
 
   useEffect(() => {
     socket.on("timerStop", () => {
@@ -254,18 +275,7 @@ function Board({ location }) {
   }, [opponentUsername]);
 
   useEffect(() => {
-    socket.on("moveToLeaderboard", () => {
-      let updateScore = {
-        username: localStorage.getItem("username"),
-        score: 50,
-      };
-      mutationUpdateScore({
-        variables: {
-          updateScore,
-        },
-      });
-      socket.emit("editLeaderboard", updateScore);
-    });
+    socket.on("moveToLeaderboard", () => {});
   }, []);
 
   useEffect(() => {
@@ -364,6 +374,16 @@ function Board({ location }) {
     if (opponentUsername) {
       mutationAddHistory({
         variables: { addHistoryGame: newPlayer },
+      });
+
+      let update = {
+        username: opponentUsername,
+        score: 50,
+      };
+      mutationUpdateScore({
+        variables: {
+          updateScore: update,
+        },
       });
     }
     swal({
