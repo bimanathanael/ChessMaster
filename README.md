@@ -1,5 +1,27 @@
 # ChessMaster
-build with React JS, Socket IO and WebRTC
+A Multiplayer interactive Chess Game.This app has:
+* Used Technology on Orchestrator Port 9003: 
+    - Orchestrator         : Graph QL - Apollo Server
+    - Cache memory         : Redis
+    - Socket IO            : for Chess movement, Timer, WebRTC, Rooms, and Chat
+    - TDD Test             : Jest
+    
+* Used Technology on Server History Port 9005: 
+    - Programming Language : Node Js with Express
+    - Database             : Postgre SQL
+    - ORM                  : Sequelize
+    - TDD Test             : Jest
+    
+* Used Technology on Server User Port 9000: 
+    - Programming Language : Node Js with Express
+    - Database             : MongoDB
+    
+* Used Technology on Client:   
+    - Programming Language : React JS
+    - Orchestrator         : Graph QL - Apollo Client
+    - Socket IO            : for Chess movement, Timer, WebRTC, Rooms, and Chat
+    - Interactive Comm     : WebRTC
+    
 
 ## In Chess Game Examples
 
