@@ -81,7 +81,7 @@ A Multiplayer interactive Chess Game.This app has:
 <img src="./examples/king-can-do-castling.gif" width="720">
 <br>
 
-#### King Cannot Do Castling After Getting Check
+#### King Cannot Do Castling After Being Checked
 <img src="./examples/king-cannot-do-castling.gif" width="720">
 <br>
 
